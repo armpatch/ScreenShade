@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/darker_gray">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:layout_above="@+id/permission_buttons">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X = " />
+
+        <EditText
+            android:id="@+id/starting_x"
+            android:layout_width="200dp"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Y = " />
+
+        <EditText
+            android:id="@+id/starting_y"
+            android:layout_width="200dp"
+            android:layout_height="50dp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/permission_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/start_button_layout"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/button_check_permission_alert_window"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_margin="4dp"
+            android:text="check permission"
+            android:layout_gravity="center" />
+
+        <Button
+            android:id="@+id/button_ask_permission_draw_over"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_margin="4dp"
+            android:text="draw over other apps"
+            android:layout_gravity="center" />
+
+        <Button
+            android:id="@+id/test_overlay"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_margin="4dp"
+            android:text="test overlay"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/start_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="200dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:text="Start Overlay service"
+
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

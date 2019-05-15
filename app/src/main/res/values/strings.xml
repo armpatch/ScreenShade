@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SecretScreen</string>
+    <string name="welcome_text">Welcome. Hit button below.</string>
+</resources>
