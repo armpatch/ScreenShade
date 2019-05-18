@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".WindowHud" />
+        <service android:name=".WindowHudService" />
 
     </application>
 </manifest>
