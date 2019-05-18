@@ -27,11 +27,8 @@ public class SecretScreenFragment extends Fragment {
     private Context context;
 
     // ui
-    private TextView mTitleView;
     private Button mStartButton;
-    private Button mCheckPermissionButton;
     private Button mRequestPermissionButtonDrawOver;
-    private Button mTestOverlayImageView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,18 +43,6 @@ public class SecretScreenFragment extends Fragment {
 
         context = inflater.getContext();
 
-        mCheckPermissionButton = v.findViewById(R.id.button_check_permission_alert_window);
-        mCheckPermissionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Settings.canDrawOverlays(context)) {
-                    Toast.makeText(context, "has permission", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "no overlay permission", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
         mRequestPermissionButtonDrawOver = v.findViewById(R.id.button_ask_permission_draw_over);
         mRequestPermissionButtonDrawOver.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,15 +50,6 @@ public class SecretScreenFragment extends Fragment {
                 Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + context.getPackageName()));
                 context.startActivity(i);
-            }
-        });
-
-        mTestOverlayImageView =
-                v.findViewById(R.id.test_overlay);
-        mTestOverlayImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
             }
         });
 
@@ -98,12 +74,6 @@ public class SecretScreenFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    public boolean hasOverlayPermission() {
-        int result = ContextCompat
-                .checkSelfPermission(context, Manifest.permission.SYSTEM_ALERT_WINDOW);
-        return result == PackageManager.PERMISSION_GRANTED;
     }
 
 }

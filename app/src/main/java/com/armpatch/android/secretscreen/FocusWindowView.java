@@ -26,7 +26,9 @@ public class FocusWindowView extends View {
     private Paint mBoxPaint;
 
     //
-    private static float boxStrokeWidth = 3;
+    private float mBoxStrokeWidth = 3;
+    private boolean mIsBoxDrawn = false;
+
 
     public FocusWindowView(Context context) {
         super(context);
@@ -51,7 +53,7 @@ public class FocusWindowView extends View {
         mBoxPaint = new Paint();
 
         mBoxPaint.setStyle(Paint.Style.STROKE);
-        mBoxPaint.setStrokeWidth(boxStrokeWidth);
+        mBoxPaint.setStrokeWidth(mBoxStrokeWidth);
         mBoxPaint.setColor(Color.BLACK);
 
         if (attrs == null)
@@ -76,35 +78,42 @@ public class FocusWindowView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         PointF current = new PointF(event.getX(), event.getY());
         String action = "";
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                action = "ACTION_DOWN";
-                // Reset drawing state
-                mViewBox = new Box(current);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                action = "ACTION_MOVE";
-                if (mViewBox != null) {
-                    mViewBox.setCurrent(current);
-                    invalidate();
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                action = "ACTION_UP";
-                mViewBox = null;
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                action = "ACTION_CANCELL";
-                mViewBox = null;
-                break;
+
+        if (!mIsBoxDrawn) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    action = "ACTION_DOWN";
+                    // Reset drawing state
+                    mViewBox = new Box(current);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    action = "ACTION_MOVE";
+                    if (mViewBox != null) {
+                        mViewBox.setCurrent(current);
+                        invalidate();
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    action = "ACTION_UP";
+                    mIsBoxDrawn = true;
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    action = "ACTION_CANCELL";
+                    mViewBox = null;
+                    break;
+            }
+        } else {
+            super.onTouchEvent(event);
         }
 
         Log.i(TAG, action + " at x=" + current.x + ", y=" + current.y);
 
         return true;
+
     }
 }
 

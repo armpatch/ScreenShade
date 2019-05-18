@@ -1,5 +1,6 @@
 package com.armpatch.android.secretscreen;
 
+
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
