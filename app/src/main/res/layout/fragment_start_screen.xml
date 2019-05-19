@@ -2,37 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/darker_gray">
+    android:background="@android:color/darker_gray"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:orientation="vertical"
-        android:layout_above="@+id/permission_buttons">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="X = " />
-
-        <EditText
-            android:id="@+id/starting_x"
-            android:layout_width="200dp"
-            android:layout_height="50dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Y = " />
-
-        <EditText
-            android:id="@+id/starting_y"
-            android:layout_width="200dp"
-            android:layout_height="50dp" />
-
-    </LinearLayout>
 
 
     <LinearLayout
@@ -41,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="200dp"
+        android:layout_marginBottom="250dp"
         android:orientation="vertical">
 
         <Button
@@ -49,17 +22,19 @@
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_margin="4dp"
-            android:text="Ask Permission"
-            android:background="@color/colorAccent"/>
+            android:layout_margin="8dp"
+            android:background="@color/colorAccent"
+            android:text="@string/ask_permission" />
 
         <Button
             android:id="@+id/start_button"
             android:layout_width="150dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            android:text="Start Overlay service"
-            android:background="@color/colorPrimary"/>
+
+            android:layout_marginBottom="16dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/start_overlay_service" />
 
     </LinearLayout>
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/controls_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/colorOverlayBackground"
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingTop="4dp"
+    android:paddingRight="8dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/overlay"
+        android:textColor="@android:color/white"
+        android:textIsSelectable="true"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/show_overlay_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/show" />
+
+    <Button
+        android:id="@+id/hide_overlay_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/hide" />
+
+
+</LinearLayout>

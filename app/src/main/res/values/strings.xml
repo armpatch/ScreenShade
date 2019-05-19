@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">SecretScreen</string>
     <string name="welcome_text">Welcome. Hit button below.</string>
+    <string name="ask_permission">Ask Permission</string>
+    <string name="start_overlay_service">Start Overlay Service</string>
+    <string name="overlay">Overlay</string>
+    <string name="show">show</string>
+    <string name="hide">Hide</string>
 </resources>

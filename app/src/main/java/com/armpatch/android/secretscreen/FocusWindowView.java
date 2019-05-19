@@ -76,7 +76,7 @@ public class FocusWindowView extends View {
         }
     }
 
-    @Override
+    /*@Override
     public boolean onTouchEvent(MotionEvent event) {
 
         PointF current = new PointF(event.getX(), event.getY());
@@ -114,6 +114,6 @@ public class FocusWindowView extends View {
 
         return true;
 
-    }
+    }*/
 }
 

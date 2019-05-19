@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".WindowHudService" />
+        <service android:name=".OverlayService" />
 
     </application>
 </manifest>
