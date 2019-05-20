@@ -10,10 +10,10 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import static android.view.View.inflate;
 
@@ -22,7 +22,7 @@ public class OverlayService extends Service {
     // Variables
     private Context context;
     private WindowManager mWindowManager;
-    private static int windowParamType;
+    private static int windowLayoutType;
     private int displayHeight;
     private int displayWidth;
 
@@ -30,14 +30,14 @@ public class OverlayService extends Service {
     private View mOverlayControlsView;
     private Button mShowOverlayButton;
     private Button mHideOverlayButton;
-    private ImageView mTopWindowBar;
-    private ImageView mBottomWindowBar;
+    private View mTopDraggableBorder;
+    private View mBottomDraggableBorder;
 
     static {
         if (Build.VERSION.SDK_INT >= 26) {
-            windowParamType = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            windowLayoutType = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            windowParamType = WindowManager.LayoutParams.TYPE_PHONE;
+            windowLayoutType = WindowManager.LayoutParams.TYPE_PHONE;
         }
     }
 
@@ -65,20 +65,20 @@ public class OverlayService extends Service {
         WindowManager.LayoutParams windowParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                windowParamType,
+                windowLayoutType,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
 
         windowParams.gravity = Gravity.BOTTOM | Gravity.LEFT;
 
-        mOverlayControlsView = inflate(context, R.layout.layout_overlay_controls, null);
+        mOverlayControlsView = inflate(context, R.layout.ui_window_controls, null);
         mWindowManager.addView(mOverlayControlsView, windowParams);
 
         mShowOverlayButton = mOverlayControlsView.findViewById(R.id.show_overlay_button);
         mShowOverlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showOverlay();
             }
         });
         mHideOverlayButton = mOverlayControlsView.findViewById(R.id.hide_overlay_button);
@@ -91,7 +91,48 @@ public class OverlayService extends Service {
     }
 
     private void showOverlay() {
+        final WindowManager.LayoutParams windowParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                windowLayoutType,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSPARENT);
 
+        windowParams.gravity = Gravity.LEFT;
+
+        mBottomDraggableBorder = inflate(context, R.layout.ui_window_border, null);
+
+        windowParams.x = 0;
+        windowParams.y = 100;
+
+        mWindowManager.addView(mBottomDraggableBorder, windowParams);
+        mBottomDraggableBorder.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = windowParams.x;
+                        initialY = windowParams.y;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        // move ImageView
+                        windowParams.x = initialX + (int) (initialTouchX - event.getRawX());
+                        windowParams.y = initialY + (int) (event.getRawY() - initialTouchY);
+                        mWindowManager.updateViewLayout(mBottomDraggableBorder, windowParams);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void setDisplayHeight() {

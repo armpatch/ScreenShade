@@ -1,18 +1,22 @@
 package com.armpatch.android.secretscreen;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class SecretScreenFragment extends Fragment {
 
@@ -49,8 +53,11 @@ public class SecretScreenFragment extends Fragment {
         mStartOverlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startService(OverlayService.getIntent(mContext));
-                // getActivity().finish();
+                if (Settings.canDrawOverlays(mContext)) {
+                    mContext.startService(OverlayService.getIntent(mContext));
+                } else {
+                    Toast.makeText(mContext,"Ask Permission First", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
