@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="false">
+
+    <ImageView
+        android:id="@+id/drag_bar"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_above="@id/view_blocker"
+        android:src="@color/color_drag_bar_normal" />
+
+    <ImageView
+        android:id="@+id/view_blocker"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/black" />
+
+    <ImageView
+        android:id="@+id/window_border_handle"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/drag_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-35dp"
+        android:background="@color/colorPrimary"
+        android:visibility="invisible" />
+
+    <ImageView
+    android:id="@+id/drag_handle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@id/drag_bar"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:layout_marginBottom="-7.5dp"
+    android:src="@drawable/ui_window_border_line" />
+
+</RelativeLayout>

@@ -1,5 +1,6 @@
 package com.armpatch.android.secretscreen;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +13,12 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
-import static android.view.View.inflate;
+  import static android.view.View.inflate;
 
 public class OverlayService extends Service {
 
@@ -30,8 +33,7 @@ public class OverlayService extends Service {
     private View mOverlayControlsView;
     private Button mShowOverlayButton;
     private Button mHideOverlayButton;
-    private View mTopDraggableBorder;
-    private View mBottomDraggableBorder;
+    private View mBottomScreenBlockView;
 
     static {
         if (Build.VERSION.SDK_INT >= 26) {
@@ -90,6 +92,7 @@ public class OverlayService extends Service {
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void showOverlay() {
         final WindowManager.LayoutParams windowParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -100,34 +103,35 @@ public class OverlayService extends Service {
 
         windowParams.gravity = Gravity.LEFT;
 
-        mBottomDraggableBorder = inflate(context, R.layout.ui_window_border, null);
+        mBottomScreenBlockView = inflate(context, R.layout.ui_screen_block_bottom, null);
+        final ImageView viewBlocker = mBottomScreenBlockView.findViewById(R.id.view_blocker);
+
+        final ViewGroup.LayoutParams viewBlockerParams = viewBlocker.getLayoutParams();
 
         windowParams.x = 0;
-        windowParams.y = 100;
+        windowParams.y = 0;
 
-        mWindowManager.addView(mBottomDraggableBorder, windowParams);
-        mBottomDraggableBorder.setOnTouchListener(new View.OnTouchListener() {
-            private int initialX;
-            private int initialY;
-            private float initialTouchX;
+        ImageView dragBar = mBottomScreenBlockView.findViewById(R.id.drag_bar);
+
+        mWindowManager.addView(mBottomScreenBlockView, windowParams);
+        dragBar.setOnTouchListener(new View.OnTouchListener() {
+            private int initialLayoutHeight;
             private float initialTouchY;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        initialX = windowParams.x;
-                        initialY = windowParams.y;
-                        initialTouchX = event.getRawX();
+                        initialLayoutHeight = viewBlocker.getHeight();
                         initialTouchY = event.getRawY();
                         return true;
                     case MotionEvent.ACTION_UP:
                         return true;
                     case MotionEvent.ACTION_MOVE:
                         // move ImageView
-                        windowParams.x = initialX + (int) (initialTouchX - event.getRawX());
-                        windowParams.y = initialY + (int) (event.getRawY() - initialTouchY);
-                        mWindowManager.updateViewLayout(mBottomDraggableBorder, windowParams);
+                        viewBlockerParams.height = initialLayoutHeight - (int) (event.getRawY() - initialTouchY);
+                        // windowParams.y = initialY + (int) (event.getRawY() - initialTouchY);
+                        mWindowManager.updateViewLayout(mBottomScreenBlockView, windowParams);
                         return true;
                 }
                 return false;
