@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">SecretScreen</string>
     <string name="ask_permission">Edit Permissions</string>
-    <string name="start_overlay_service">Start Overlay Service</string>
+    <string name="start_overlay_service">Start Service</string>
+    <string name="stop_overlay_service">Stop Service</string>
     <string name="overlay">Window</string>
     <string name="show">show</string>
     <string name="hide">Hide</string>

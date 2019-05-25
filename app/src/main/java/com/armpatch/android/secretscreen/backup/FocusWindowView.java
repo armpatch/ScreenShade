@@ -1,19 +1,16 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.secretscreen.backup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.EmbossMaskFilter;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+
+import com.armpatch.android.secretscreen.R;
 
 public class FocusWindowView extends View {
 

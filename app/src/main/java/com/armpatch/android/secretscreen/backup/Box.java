@@ -1,4 +1,4 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.secretscreen.backup;
 
 import android.graphics.PointF;
 
