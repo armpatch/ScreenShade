@@ -1,15 +1,15 @@
 package com.armpatch.android.secretscreen;
 
-import android.Manifest;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -21,11 +21,13 @@ import android.widget.Toast;
 public class SecretScreenFragment extends Fragment {
 
     // variables
-    private Context mContext;
+    private Context fragmentContext;
+    private Intent serviceIntent;
 
     // ui
-    private Button mStartOverlayButton;
-    private Button mPermissionButton;
+    private Button startServiceButton;
+    private Button stopServiceButton;
+    private Button permissionButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,35 +36,64 @@ public class SecretScreenFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        fragmentContext = inflater.getContext();
+
         View v = inflater.inflate(R.layout.fragment_start_screen, container, false );
 
-        mContext = inflater.getContext();
+        initButtons(v);
+        return v;
+    }
 
-        mPermissionButton = v.findViewById(R.id.button_ask_permission_draw_over);
-        mPermissionButton.setOnClickListener(new View.OnClickListener() {
+    private void initButtons(View v) {
+        permissionButton = v.findViewById(R.id.button_ask_permission_draw_over);
+        permissionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + mContext.getPackageName()));
-                mContext.startActivity(i);
+                        Uri.parse("package:" + fragmentContext.getPackageName()));
+                fragmentContext.startActivity(i);
             }
         });
 
-        mStartOverlayButton = v.findViewById(R.id.start_button);
-        mStartOverlayButton.setOnClickListener(new View.OnClickListener() {
+        startServiceButton = v.findViewById(R.id.start_service_button);
+        startServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Settings.canDrawOverlays(mContext)) {
-                    mContext.startService(OverlayService.getIntent(mContext));
-                } else {
-                    Toast.makeText(mContext,"Ask Permission First", Toast.LENGTH_SHORT).show();
-                }
+                startOverlayService();
             }
         });
 
-        return v;
+        stopServiceButton = v.findViewById(R.id.stop_service_button);
+        stopServiceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopOverlayService();
+                quickToast("stop service attempted");
+            }
+        });
+
     }
+
+    private void startOverlayService() {
+        if (Settings.canDrawOverlays(fragmentContext)) {
+            serviceIntent = OverlayService.getIntent(fragmentContext);
+            fragmentContext.startService(serviceIntent);
+        } else {
+            quickToast("ask permission first.");
+        }
+    }
+
+    private void stopOverlayService() {
+        if (serviceIntent != null)
+            fragmentContext.stopService(serviceIntent);
+    }
+
+    public void quickToast(String message) {
+        Toast.makeText(fragmentContext, message, Toast.LENGTH_SHORT).show();
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,

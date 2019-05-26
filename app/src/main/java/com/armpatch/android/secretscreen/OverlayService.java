@@ -4,11 +4,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 public class OverlayService extends Service {
 
+    com.armpatch.android.secretscreen.OverlayManager OverlayManager;
+    Context baseContext;
 
     // Methods
     public static Intent getIntent(Context context) {
@@ -19,12 +23,12 @@ public class OverlayService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        OverlayManager = new OverlayManager(this);
+        OverlayManager.start();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        // show overlay
 
         return START_STICKY;
     }
@@ -37,7 +41,14 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
+        Toast exitToast = Toast.makeText(getApplication(),
+                "onDestroy:  Overlay Service",Toast.LENGTH_SHORT);
+        exitToast.setGravity(Gravity.TOP, 0,0);
+        exitToast.show();
+
+        OverlayManager.stop();
+
+
         super.onDestroy();
     }
-
 }

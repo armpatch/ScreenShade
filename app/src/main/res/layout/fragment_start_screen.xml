@@ -23,7 +23,7 @@
             android:text="@string/ask_permission" />
 
         <Button
-            android:id="@+id/start_button"
+            android:id="@+id/start_service_button"
             android:layout_width="150dp"
             android:layout_height="80dp"
             android:layout_gravity="center"
