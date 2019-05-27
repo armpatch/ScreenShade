@@ -18,15 +18,15 @@ public class OverlayManager {
 
     private Service parentService;
     private WindowManager windowManager;
-    private WindowManager.LayoutParams dragBarParams;
-    private WindowManager.LayoutParams windowShadeParams;
+    private WindowManager.LayoutParams barParams;
+    private WindowManager.LayoutParams blockerParams;
     static int windowLayoutType;
 
     // Views
-    private LinearLayout uiDragBarLayout;
-    private ImageView uiDragBarView;
-    private LinearLayout uiWindowShadeLayout;
-    private ImageView uiWindowShadeView;
+    private LinearLayout barLayout;
+    private ImageView barImageView;
+    private LinearLayout blockerLayout;
+    private ImageView blockerImageView;
 
     // phones display information
     private int displayHeight;
@@ -62,19 +62,19 @@ public class OverlayManager {
     @SuppressLint("ClickableViewAccessibility")
     private void createViews() {
 
-        dragBarParams = new WindowManager.LayoutParams(
+        barParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 windowLayoutType,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
 
-        dragBarParams.gravity = Gravity.TOP;
-        uiDragBarLayout = (LinearLayout) View.inflate(parentService, R.layout.ui_drag_bar, null);
-        uiDragBarView = uiDragBarLayout.findViewById(R.id.ui_drag_bar);
-        uiDragBarView.getLayoutParams().width = displayWidth;
+        barParams.gravity = Gravity.TOP;
+        barLayout = (LinearLayout) View.inflate(parentService, R.layout.ui_drag_bar, null);
+        barImageView = barLayout.findViewById(R.id.ui_drag_bar);
+        barImageView.getLayoutParams().width = displayWidth;
 
-        uiDragBarLayout.setOnTouchListener(new View.OnTouchListener() {
+        barLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 final int action = event.getActionMasked();
@@ -106,7 +106,7 @@ public class OverlayManager {
                     }
 
                     case MotionEvent.ACTION_UP: {
-                        activePointerId = INVALID_POINTER_ID;
+                        //activePointerId = INVALID_POINTER_ID;
                         break;
                     }
                 }
@@ -114,21 +114,21 @@ public class OverlayManager {
             }
         });
 
-        windowShadeParams = new WindowManager.LayoutParams(
+        blockerParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 windowLayoutType,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
 
-        windowShadeParams.gravity = Gravity.TOP;
-        uiWindowShadeLayout = (LinearLayout) View.inflate(parentService, R.layout.window_shade, null);
-        uiWindowShadeView = uiWindowShadeLayout.findViewById(R.id.window_shade_image);
-        uiWindowShadeView.getLayoutParams().width = displayWidth;
+        blockerParams.gravity = Gravity.TOP;
+        blockerLayout = (LinearLayout) View.inflate(parentService, R.layout.window_shade, null);
+        blockerImageView = blockerLayout.findViewById(R.id.window_shade_image);
+        blockerImageView.getLayoutParams().width = displayWidth;
 
 
-        windowManager.addView(uiDragBarLayout, dragBarParams);
-        windowManager.addView(uiWindowShadeLayout, windowShadeParams);
+        windowManager.addView(barLayout, barParams);
+        windowManager.addView(blockerLayout, blockerParams);
 
         setDragBarPosY(1300);
     }
@@ -144,19 +144,18 @@ public class OverlayManager {
     }
 
     private void updateViews() {
-        dragBarParams.y = (int) dragBarPosY;
+        barParams.y = (int) dragBarPosY;
 
-        windowShadeParams.y = uiDragBarView.getHeight() + (int) dragBarPosY + 20;
-        uiWindowShadeView.getLayoutParams().height = displayHeight - windowShadeParams.y;
+        blockerParams.y = barImageView.getHeight() + (int) dragBarPosY + 20;
+        blockerImageView.getLayoutParams().height = displayHeight - blockerParams.y;
 
-
-        windowManager.updateViewLayout(uiDragBarLayout, dragBarParams);
-        windowManager.updateViewLayout(uiWindowShadeLayout,  windowShadeParams);
+        windowManager.updateViewLayout(barLayout, barParams);
+        windowManager.updateViewLayout(blockerLayout, blockerParams);
     }
 
     private void removeViews() {
-        windowManager.removeView(uiDragBarLayout);
-        windowManager.removeView(uiWindowShadeLayout);
+        windowManager.removeView(barLayout);
+        windowManager.removeView(blockerLayout);
     }
 
     private void setDisplayMetrics() {
