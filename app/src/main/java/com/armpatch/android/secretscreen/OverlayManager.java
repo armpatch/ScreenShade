@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 public class OverlayManager {
 
@@ -33,7 +32,6 @@ public class OverlayManager {
     private int displayWidth;
 
     float lastTouchY;
-    int activePointerId;
     float dragBarPosY;
 
     // sets windowLayoutType
@@ -52,7 +50,7 @@ public class OverlayManager {
     }
 
     public void start() {
-        createViews();
+        addViews();
     }
 
     public void stop() {
@@ -60,7 +58,7 @@ public class OverlayManager {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void createViews() {
+    private void addViews() {
 
         barParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -80,35 +78,21 @@ public class OverlayManager {
                 final int action = event.getActionMasked();
 
                 switch (action) {
-                    case MotionEvent.ACTION_DOWN: {
-                        final int pointerIndex = event.getActionIndex();
+                    case MotionEvent.ACTION_DOWN:
                         lastTouchY = event.getRawY();
-
-                        // Save the ID of this pointer (for dragging)
-                        activePointerId = event.getPointerId(0);
                         break;
-                    }
 
-                    case MotionEvent.ACTION_MOVE: {
-                        // Find the index of the active pointer and fetch its position
-                        final int pointerIndex = event.findPointerIndex(activePointerId);
-
-                        // Calculate the distance moved
+                    case MotionEvent.ACTION_MOVE:
                         final float y = event.getRawY();
                         final float dy = y - lastTouchY;
-
                         incrementDragBarPosY(dy);
 
                         // Remember this touch position for the next move event
                         lastTouchY = y;
-
                         break;
-                    }
 
-                    case MotionEvent.ACTION_UP: {
-                        //activePointerId = INVALID_POINTER_ID;
+                    case MotionEvent.ACTION_UP:
                         break;
-                    }
                 }
                 return true;
             }
@@ -126,11 +110,8 @@ public class OverlayManager {
         blockerImageView = blockerLayout.findViewById(R.id.window_shade_image);
         blockerImageView.getLayoutParams().width = displayWidth;
 
-
         windowManager.addView(barLayout, barParams);
         windowManager.addView(blockerLayout, blockerParams);
-
-        setDragBarPosY(1300);
     }
 
     private void incrementDragBarPosY(float dy) {
@@ -146,11 +127,11 @@ public class OverlayManager {
     private void updateViews() {
         barParams.y = (int) dragBarPosY;
 
-        blockerParams.y = barImageView.getHeight() + (int) dragBarPosY + 20;
-        blockerImageView.getLayoutParams().height = displayHeight - blockerParams.y;
+        // blockerParams.y = barImageView.getHeight() + (int) dragBarPosY + 20;
+        // blockerImageView.getLayoutParams().height = displayHeight - blockerParams.y;
 
-        windowManager.updateViewLayout(barLayout, barParams);
         windowManager.updateViewLayout(blockerLayout, blockerParams);
+        windowManager.updateViewLayout(barLayout, barParams);
     }
 
     private void removeViews() {
