@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 
 import androidx.core.view.MotionEventCompat;
 
+import static android.view.MotionEvent.INVALID_POINTER_ID;
+
 public class OverlayManager {
 
     Service parentService;
@@ -30,7 +32,7 @@ public class OverlayManager {
 
     float lastTouchY;
     int activePointerId;
-    int posY;
+    float posY;
 
     // sets windowLayoutType
     static {
@@ -80,12 +82,12 @@ public class OverlayManager {
                 switch (action) {
                     case MotionEvent.ACTION_DOWN: {
                         final int pointerIndex = event.getActionIndex();
-                        lastTouchY = event.getY();
+                        lastTouchY = event.getRawY();
 
 
                         // Save the ID of this pointer (for dragging)
                         activePointerId = event.getPointerId(0);
-                        return true;
+                        break;
                     }
 
                     case MotionEvent.ACTION_MOVE: {
@@ -93,33 +95,24 @@ public class OverlayManager {
                         final int pointerIndex =
                                 event.findPointerIndex(activePointerId);
 
-                        final float y = event.getY(activePointerId);
+                        final float y = event.getRawY();
 
                         // Calculate the distance moved
                         final float dy = y - lastTouchY;
 
                         posY += dy;
-                        dragBarParams.y = -1 * posY;
+                        dragBarParams.y = -1 * (int) posY;
 
                         windowManager.updateViewLayout(uiDragBarLayout, dragBarParams);
 
                         // Remember this touch position for the next move event
                         lastTouchY = y;
 
-                        return true;
+                        break;
                     }
 
                     case MotionEvent.ACTION_UP: {
-                        final int pointerIndex = event.getActionIndex();
-                        final int pointerId = event.getPointerId(pointerIndex);
-
-                        if (pointerId == activePointerId) {
-                            // This was our active pointer going up. Choose a new
-                            // active pointer and adjust accordingly.
-                            final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                            lastTouchY = event.getY(newPointerIndex);
-                            activePointerId = event.getPointerId(newPointerIndex);
-                        }
+                        activePointerId = INVALID_POINTER_ID;
                         break;
                     }
                 }
