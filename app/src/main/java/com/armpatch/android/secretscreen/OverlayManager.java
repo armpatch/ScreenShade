@@ -2,6 +2,7 @@ package com.armpatch.android.secretscreen;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
@@ -17,15 +18,13 @@ public class OverlayManager {
 
     private Service parentService;
     private WindowManager windowManager;
-    private WindowManager.LayoutParams barParams;
-    private WindowManager.LayoutParams blockerParams;
+    private WindowManager.LayoutParams layoutParams;
     static int windowLayoutType;
 
     // Views
-    private LinearLayout barLayout;
+    private LinearLayout comboLayout;
     private ImageView barImageView;
-    private LinearLayout blockerLayout;
-    private ImageView blockerImageView;
+    private ImageView shadeImageView;
 
     // phones display information
     private int displayHeight;
@@ -42,6 +41,8 @@ public class OverlayManager {
             windowLayoutType = WindowManager.LayoutParams.TYPE_PHONE;
         }
     }
+
+
 
     public OverlayManager(Service service) {
         parentService = service;
@@ -60,19 +61,19 @@ public class OverlayManager {
     @SuppressLint("ClickableViewAccessibility")
     private void addViews() {
 
-        barParams = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
+        layoutParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 windowLayoutType,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
 
-        barParams.gravity = Gravity.TOP;
-        barLayout = (LinearLayout) View.inflate(parentService, R.layout.ui_drag_bar, null);
-        barImageView = barLayout.findViewById(R.id.ui_drag_bar);
-        barImageView.getLayoutParams().width = displayWidth;
+        layoutParams.gravity = Gravity.TOP;
+        comboLayout = (LinearLayout) View.inflate(parentService, R.layout.ui_combo_layout, null);
+        barImageView = comboLayout.findViewById(R.id.drag_bar_bottom);
+        //barImageView.getLayoutParams().width = displayWidth;
 
-        barLayout.setOnTouchListener(new View.OnTouchListener() {
+        barImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 final int action = event.getActionMasked();
@@ -80,6 +81,7 @@ public class OverlayManager {
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         lastTouchY = event.getRawY();
+                        isDragging(true);
                         break;
 
                     case MotionEvent.ACTION_MOVE:
@@ -92,26 +94,18 @@ public class OverlayManager {
                         break;
 
                     case MotionEvent.ACTION_UP:
+                        isDragging(false);
                         break;
                 }
                 return true;
             }
         });
 
-        blockerParams = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                windowLayoutType,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSPARENT);
+        shadeImageView = comboLayout.findViewById(R.id.shade_bottom);
 
-        blockerParams.gravity = Gravity.TOP;
-        blockerLayout = (LinearLayout) View.inflate(parentService, R.layout.window_shade, null);
-        blockerImageView = blockerLayout.findViewById(R.id.window_shade_image);
-        blockerImageView.getLayoutParams().width = displayWidth;
+        windowManager.addView(comboLayout, layoutParams);
 
-        windowManager.addView(barLayout, barParams);
-        windowManager.addView(blockerLayout, blockerParams);
+        updateViews();
     }
 
     private void incrementDragBarPosY(float dy) {
@@ -125,18 +119,23 @@ public class OverlayManager {
     }
 
     private void updateViews() {
-        barParams.y = (int) dragBarPosY;
+        layoutParams.y = (int) dragBarPosY;
 
-        // blockerParams.y = barImageView.getHeight() + (int) dragBarPosY + 20;
-        // blockerImageView.getLayoutParams().height = displayHeight - blockerParams.y;
+        shadeImageView.getLayoutParams().height = displayHeight - layoutParams.y;
 
-        windowManager.updateViewLayout(blockerLayout, blockerParams);
-        windowManager.updateViewLayout(barLayout, barParams);
+        windowManager.updateViewLayout(comboLayout, layoutParams);
+    }
+
+    void isDragging(boolean dragging) {
+        if (dragging) {
+            shadeImageView.setBackgroundColor(parentService.getColor(R.color.color_shade_transparent));
+        } else {
+            shadeImageView.setBackgroundColor(parentService.getColor(R.color.color_shade_normal));
+        }
     }
 
     private void removeViews() {
-        windowManager.removeView(barLayout);
-        windowManager.removeView(blockerLayout);
+        windowManager.removeView(comboLayout);
     }
 
     private void setDisplayMetrics() {
