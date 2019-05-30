@@ -5,7 +5,7 @@
     <color name="colorAccent">#FFC107</color>
     <color name="colorOverlayBackground">#801565C0</color>
     <color name="color_drag_bar_normal">#313131</color>
-    <color name="color_shade_normal">#000000</color>
+    <color name="color_shade_normal">#C9000000</color>
     <color name="color_shade_transparent">#99000000</color>
 
 </resources>

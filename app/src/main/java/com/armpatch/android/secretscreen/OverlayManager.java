@@ -2,7 +2,6 @@ package com.armpatch.android.secretscreen;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
@@ -10,6 +9,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -25,6 +25,8 @@ public class OverlayManager {
     private LinearLayout comboLayout;
     private ImageView barImageView;
     private ImageView shadeImageView;
+    private Button testButton;
+    private Button testButton2;
 
     // phones display information
     private int displayHeight;
@@ -33,7 +35,14 @@ public class OverlayManager {
     float lastTouchY;
     float dragBarPosY;
 
+    //test variables
+    final int shadeHeight1 = 200;
+    final int shadeHeight2 = 1000;
+    private boolean shadeIsUp;
+
+
     // sets windowLayoutType
+
     static {
         if (Build.VERSION.SDK_INT >= 26) {
             windowLayoutType = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -41,8 +50,6 @@ public class OverlayManager {
             windowLayoutType = WindowManager.LayoutParams.TYPE_PHONE;
         }
     }
-
-
 
     public OverlayManager(Service service) {
         parentService = service;
@@ -102,26 +109,85 @@ public class OverlayManager {
         });
 
         shadeImageView = comboLayout.findViewById(R.id.shade_bottom);
+        //TODO remove after testing
+        shadeImageView.getLayoutParams().height = 200;
+
+        View testButtonView = View.inflate(parentService, R.layout.test_button, null);
+        testButton = (Button) testButtonView.findViewById(R.id.test_button);
+        testButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int action = event.getActionMasked();
+
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        shadeIsUp = true;
+                        shadeImageView.getLayoutParams().height = 300;
+                        updateWindows();
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        shadeIsUp = false;
+                        shadeImageView.getLayoutParams().height = 1000;
+                        updateWindows();
+                        break;
+                }
+                return false;
+            }
+        });
+
+        testButton2 = (Button) testButtonView.findViewById(R.id.test_button_2);
+        testButton2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int action = event.getActionMasked();
+
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        setDragBarPosY(1500);
+                        updateWindows();
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        setDragBarPosY(400);
+                        updateWindows();
+                        break;
+                }
+                return false;
+            }
+        });
+
+        WindowManager.LayoutParams testButtonParams = layoutParams;
+        testButtonParams.gravity = Gravity.TOP;
+        windowManager.addView(testButtonView, layoutParams);
 
         windowManager.addView(comboLayout, layoutParams);
+        setDragBarPosY(100);
 
-        updateViews();
+        updateWindows();
     }
 
     private void incrementDragBarPosY(float dy) {
         dragBarPosY += dy;
-        updateViews();
+        updateWindows();
     }
 
     private void setDragBarPosY(float y) {
         dragBarPosY = y;
-        updateViews();
+        updateWindows();
     }
 
-    private void updateViews() {
+    private void updateWindows() {
         layoutParams.y = (int) dragBarPosY;
 
-        shadeImageView.getLayoutParams().height = displayHeight - layoutParams.y;
+        // shadeImageView.getLayoutParams().height = displayHeight - layoutParams.y;
+
 
         windowManager.updateViewLayout(comboLayout, layoutParams);
     }
