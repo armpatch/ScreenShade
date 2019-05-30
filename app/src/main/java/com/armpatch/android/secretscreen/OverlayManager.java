@@ -25,6 +25,7 @@ public class OverlayManager {
     private LinearLayout comboLayout;
     private ImageView barImageView;
     private ImageView shadeImageView;
+    private View testButtonView;
     private Button testButton;
     private Button testButton2;
 
@@ -112,7 +113,7 @@ public class OverlayManager {
         //TODO remove after testing
         shadeImageView.getLayoutParams().height = 200;
 
-        View testButtonView = View.inflate(parentService, R.layout.test_button, null);
+        testButtonView = View.inflate(parentService, R.layout.test_button, null);
         testButton = (Button) testButtonView.findViewById(R.id.test_button);
         testButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -165,10 +166,11 @@ public class OverlayManager {
 
         WindowManager.LayoutParams testButtonParams = layoutParams;
         testButtonParams.gravity = Gravity.TOP;
-        windowManager.addView(testButtonView, layoutParams);
+        testButtonParams.y = 100;
+        windowManager.addView(testButtonView, testButtonParams);
 
         windowManager.addView(comboLayout, layoutParams);
-        setDragBarPosY(100);
+        setDragBarPosY(600);
 
         updateWindows();
     }
@@ -186,7 +188,7 @@ public class OverlayManager {
     private void updateWindows() {
         layoutParams.y = (int) dragBarPosY;
 
-        // shadeImageView.getLayoutParams().height = displayHeight - layoutParams.y;
+        shadeImageView.getLayoutParams().height = displayHeight - layoutParams.y;
 
 
         windowManager.updateViewLayout(comboLayout, layoutParams);
@@ -202,6 +204,7 @@ public class OverlayManager {
 
     private void removeViews() {
         windowManager.removeView(comboLayout);
+        windowManager.removeView(testButtonView);
     }
 
     private void setDisplayMetrics() {
