@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 public class OverlayService extends Service {
 
     com.armpatch.android.secretscreen.OverlayManager OverlayManager;
-    Context baseContext;
 
     // Methods
     public static Intent getIntent(Context context) {
