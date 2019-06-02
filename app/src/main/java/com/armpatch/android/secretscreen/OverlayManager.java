@@ -10,14 +10,15 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.LayoutRes;
 
 class OverlayManager {
 
     public static final String TAG = "OverlayManager";
+
+    // developer option
+    private static final boolean loggingIsOn = true;
 
     private Service rootService;
     private WindowManager windowManager;
@@ -52,15 +53,15 @@ class OverlayManager {
 
     @SuppressLint("ClickableViewAccessibility")
     private void addViews() {
-        windowManager.addView(screenBlocker.layoutView, screenBlocker.layoutParams);
+        windowManager.addView(screenBlocker.viewOverlay, screenBlocker.layoutParams);
     }
 
     private void updateWindowViewLayouts() {
-        windowManager.updateViewLayout(screenBlocker.layoutView, screenBlocker.layoutParams);
+        windowManager.updateViewLayout(screenBlocker.viewOverlay, screenBlocker.layoutParams);
     }
 
     private void removeViews() {
-        windowManager.removeView(screenBlocker.layoutView);
+        windowManager.removeView(screenBlocker.viewOverlay);
     }
 
     private void setDisplayMetrics() {
@@ -72,31 +73,31 @@ class OverlayManager {
     class ScreenBlocker {
 
         WindowManager.LayoutParams layoutParams;
-        int layoutRes;
+        int INITIAL_BAR_POS_Y = 1000;
 
-        LinearLayout layoutView;
-        ImageView barView;
-        ImageView shadeView;
+        View viewOverlay;
+        View viewBarLayout;
+        View viewBar;
+        View viewShade;
 
         float lastTouchY;
-        int INITIAL_BAR_HEIGHT = 500;
 
         @SuppressLint("ClickableViewAccessibility")
         ScreenBlocker(@LayoutRes int resource) {
-            setLayoutRes(resource);
+            viewOverlay = View.inflate(rootService, resource, null);
 
             layoutParams = new WindowManager.LayoutParams();
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
             layoutParams.type = windowLayoutType;
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             layoutParams.format = PixelFormat.TRANSPARENT;
             layoutParams.gravity = Gravity.TOP;
 
-            barView = layoutView.findViewById(R.id.bar);
-            shadeView = layoutView.findViewById(R.id.shade);
-
-            barView.setOnTouchListener(new View.OnTouchListener() {
+            // setup viewBar
+            viewBarLayout = viewOverlay.findViewById(R.id.bar_layout);
+            viewBarLayout.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     final int action = event.getActionMasked();
@@ -104,52 +105,62 @@ class OverlayManager {
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
                             lastTouchY = event.getRawY();
-                            setTransparency(true);
+                            Log.v(TAG, "moved");
+                            dimShade(true);
                             break;
 
                         case MotionEvent.ACTION_MOVE:
                             final float y = event.getRawY();
                             final float dy = y - lastTouchY;
-                            moveWindowVertically(dy);
+                            moveBlockerPosY(dy);
 
                             // Remember this touch position for the next move event
                             lastTouchY = y;
                             break;
 
                         case MotionEvent.ACTION_UP:
-                            setTransparency(false);
+                            dimShade(false);
                             break;
                     }
                     return true;
                 }
             });
+            viewShade = viewOverlay.findViewById(R.id.shade);
 
-            setBlockerHeight(INITIAL_BAR_HEIGHT);
+            viewOverlay.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return false;
+                }
+            });
+
+            setBlockerPosY(INITIAL_BAR_POS_Y);
         }
 
-        void setLayoutRes(@LayoutRes int resource) {
-            layoutRes = resource;
-            layoutView = (LinearLayout) View.inflate(rootService, layoutRes, null);
-        }
-
-        void setBlockerHeight(int height) {
+        void setBlockerPosY(int height) {
             layoutParams.y = height;
+
         }
 
-        void moveWindowVertically(float dy){
-            Log.v(TAG, "dy = " + dy);
-            Log.v(TAG, "    int dy = " + (int) dy);
+        void moveBlockerPosY(float dy){
 
             layoutParams.y += dy;
             updateWindowViewLayouts();
         }
 
-        void setTransparency(boolean isMoving) {
-            if (isMoving) {
-                shadeView.setBackgroundColor(rootService.getColor(R.color.color_shade_transparent));
+        void dimShade(boolean makeDim) {
+            float alpha = 0.8f;
+            if(makeDim) {
+                viewShade.setBackgroundColor(rootService.getColor(R.color.color_shade_transparent));
+                viewBarLayout.setBackgroundColor(rootService.getColor(R.color.color_shade_transparent));
             } else {
-                shadeView.setBackgroundColor(rootService.getColor(R.color.color_shade_normal));
+                viewShade.setBackgroundColor(rootService.getColor(R.color.color_shade_normal));
+                viewBarLayout.setBackgroundColor(rootService.getColor(R.color.color_shade_normal));
             }
+        }
+
+        void elevateBar() {
+
         }
     }
 }

@@ -4,8 +4,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -41,14 +39,7 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
-        Toast exitToast = Toast.makeText(getApplication(),
-                "onDestroy:  Overlay Service",Toast.LENGTH_SHORT);
-        exitToast.setGravity(Gravity.TOP, 0,0);
-        exitToast.show();
-
         OverlayManager.stop();
-
-
         super.onDestroy();
     }
 }
