@@ -10,7 +10,7 @@
         android:background="@android:color/white"/>
 
     <ImageView
-        android:id="@+id/drag_bar_bottom"
+        android:id="@+id/bar"
         android:layout_width="match_parent"
         android:layout_height="18dp"
         android:background="@color/color_drag_bar_normal"
@@ -22,7 +22,7 @@
         android:background="@android:color/white"/>
 
     <ImageView
-        android:id="@+id/shade_bottom"
+        android:id="@+id/shade"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:background="@color/color_shade_normal"/>
