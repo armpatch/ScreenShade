@@ -5,6 +5,7 @@ import android.app.Service;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.widget.LinearLayout;
 import androidx.annotation.LayoutRes;
 
 class OverlayManager {
+
+    public static final String TAG = "OverlayManager";
 
     private Service rootService;
     private WindowManager windowManager;
@@ -56,8 +59,6 @@ class OverlayManager {
         windowManager.updateViewLayout(screenBlocker.layoutView, screenBlocker.layoutParams);
     }
 
-
-
     private void removeViews() {
         windowManager.removeView(screenBlocker.layoutView);
     }
@@ -77,9 +78,8 @@ class OverlayManager {
         ImageView barView;
         ImageView shadeView;
 
-        int barPosY;
         float lastTouchY;
-
+        int INITIAL_BAR_HEIGHT = 500;
 
         @SuppressLint("ClickableViewAccessibility")
         ScreenBlocker(@LayoutRes int resource) {
@@ -89,7 +89,7 @@ class OverlayManager {
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
             layoutParams.type = windowLayoutType;
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             layoutParams.format = PixelFormat.TRANSPARENT;
             layoutParams.gravity = Gravity.TOP;
 
@@ -124,7 +124,7 @@ class OverlayManager {
                 }
             });
 
-            updateComponentParameters();
+            setBlockerHeight(INITIAL_BAR_HEIGHT);
         }
 
         void setLayoutRes(@LayoutRes int resource) {
@@ -132,18 +132,15 @@ class OverlayManager {
             layoutView = (LinearLayout) View.inflate(rootService, layoutRes, null);
         }
 
-        void updateComponentParameters() {
-            layoutParams.y = barPosY;
-            shadeView.getLayoutParams().height = displayHeight - layoutParams.y;
-        }
-
         void setBlockerHeight(int height) {
-            barPosY = height;
+            layoutParams.y = height;
         }
 
         void moveWindowVertically(float dy){
-            barPosY += dy;
-            updateComponentParameters();
+            Log.v(TAG, "dy = " + dy);
+            Log.v(TAG, "    int dy = " + (int) dy);
+
+            layoutParams.y += dy;
             updateWindowViewLayouts();
         }
 

@@ -24,11 +24,11 @@ public class OverlayService extends Service {
         super.onCreate();
 
         OverlayManager = new OverlayManager(this);
-        OverlayManager.start();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        OverlayManager.start();
 
         return START_STICKY;
     }

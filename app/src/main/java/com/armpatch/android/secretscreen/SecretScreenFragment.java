@@ -101,4 +101,9 @@ public class SecretScreenFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopOverlayService();
+    }
 }
