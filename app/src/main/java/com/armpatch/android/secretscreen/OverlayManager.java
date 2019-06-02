@@ -56,13 +56,7 @@ class OverlayManager {
         windowManager.updateViewLayout(screenBlocker.layoutView, screenBlocker.layoutParams);
     }
 
-    private void isDragging(boolean dragging) {
-        if (dragging) {
-            screenBlocker.shadeView.setBackgroundColor(rootService.getColor(R.color.color_shade_transparent));
-        } else {
-            screenBlocker.shadeView.setBackgroundColor(rootService.getColor(R.color.color_shade_normal));
-        }
-    }
+
 
     private void removeViews() {
         windowManager.removeView(screenBlocker.layoutView);
@@ -110,20 +104,20 @@ class OverlayManager {
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
                             lastTouchY = event.getRawY();
-                            isDragging(true);
+                            setTransparency(true);
                             break;
 
                         case MotionEvent.ACTION_MOVE:
                             final float y = event.getRawY();
                             final float dy = y - lastTouchY;
-                            incrementDragBarPosY(dy);
+                            moveWindowVertically(dy);
 
                             // Remember this touch position for the next move event
                             lastTouchY = y;
                             break;
 
                         case MotionEvent.ACTION_UP:
-                            isDragging(false);
+                            setTransparency(false);
                             break;
                     }
                     return true;
@@ -131,7 +125,6 @@ class OverlayManager {
             });
 
             updateComponentParameters();
-
         }
 
         void setLayoutRes(@LayoutRes int resource) {
@@ -144,10 +137,22 @@ class OverlayManager {
             shadeView.getLayoutParams().height = displayHeight - layoutParams.y;
         }
 
-        void incrementDragBarPosY(float dy){
+        void setBlockerHeight(int height) {
+            barPosY = height;
+        }
+
+        void moveWindowVertically(float dy){
             barPosY += dy;
             updateComponentParameters();
             updateWindowViewLayouts();
+        }
+
+        void setTransparency(boolean isMoving) {
+            if (isMoving) {
+                shadeView.setBackgroundColor(rootService.getColor(R.color.color_shade_transparent));
+            } else {
+                shadeView.setBackgroundColor(rootService.getColor(R.color.color_shade_normal));
+            }
         }
     }
 }
