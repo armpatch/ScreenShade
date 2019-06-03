@@ -11,6 +11,8 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.annotation.LayoutRes;
 
@@ -107,6 +109,7 @@ class OverlayManager {
         View viewBarLayout;
         View viewBar;
         View viewShade;
+        ImageButton buttonExit;
 
         float lastTouchY;
 
@@ -162,6 +165,16 @@ class OverlayManager {
                 }
             });
 
+            buttonExit = viewOverlay.findViewById(R.id.exit_button);
+            buttonExit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    OverlayService overlayService = (OverlayService) rootService;
+
+                    overlayService.onDestroy();
+                }
+            });
+
             viewShade.getLayoutParams().height = displayHeight + 500;
             layoutParams.y = INITIAL_BAR_POS_Y;
             layoutParams.height = displayHeight + 500;
@@ -196,6 +209,6 @@ class OverlayManager {
 
         void elevateBar() {
 
-        }
     }
+}
 }
