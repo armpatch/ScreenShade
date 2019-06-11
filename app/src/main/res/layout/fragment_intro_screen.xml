@@ -10,17 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="250dp"
+        android:layout_marginBottom="300dp"
         android:orientation="vertical">
-
-        <Button
-            android:id="@+id/button_ask_permission_draw_over"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:background="@color/colorAccent"
-            android:text="@string/ask_permission" />
 
         <Button
             android:id="@+id/start_service_button"
@@ -28,13 +19,13 @@
             android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginBottom="8dp"
-            android:background="@color/colorPrimary"
+            android:background="@android:color/holo_green_light"
             android:text="@string/start_overlay_service" />
 
         <Button
             android:id="@+id/stop_service_button"
             android:layout_width="150dp"
-            android:layout_height="80dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginBottom="8dp"
             android:background="@android:color/holo_red_light"

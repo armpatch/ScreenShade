@@ -1,5 +1,8 @@
 package com.armpatch.android.secretscreen;
 
+import android.app.ActivityManager;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,16 +18,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import static android.content.Context.ACTIVITY_SERVICE;
+
 public class SecretScreenFragment extends Fragment {
 
     // variables
     private Context fragmentContext;
+
     private Intent serviceIntent;
+    private ComponentName serviceComponent;
+
 
     // ui
-    private Button startServiceButton;
-    private Button stopServiceButton;
-    private Button permissionButton;
+    private Button startServiceButton, stopServiceButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,28 +43,18 @@ public class SecretScreenFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         fragmentContext = inflater.getContext();
 
-        View v = inflater.inflate(R.layout.fragment_start_screen, container, false );
+        View view = inflater.inflate(R.layout.fragment_intro_screen, container, false );
 
-        initButtons(v);
-        return v;
+        initButtons(view);
+        return view;
     }
 
     private void initButtons(View v) {
-        permissionButton = v.findViewById(R.id.button_ask_permission_draw_over);
-        permissionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + fragmentContext.getPackageName()));
-                fragmentContext.startActivity(i);
-            }
-        });
-
         startServiceButton = v.findViewById(R.id.start_service_button);
         startServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startOverlayService();
+                attemptServiceStart();
             }
         });
 
@@ -66,30 +62,43 @@ public class SecretScreenFragment extends Fragment {
         stopServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopOverlayService();
+                attemptServiceStop();
             }
         });
 
     }
 
-    private void startOverlayService() {
-        if (Settings.canDrawOverlays(fragmentContext)) {
-            serviceIntent = OverlayService.getIntent(fragmentContext);
-            fragmentContext.startService(serviceIntent);
+    private void attemptServiceStart() {
+        if (Settings.canDrawOverlays(fragmentContext) && !isServiceRunning()) {
+            startService();
         } else {
-            quickToast("ask permission first.");
+            requestPermission();
         }
     }
 
-    private void stopOverlayService() {
+    private boolean isServiceRunning() {
+        if (serviceComponent == null) {
+            return false;
+        } else if (serviceComponent.getClassName())
+        return ;
+
+    }
+
+    private void startService() {
+        serviceIntent = OverlayService.getIntent(fragmentContext);
+        serviceComponent = fragmentContext.startService(serviceIntent);
+    }
+
+    private void attemptServiceStop() {
         if (serviceIntent != null)
             fragmentContext.stopService(serviceIntent);
     }
 
-    public void quickToast(String message) {
-        Toast.makeText(fragmentContext, message, Toast.LENGTH_SHORT).show();
+    private void requestPermission() {
+        Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + fragmentContext.getPackageName()));
+        fragmentContext.startActivity(i);
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -100,6 +109,5 @@ public class SecretScreenFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopOverlayService();
     }
 }

@@ -11,14 +11,16 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.annotation.LayoutRes;
 
+import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
+
 class OverlayManager {
 
-    public static final String TAG = "OverlayManager";
+    private static final String TAG = "OverlayManager";
 
     private Service rootService;
     private WindowManager windowManager;
@@ -33,9 +35,9 @@ class OverlayManager {
 
     OverlayManager(Service service) {
         if (Build.VERSION.SDK_INT >= 26) {
-            windowLayoutType = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            windowLayoutType = TYPE_APPLICATION_OVERLAY;
         } else {
-            windowLayoutType = WindowManager.LayoutParams.TYPE_PHONE;
+            windowLayoutType = TYPE_PHONE;
         }
 
         rootService = service;
@@ -71,33 +73,40 @@ class OverlayManager {
         windowManager.getDefaultDisplay().getMetrics(displaymetrics);
         displayHeight = displaymetrics.heightPixels;
 
-        setNavBarHeight();
-        setStatusBarHeight();
+        navBarHeight = getNavBarHeight();
+        statusBarHeight = getStatusBarHeight();
 
         barLowerBounds = displayHeight + statusBarHeight - navBarHeight;
-
     }
 
-    private void setNavBarHeight() {
+    private int getNavBarHeight() {
+        int height;
+
         Resources resources = rootService.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height",
                 "dimen", "android");
         if (resourceId > 0) {
-            navBarHeight = resources.getDimensionPixelSize(resourceId);
+            height = resources.getDimensionPixelSize(resourceId);
         } else {
-            navBarHeight = 0;
+            height = 0;
         }
+
+        return height;
     }
 
-    public void setStatusBarHeight() {
+    private int getStatusBarHeight() {
+        int height;
+
         Resources resources = rootService.getResources();
         int resourceId = resources.getIdentifier("status_bar_height",
                 "dimen", "android");
         if (resourceId > 0) {
-            statusBarHeight = resources.getDimensionPixelSize(resourceId);
+            height = resources.getDimensionPixelSize(resourceId);
         } else {
-            statusBarHeight = 0;
+            height = 0;
         }
+
+        return height;
     }
 
     class ScreenBlocker {
@@ -105,29 +114,24 @@ class OverlayManager {
         WindowManager.LayoutParams layoutParams;
         int INITIAL_BAR_POS_Y = 1600;
 
-        View viewOverlay;
-        View viewBarLayout;
-        View viewBar;
-        View viewShade;
+        View viewOverlay, viewBarLayout, viewBar, viewShade;
         ImageButton buttonExit;
 
         float lastTouchY;
 
         @SuppressLint("ClickableViewAccessibility")
         ScreenBlocker(@LayoutRes int resource) {
-            viewOverlay = View.inflate(rootService, resource, null);
+            layoutParams = getDefaultLayoutParams();
+            setViews(resource);
+            setInitialHeights();
+            }
 
-            layoutParams = new WindowManager.LayoutParams();
-            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            layoutParams.type = windowLayoutType;
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-            layoutParams.format = PixelFormat.TRANSPARENT;
-            layoutParams.gravity = Gravity.TOP;
+        void setViews(@LayoutRes int resource) {
+            viewOverlay = View.inflate(rootService, resource, null);
 
             viewBarLayout = viewOverlay.findViewById(R.id.bar_layout);
             viewBarLayout.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     final int action = event.getActionMasked();
@@ -159,6 +163,7 @@ class OverlayManager {
             viewShade = viewOverlay.findViewById(R.id.shade);
 
             viewOverlay.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     return false;
@@ -170,14 +175,28 @@ class OverlayManager {
                 @Override
                 public void onClick(View v) {
                     OverlayService overlayService = (OverlayService) rootService;
-
                     overlayService.onDestroy();
                 }
             });
+        }
 
+        void setInitialHeights() {
             viewShade.getLayoutParams().height = displayHeight + 500;
             layoutParams.y = INITIAL_BAR_POS_Y;
             layoutParams.height = displayHeight + 500;
+        }
+
+        WindowManager.LayoutParams getDefaultLayoutParams() {
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.type = windowLayoutType;
+            params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            params.format = PixelFormat.TRANSPARENT;
+            params.gravity = Gravity.TOP;
+
+            return params;
         }
 
         void setBlockerPosY(int y) {
@@ -207,8 +226,8 @@ class OverlayManager {
             }
         }
 
-        void elevateBar() {
+        void elevateBar() { // raise elevation of bar as it moves
 
+        }
     }
-}
 }
