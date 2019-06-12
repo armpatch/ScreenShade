@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#42A5F5</color>
-    <color name="colorPrimaryDark">#1565C0</color>
+    <color name="colorPrimary">#1E88E5</color>
+    <color name="colorPrimaryDark">#124D80</color>
     <color name="colorAccent">#FFC107</color>
+
+    <color name="color_fragment_background">#464E75</color>
+
     <color name="color_drag_bar_normal">#1E88E5</color>
     <color name="color_shade_normal">#000000</color>
     <color name="color_shade_transparent">#CB000000</color>
     <color name="color_bar_separator">#969696</color>
+
+    <color name="color_controls_frame">#969696</color>
+    <color name="color_controls_button">#1E88E5</color>
 
 </resources>

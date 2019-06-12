@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/circle1"
+        android:width="50dp"
+        android:height="50dp">
+        <shape android:shape="oval">
+
+            <solid android:color="@color/color_controls_frame" />
+        </shape>
+    </item>
+
+    <item android:id="@+id/circle2"
+        android:width="50dp"
+        android:height="50dp"
+        android:top="50dp">
+        <shape android:shape="oval">
+
+            <solid android:color="@color/color_controls_frame" />
+        </shape>
+    </item>
+
+    <item android:id="@+id/rect"
+        android:width="50dp"
+        android:height="50dp"
+        android:top="25dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/color_controls_frame" />
+        </shape>
+    </item>
+
+
+</layer-list>
