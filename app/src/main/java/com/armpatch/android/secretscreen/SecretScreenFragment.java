@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 
 public class SecretScreenFragment extends Fragment {
 
+    public static final int REQUEST_OVERLAY_CODE = 2;
+
     // variables
     private Context fragmentContext;
 
@@ -92,13 +94,18 @@ public class SecretScreenFragment extends Fragment {
     private void requestPermission() {
         Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:" + fragmentContext.getPackageName()));
-        fragmentContext.startActivity(i);
+        startActivityForResult(i, REQUEST_OVERLAY_CODE );
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (Settings.canDrawOverlays((fragmentContext))) {
+
+        }
+
+
     }
 
     @Override
