@@ -1,7 +1,5 @@
 package com.armpatch.android.secretscreen;
 
-import android.app.ActivityManager;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,13 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 public class SecretScreenFragment extends Fragment {
 
@@ -69,19 +64,17 @@ public class SecretScreenFragment extends Fragment {
     }
 
     private void attemptServiceStart() {
-        if (Settings.canDrawOverlays(fragmentContext) && !isServiceRunning()) {
-            startService();
-        } else {
+
+        if (!Settings.canDrawOverlays((fragmentContext))) {
             requestPermission();
+        } else if (!isServiceRunning()) {
+            startService();
         }
+
     }
 
     private boolean isServiceRunning() {
-        if (serviceComponent == null) {
-            return false;
-        } else if (serviceComponent.getClassName())
-        return ;
-
+        return !(serviceComponent == null);
     }
 
     private void startService() {
@@ -90,8 +83,10 @@ public class SecretScreenFragment extends Fragment {
     }
 
     private void attemptServiceStop() {
-        if (serviceIntent != null)
+        if (serviceIntent != null) {
             fragmentContext.stopService(serviceIntent);
+            serviceComponent = null;
+        }
     }
 
     private void requestPermission() {
