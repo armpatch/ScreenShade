@@ -6,4 +6,6 @@
     <string name="overlay">Window</string>
     <string name="show">show</string>
     <string name="hide">Hide</string>
+
+    <string name="permission_denied_toast">Permission is needed to use overlay.</string>
 </resources>
