@@ -10,6 +10,7 @@ import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
@@ -26,7 +27,7 @@ class OverlayManager {
     private Service context;
     private WindowManager windowManager;
 
-    private ShadeViewWrapper shadeViewWrapper;
+    private ShadeOverlay shadeOverlay;
 
     private int windowLayoutType;
 
@@ -39,13 +40,12 @@ class OverlayManager {
 
         context = service;
         windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
-
-        shadeViewWrapper = new ShadeViewWrapper(R.layout.ui_plain_dark_shade);
+        shadeOverlay = new ShadeOverlay(R.layout.ui_overlay);
     }
 
     void start() {
         addViews();
-        shadeViewWrapper.startRevealAnimation();
+        shadeOverlay.startSlideDownAnimation();
     }
 
     void stop() {
@@ -54,15 +54,15 @@ class OverlayManager {
 
     @SuppressLint("ClickableViewAccessibility")
     private void addViews() {
-        windowManager.addView(shadeViewWrapper.viewLayout, shadeViewWrapper.layoutParams);
+        windowManager.addView(shadeOverlay.viewLayout, shadeOverlay.layoutParams);
     }
 
     private void updateWindowViewLayouts() {
-        windowManager.updateViewLayout(shadeViewWrapper.viewLayout, shadeViewWrapper.layoutParams);
+        windowManager.updateViewLayout(shadeOverlay.viewLayout, shadeOverlay.layoutParams);
     }
 
     private void removeViews() {
-        windowManager.removeView(shadeViewWrapper.viewLayout);
+        windowManager.removeView(shadeOverlay.viewLayout);
     }
 
     private int getDisplayHeight() {
@@ -80,36 +80,36 @@ class OverlayManager {
         return 0;
     }
 
-    class ShadeViewWrapper {
+    class ShadeOverlay {
 
         WindowManager.LayoutParams layoutParams;
-
         private int OVERLAY_POSY_HIDDEN;
-        private int OVERLAY_POSY_VISIBLE = 0;
-        private int overlayHeight = getDisplayHeight();
-
-        private boolean animationEnded = false;
 
         View viewLayout, viewShade;
+        ColorAnimator colorAnimator;
 
         @SuppressLint("ClickableViewAccessibility")
-        ShadeViewWrapper(@LayoutRes int resource) {
+        ShadeOverlay(@LayoutRes int resource) {
             layoutParams = getLayoutParams();
             viewLayout = View.inflate(context, resource, null);
             viewShade = viewLayout.findViewById(R.id.shade);
 
+            colorAnimator = new ColorAnimator(viewShade,
+                    context.getColor(R.color.color_shade_normal),
+                    context.getColor(R.color.color_shade_transparent));
+
+            setDimmerOnTouchListener(viewLayout);
             setLayoutDimensions();
             layoutParams.y = OVERLAY_POSY_HIDDEN;
-
             }
 
-        private void startRevealAnimation() {
+        private void startSlideDownAnimation() {
             float startingPosY = layoutParams.y;
             float endingPosY = 0;
 
             ObjectAnimator heightAnimator = ObjectAnimator
                     .ofFloat(this, "LayoutPosY", startingPosY, endingPosY)
-                    .setDuration(1000);
+                    .setDuration(600);
 
             heightAnimator.setInterpolator(new LinearInterpolator());
 
@@ -119,12 +119,10 @@ class OverlayManager {
             animatorSet.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    animationEnded = true;
                 }
 
                 @Override
@@ -138,6 +136,28 @@ class OverlayManager {
                 }
             });
             animatorSet.start();
+        }
+
+        private void setDimmerOnTouchListener(View view) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            colorAnimator.start();
+                            break;
+
+                        case MotionEvent.ACTION_UP:
+                            colorAnimator.reverse();
+                            break;
+
+                        default:
+                            break;
+                    }
+                    return false;
+                }
+            });
         }
 
         private void setLayoutDimensions() {
@@ -165,6 +185,5 @@ class OverlayManager {
             layoutParams.y = (int) y;
             updateWindowViewLayouts();
         }
-
     }
 }

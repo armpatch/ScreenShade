@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 
 public class SecretScreenFragment extends Fragment {
 
-    public static final int REQUEST_OVERLAY_CODE = 2;
+    private static final int REQUEST_OVERLAY_CODE = 2;
 
     // variables
     private Context fragmentContext;
@@ -27,9 +27,6 @@ public class SecretScreenFragment extends Fragment {
     private Intent serviceIntent;
     private ComponentName serviceComponent;
 
-
-    // ui
-    private Button startServiceButton, stopServiceButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +46,8 @@ public class SecretScreenFragment extends Fragment {
     }
 
     private void initButtons(View v) {
-        startServiceButton = v.findViewById(R.id.start_service_button);
+        // ui
+        Button startServiceButton = v.findViewById(R.id.start_service_button);
         startServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,7 +55,7 @@ public class SecretScreenFragment extends Fragment {
             }
         });
 
-        stopServiceButton = v.findViewById(R.id.stop_service_button);
+        Button stopServiceButton = v.findViewById(R.id.stop_service_button);
         stopServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

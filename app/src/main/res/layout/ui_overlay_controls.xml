@@ -6,12 +6,12 @@
     <ImageView
         android:layout_width="60dp"
         android:layout_height="120dp"
-        android:src="@drawable/ui_controls_frame_v2"/>
+        android:src="@drawable/ui_controls_draggable"/>
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ui_controls_exit"
+        android:src="@drawable/ui_circle_button_x"
         android:background="@android:color/transparent"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"/>
@@ -19,7 +19,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ui_controls_minimize"
+        android:src="@drawable/ui_circle_button_arrow"
         android:background="@android:color/transparent"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="65dp"/>
