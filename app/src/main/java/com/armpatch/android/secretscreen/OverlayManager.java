@@ -1,14 +1,18 @@
 package com.armpatch.android.secretscreen;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.LayoutRes;
 
@@ -19,12 +23,11 @@ class OverlayManager {
 
     private static final String TAG = "OverlayManager";
 
-    private Service rootService;
+    private Service context;
     private WindowManager windowManager;
 
-    private ScreenBlocker screenBlocker;
+    private ShadeViewWrapper shadeViewWrapper;
 
-    private int displayHeight;
     private int windowLayoutType;
 
     OverlayManager(Service service) {
@@ -34,15 +37,15 @@ class OverlayManager {
             windowLayoutType = TYPE_PHONE;
         }
 
-        rootService = service;
-        windowManager = (WindowManager) rootService.getSystemService(Service.WINDOW_SERVICE);
-        setDisplayVariables();
+        context = service;
+        windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
 
-        screenBlocker = new ScreenBlocker(R.layout.ui_plain_dark_shade);
+        shadeViewWrapper = new ShadeViewWrapper(R.layout.ui_plain_dark_shade);
     }
 
     void start() {
         addViews();
+        shadeViewWrapper.startRevealAnimation();
     }
 
     void stop() {
@@ -51,58 +54,101 @@ class OverlayManager {
 
     @SuppressLint("ClickableViewAccessibility")
     private void addViews() {
-        windowManager.addView(screenBlocker.viewOverlay, screenBlocker.layoutParams);
+        windowManager.addView(shadeViewWrapper.viewLayout, shadeViewWrapper.layoutParams);
     }
 
     private void updateWindowViewLayouts() {
-        windowManager.updateViewLayout(screenBlocker.viewOverlay, screenBlocker.layoutParams);
+        windowManager.updateViewLayout(shadeViewWrapper.viewLayout, shadeViewWrapper.layoutParams);
     }
 
     private void removeViews() {
-        windowManager.removeView(screenBlocker.viewOverlay);
+        windowManager.removeView(shadeViewWrapper.viewLayout);
     }
 
-    private void setDisplayVariables() {
+    private int getDisplayHeight() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(displaymetrics);
-        displayHeight = displaymetrics.heightPixels;
+        return displaymetrics.heightPixels;
     }
 
-    class ScreenBlocker {
+    private int getNavBarHeight() {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
+    class ShadeViewWrapper {
 
         WindowManager.LayoutParams layoutParams;
-        int INITIAL_BAR_POS_Y = 1600;
 
-        View viewOverlay, viewShade;
+        private int OVERLAY_POSY_HIDDEN;
+        private int OVERLAY_POSY_VISIBLE = 0;
+        private int overlayHeight = getDisplayHeight();
+
+        private boolean animationEnded = false;
+
+        View viewLayout, viewShade;
 
         @SuppressLint("ClickableViewAccessibility")
-        ScreenBlocker(@LayoutRes int resource) {
-            layoutParams = getDefaultLayoutParams();
-            setViews(resource);
-            setInitialHeights();
+        ShadeViewWrapper(@LayoutRes int resource) {
+            layoutParams = getLayoutParams();
+            viewLayout = View.inflate(context, resource, null);
+            viewShade = viewLayout.findViewById(R.id.shade);
+
+            setLayoutDimensions();
+            layoutParams.y = OVERLAY_POSY_HIDDEN;
+
             }
 
-        void setViews(@LayoutRes int resource) {
-            viewOverlay = View.inflate(rootService, resource, null);
+        private void startRevealAnimation() {
+            float startingPosY = layoutParams.y;
+            float endingPosY = 0;
 
-            viewShade = viewOverlay.findViewById(R.id.shade);
+            ObjectAnimator heightAnimator = ObjectAnimator
+                    .ofFloat(this, "LayoutPosY", startingPosY, endingPosY)
+                    .setDuration(1000);
 
-            viewOverlay.setOnTouchListener(new View.OnTouchListener() {
-                @SuppressLint("ClickableViewAccessibility")
+            heightAnimator.setInterpolator(new LinearInterpolator());
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet
+                    .play(heightAnimator);
+            animatorSet.addListener(new Animator.AnimatorListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return false;
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animationEnded = true;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
                 }
             });
+            animatorSet.start();
         }
 
-        void setInitialHeights() {
-            viewShade.getLayoutParams().height = displayHeight + 500;
-            layoutParams.y = INITIAL_BAR_POS_Y;
-            layoutParams.height = displayHeight + 500;
+        private void setLayoutDimensions() {
+            int height = getDisplayHeight() + getNavBarHeight();
+
+            layoutParams.height = height;
+            viewShade.getLayoutParams().height = height;
+            OVERLAY_POSY_HIDDEN = -1 * height;
         }
 
-        WindowManager.LayoutParams getDefaultLayoutParams() {
+        private WindowManager.LayoutParams getLayoutParams() {
             WindowManager.LayoutParams params = new WindowManager.LayoutParams();
             params.width = WindowManager.LayoutParams.MATCH_PARENT;
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -115,14 +161,10 @@ class OverlayManager {
             return params;
         }
 
-        void setBlockerPosY(int y) {
-            layoutParams.y = y;
+        private void setLayoutPosY(float y) {
+            layoutParams.y = (int) y;
+            updateWindowViewLayouts();
         }
-
-        void moveBlockerPosY(float dy){
-            setBlockerPosY((int) (layoutParams.y + dy));
-        }
-
 
     }
 }
