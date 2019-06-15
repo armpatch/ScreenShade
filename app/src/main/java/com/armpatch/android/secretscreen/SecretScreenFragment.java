@@ -71,7 +71,7 @@ public class SecretScreenFragment extends Fragment {
             requestPermission();
         } else if (!isServiceRunning()) {
             startService();
-            closeActivity();
+            //closeActivity();
         }
 
     }

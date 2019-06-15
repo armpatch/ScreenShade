@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 
@@ -43,7 +44,7 @@ class OverlayManager {
 
     void start() {
         addViews();
-        shadeOverlay.startSlideDownAnimation();
+        shadeOverlay.startRevealAnimation();
     }
 
     void stop() {
@@ -79,11 +80,12 @@ class OverlayManager {
     }
 
     class ShadeOverlay {
+        View viewLayout, viewShade;
 
         WindowManager.LayoutParams layoutParams;
         private int OVERLAY_POSY_HIDDEN;
 
-        View viewLayout, viewShade;
+
         ColorAnimator colorAnimator;
 
         @SuppressLint("ClickableViewAccessibility")
@@ -91,17 +93,17 @@ class OverlayManager {
             layoutParams = getLayoutParams();
             viewLayout = View.inflate(context, resource, null);
             viewShade = viewLayout.findViewById(R.id.shade);
+            setLayoutDimensions();
 
             colorAnimator = new ColorAnimator(viewShade,
                     context.getColor(R.color.color_shade_normal),
                     context.getColor(R.color.color_shade_transparent));
 
             setDimmerOnTouchListener(viewLayout);
-            setLayoutDimensions();
             layoutParams.y = OVERLAY_POSY_HIDDEN;
             }
 
-        private void startSlideDownAnimation() {
+        private void startRevealAnimation() {
             float startingPosY = layoutParams.y;
             float endingPosY = 0;
             final int DURATION_MS = 600;
@@ -117,14 +119,42 @@ class OverlayManager {
             heightAnimator.start();
         }
 
+        private void startHideAnimation() {
+            float startingPosY = layoutParams.y;
+            float endingPosY = OVERLAY_POSY_HIDDEN;
+            final int DURATION_MS = 600;
+            final int START_DELAY_MS = 0;
+
+            ObjectAnimator heightAnimator = ObjectAnimator
+                    .ofFloat(this, "LayoutPosY", startingPosY, endingPosY)
+                    .setDuration(DURATION_MS);
+
+            heightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+            heightAnimator.setStartDelay(START_DELAY_MS);
+            heightAnimator.start();
+        }
+
         private void setDimmerOnTouchListener(View view) {
             view.setOnTouchListener(new View.OnTouchListener() {
+                long lastTime;
+                long duration;
+                long MAX_DURATION = 400;
+
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             colorAnimator.start();
+
+                            duration = System.currentTimeMillis() - lastTime;
+                            if (duration < MAX_DURATION) {
+                                Toast.makeText(context, "double click, " + duration, Toast.LENGTH_SHORT).show();
+                                startHideAnimation();
+                            }
+                            lastTime = System.currentTimeMillis();
                             break;
 
                         case MotionEvent.ACTION_UP:
