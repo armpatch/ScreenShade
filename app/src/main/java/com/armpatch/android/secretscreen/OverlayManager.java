@@ -1,7 +1,5 @@
 package com.armpatch.android.secretscreen;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -13,7 +11,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.LinearInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.LayoutRes;
 
@@ -106,36 +104,17 @@ class OverlayManager {
         private void startSlideDownAnimation() {
             float startingPosY = layoutParams.y;
             float endingPosY = 0;
+            final int DURATION_MS = 600;
+            final int START_DELAY_MS = 400;
 
             ObjectAnimator heightAnimator = ObjectAnimator
                     .ofFloat(this, "LayoutPosY", startingPosY, endingPosY)
-                    .setDuration(600);
+                    .setDuration(DURATION_MS);
 
-            heightAnimator.setInterpolator(new LinearInterpolator());
+            heightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet
-                    .play(heightAnimator);
-            animatorSet.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-            animatorSet.start();
+            heightAnimator.setStartDelay(START_DELAY_MS);
+            heightAnimator.start();
         }
 
         private void setDimmerOnTouchListener(View view) {
