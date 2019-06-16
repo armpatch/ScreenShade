@@ -10,7 +10,8 @@
     <color name="color_shade_transparent">#80000000</color>
 
     <color name="color_controls_frame">#969696</color>
-    <color name="color_controls_button">#1E88E5</color>
+    <color name="color_controls_enable_button">#1E88E5</color>
+    <color name="color_controls_disable_button">#E53935</color>
 
     <color name="color_overlay_dismiss_button">#969696</color>
 
