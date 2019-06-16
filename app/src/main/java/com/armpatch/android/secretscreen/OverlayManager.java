@@ -186,7 +186,8 @@ class OverlayManager {
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             params.type = windowLayoutType;
             params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
             params.format = PixelFormat.TRANSPARENT;
             params.gravity = Gravity.TOP;
 
@@ -205,7 +206,7 @@ class OverlayManager {
         ImageButton hideControlsButton, showOverlayButton;
 
         WindowManager.LayoutParams layoutParams;
-        private int OVERLAY_POSX_HIDDEN, OVERLAY_POSX_VISIBLE, OVERLAY_POSY_STARTING;
+        private int overlayPosXHidden, overlayPosXVisible, OverlayPosYStart;
 
         @SuppressLint("ClickableViewAccessibility")
         ControlsOverlay() {
@@ -215,16 +216,15 @@ class OverlayManager {
             calculateLayoutVariables();
             initButtons();
 
-            layoutParams.x = OVERLAY_POSX_HIDDEN;
-            layoutParams.y = OVERLAY_POSY_STARTING;
+            layoutParams.x = overlayPosXHidden;
+            layoutParams.y = OverlayPosYStart;
         }
 
         private void calculateLayoutVariables(){
-            OVERLAY_POSX_HIDDEN = (int) (-1 *
-                    controlsView.findViewById(R.id.controls_frame).getLayoutParams().width *
-                    context.getResources().getDisplayMetrics().density);
-            OVERLAY_POSX_VISIBLE = 0;
-            OVERLAY_POSY_STARTING = (int) (getDisplayHeight() / 2);
+            overlayPosXHidden = (int) (-1 *
+                    controlsView.findViewById(R.id.controls_frame).getLayoutParams().width);
+            overlayPosXVisible = 0;
+            OverlayPosYStart = (int) (getDisplayHeight() / 2);
         }
 
         private void initButtons() {
@@ -247,9 +247,9 @@ class OverlayManager {
         }
 
         private void startRevealAnimation() {
-            float startingPosX = OVERLAY_POSX_HIDDEN;
-            float endingPosX = OVERLAY_POSX_VISIBLE;
-            final int DURATION_MS = 600;
+            float startingPosX = overlayPosXHidden;
+            float endingPosX = overlayPosXVisible;
+            final int DURATION_MS = 400;
             final int START_DELAY_MS = 0;
 
             ObjectAnimator heightAnimator = ObjectAnimator
@@ -262,8 +262,8 @@ class OverlayManager {
         }
 
         private void startHideAnimation() {
-            float startingPosY = OVERLAY_POSX_VISIBLE;
-            float endingPosY = OVERLAY_POSX_HIDDEN;
+            float startingPosY = overlayPosXVisible;
+            float endingPosY = overlayPosXHidden;
             final int DURATION_MS = 600;
 
             ObjectAnimator XPositionAnimator = ObjectAnimator

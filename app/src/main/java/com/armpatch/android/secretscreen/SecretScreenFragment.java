@@ -22,7 +22,7 @@ public class SecretScreenFragment extends Fragment {
     private static final int REQUEST_OVERLAY_CODE = 2;
 
     // variables
-    private Context fragmentContext;
+    private Context context;
 
     private Intent serviceIntent;
     private ComponentName serviceComponent;
@@ -37,7 +37,7 @@ public class SecretScreenFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragmentContext = inflater.getContext();
+        context = inflater.getContext();
 
         View view = inflater.inflate(R.layout.fragment_intro_screen, container, false );
 
@@ -66,8 +66,7 @@ public class SecretScreenFragment extends Fragment {
     }
 
     private void attemptServiceStart() {
-
-        if (!Settings.canDrawOverlays((fragmentContext))) {
+        if (!Settings.canDrawOverlays((context))) {
             requestPermission();
         } else if (!isServiceRunning()) {
             startService();
@@ -76,37 +75,41 @@ public class SecretScreenFragment extends Fragment {
 
     }
 
+    private void startService() {
+        serviceIntent = OverlayService.getIntent(context);
+        serviceComponent = context.startService(serviceIntent);
+    }
+
     private boolean isServiceRunning() {
         return !(serviceComponent == null);
     }
 
-    private void startService() {
-        serviceIntent = OverlayService.getIntent(fragmentContext);
-        serviceComponent = fragmentContext.startService(serviceIntent);
-    }
-
-    private void attemptServiceStop() {
-        if (serviceIntent != null) {
-            fragmentContext.stopService(serviceIntent);
-            serviceComponent = null;
-        }
-    }
-
     private void requestPermission() {
         Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:" + fragmentContext.getPackageName()));
+                Uri.parse("package:" + context.getPackageName()));
         startActivityForResult(i, REQUEST_OVERLAY_CODE );
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (!Settings.canDrawOverlays((fragmentContext))) {
+        if (!Settings.canDrawOverlays((context))) {
             //create dialog that asks to enable permission
-            Toast toast = Toast.makeText(fragmentContext, R.string.permission_denied_toast, Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(context, R.string.permission_denied_toast, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.TOP, 0,200);
             toast.show();
         }
+    }
+
+    private void attemptServiceStop() {
+        if (serviceIntent != null) {
+            stopService();
+            serviceComponent = null;
+        }
+    }
+
+    private void stopService() {
+        context.stopService(serviceIntent);
     }
 
     private void closeActivity() {
@@ -116,10 +119,12 @@ public class SecretScreenFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopService();
     }
 
     @Override
     public void onStop() {
         super.onStop();
     }
+
 }
