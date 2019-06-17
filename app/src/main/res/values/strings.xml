@@ -8,4 +8,7 @@
     <string name="hide">Hide</string>
 
     <string name="permission_denied_toast">Permission is needed to use overlay.</string>
+
+    <string name="notification_title">Screen Blocker is Hidden</string>
+    <string name="notification_description">Click here to restore controls</string>
 </resources>

@@ -68,20 +68,15 @@ public class SecretScreenFragment extends Fragment {
     private void attemptServiceStart() {
         if (!Settings.canDrawOverlays((context))) {
             requestPermission();
-        } else if (!isServiceRunning()) {
+        } else if (serviceComponent == null) {
             startService();
             //closeActivity();
         }
-
     }
 
     private void startService() {
         serviceIntent = OverlayService.getIntent(context);
         serviceComponent = context.startService(serviceIntent);
-    }
-
-    private boolean isServiceRunning() {
-        return !(serviceComponent == null);
     }
 
     private void requestPermission() {
