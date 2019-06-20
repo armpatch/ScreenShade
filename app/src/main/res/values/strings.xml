@@ -11,4 +11,7 @@
 
     <string name="notification_title">Screen Blocker is Hidden</string>
     <string name="notification_description">Click here to restore controls</string>
+
+    <string name="channel_name">Channel Name</string>
+    <string name="channel_description">Channel Description</string>
 </resources>

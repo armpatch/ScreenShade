@@ -27,8 +27,8 @@ class OverlayManager {
     private Service context;
     private WindowManager windowManager;
 
-    private ShadeOverlayWrapper shadeOverlayWrapper;
-    private ControlsWrapper controlsWrapper;
+    private ShadeOverlay shadeOverlay;
+    private ControlsOverlay controlsOverlay;
 
     private int windowLayoutType;
 
@@ -42,34 +42,22 @@ class OverlayManager {
         context = service;
         windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
 
-        shadeOverlayWrapper = new ShadeOverlayWrapper();
-        controlsWrapper = new ControlsWrapper();
+        shadeOverlay = new ShadeOverlay();
+        controlsOverlay = new ControlsOverlay();
     }
 
     void start() {
-        addViews();
-        controlsWrapper.startRevealAnimation();
+        controlsOverlay.show();
     }
 
     void stop() {
-        removeViews();
+        if (shadeOverlay.isShown)
+            shadeOverlay.hide();
+        if (controlsOverlay.isShown)
+            controlsOverlay.hide();
+
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private void addViews() {
-        windowManager.addView(controlsWrapper.controlsView, controlsWrapper.layoutParams);
-        windowManager.addView(shadeOverlayWrapper.shadeLayout, shadeOverlayWrapper.layoutParams);
-    }
-
-    private void updateWindowViewLayouts() {
-        windowManager.updateViewLayout(shadeOverlayWrapper.shadeLayout, shadeOverlayWrapper.layoutParams);
-        windowManager.updateViewLayout(controlsWrapper.controlsView, controlsWrapper.layoutParams);
-    }
-
-    private void removeViews() {
-        windowManager.removeView(shadeOverlayWrapper.shadeLayout);
-        windowManager.removeView(controlsWrapper.controlsView);
-    }
 
     private int getDisplayHeight() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -86,16 +74,18 @@ class OverlayManager {
         return 0;
     }
 
-    class ShadeOverlayWrapper {
+    class ShadeOverlay {
         View shadeLayout, shadeImage;
 
         WindowManager.LayoutParams layoutParams;
         private int PosYWhileHidden;
 
+        private boolean isShown = false;
+
         ColorAnimator dimmerAnimator;
 
         @SuppressLint("ClickableViewAccessibility")
-        ShadeOverlayWrapper() {
+        ShadeOverlay() {
             layoutParams = getLayoutParams();
             shadeLayout = View.inflate(context, R.layout.ui_overlay, null);
             shadeImage = shadeLayout.findViewById(R.id.shade);
@@ -110,11 +100,15 @@ class OverlayManager {
             }
 
         private void show() {
-
+            windowManager.addView(shadeLayout, layoutParams);
+            isShown = true;
+            startRevealAnimation();
+            controlsOverlay.hide();
         }
 
         private void hide() {
-
+            startHideAnimation();
+            controlsOverlay.show();
         }
 
         private void startRevealAnimation() {
@@ -136,12 +130,34 @@ class OverlayManager {
         private void startHideAnimation() {
             float startingPosY = layoutParams.y;
             float endingPosY = PosYWhileHidden;
-            final int DURATION_MS = 600;
+            final int DURATION_MS = 400;
             final int START_DELAY_MS = 0;
 
             ObjectAnimator heightAnimator = ObjectAnimator
                     .ofFloat(this, "LayoutPosY", startingPosY, endingPosY)
                     .setDuration(DURATION_MS);
+            heightAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    windowManager.removeView(shadeLayout);
+                    isShown = false;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
 
             heightAnimator.setInterpolator(new AccelerateInterpolator());
 
@@ -153,7 +169,7 @@ class OverlayManager {
             view.setOnTouchListener(new View.OnTouchListener() {
                 long lastTime;
                 long duration;
-                long MAX_DURATION = 200;
+                long DOUBLE_TAP_DURATION = 400;
 
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
@@ -163,10 +179,10 @@ class OverlayManager {
                         case MotionEvent.ACTION_DOWN:
                             dimmerAnimator.start();
 
+                            // double tap functionality
                             duration = System.currentTimeMillis() - lastTime;
-                            if (duration < MAX_DURATION) {
-                                startHideAnimation();
-                                controlsWrapper.startRevealAnimation();
+                            if (duration < DOUBLE_TAP_DURATION) {
+                                hide();
                             }
                             lastTime = System.currentTimeMillis();
                             break;
@@ -207,21 +223,22 @@ class OverlayManager {
         @SuppressWarnings("unused") //used with ObjectAnimator
         private void setLayoutPosY(float y) {
             layoutParams.y = (int) y;
-            updateWindowViewLayouts();
+            windowManager.updateViewLayout(shadeLayout, layoutParams);
         }
     }
 
-    class ControlsWrapper {
-        View controlsView;
+    class ControlsOverlay {
+        View controlsLayout;
         ImageButton hideControlsButton, showOverlayButton;
+        boolean isShown = false;
 
         WindowManager.LayoutParams layoutParams;
         private int controlsXPosShown, controlsXPosHidden, OverlayPosYStart;
 
         @SuppressLint("ClickableViewAccessibility")
-        ControlsWrapper() {
+        ControlsOverlay() {
             layoutParams = getLayoutParams();
-            controlsView = View.inflate(context, R.layout.ui_overlay_controls, null);
+            controlsLayout = View.inflate(context, R.layout.ui_overlay_controls, null);
 
             calculateLayoutVariables();
             initButtons();
@@ -231,33 +248,36 @@ class OverlayManager {
         }
 
         private void calculateLayoutVariables(){
-            controlsXPosShown = -1 * controlsView.findViewById(R.id.controls_frame)
+            controlsXPosShown = -1 * controlsLayout.findViewById(R.id.controls_frame)
                     .getLayoutParams().width;
             controlsXPosHidden = 0;
             OverlayPosYStart = (getDisplayHeight() / 2);
         }
 
         private void initButtons() {
-            hideControlsButton = controlsView.findViewById(R.id.hide_controls_button);
+            hideControlsButton = controlsLayout.findViewById(R.id.hide_controls_button);
             hideControlsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startHideAnimation();
+                    hide();
+                    ControlsNotification n = new ControlsNotification(context);
+                    n.sendNotification();
                 }
             });
 
-            showOverlayButton = controlsView.findViewById(R.id.show_overlay_button);
+            showOverlayButton = controlsLayout.findViewById(R.id.show_overlay_button);
             showOverlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    shadeOverlayWrapper.startRevealAnimation();
-                    startHideAnimation();
+                    shadeOverlay.show();
+                    hide();
                 }
             });
         }
 
         private void show() {
-            windowManager.addView(controlsView, layoutParams);
+            windowManager.addView(controlsLayout, layoutParams);
+            isShown = true;
             startRevealAnimation();
         }
 
@@ -295,6 +315,8 @@ class OverlayManager {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    windowManager.removeView(controlsLayout);
+                    isShown = false;
                 }
 
                 @Override
@@ -329,7 +351,7 @@ class OverlayManager {
         @SuppressWarnings("unused") //used with ObjectAnimator
         private void setLayoutPosX(float x) {
             layoutParams.x = (int) x;
-            updateWindowViewLayouts();
+            windowManager.updateViewLayout(controlsLayout, layoutParams);
         }
     }
 
