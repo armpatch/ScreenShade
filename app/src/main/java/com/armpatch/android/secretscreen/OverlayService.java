@@ -10,8 +10,8 @@ import androidx.annotation.Nullable;
 public class OverlayService extends Service {
 
     com.armpatch.android.secretscreen.OverlayManager OverlayManager;
+    private boolean overlayManagerStarted;
 
-    // Methods
     public static Intent getIntent(Context context) {
         return new Intent(context, OverlayService.class);
     }
@@ -25,7 +25,10 @@ public class OverlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        OverlayManager.start();
+        if (!overlayManagerStarted){
+            OverlayManager.start();
+            overlayManagerStarted = true;
+        }
 
         return START_STICKY;
     }

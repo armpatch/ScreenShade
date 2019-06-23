@@ -47,14 +47,14 @@ class OverlayManager {
     }
 
     void start() {
-        controlsOverlay.show();
+        controlsOverlay.startRevealAnimation();
     }
 
     void stop() {
         if (shadeOverlay.isShown)
             shadeOverlay.hide();
         if (controlsOverlay.isShown)
-            controlsOverlay.hide();
+            controlsOverlay.startHideAnimation(true);
     }
 
     private int getDisplayHeight() {
@@ -101,7 +101,7 @@ class OverlayManager {
             isShown = true;
             dimmerAnimator.makeOpaque();
             startSlideDownAnimation();
-            controlsOverlay.hide();
+            controlsOverlay.startHideAnimation(false);
         }
 
         private void hide() {
@@ -149,7 +149,7 @@ class OverlayManager {
                 public void onAnimationEnd(Animator animation) {
                     windowManager.removeView(shadeLayout);
                     isShown = false;
-                    controlsOverlay.show();
+                    controlsOverlay.startRevealAnimation();
                 }
 
                 @Override
@@ -275,7 +275,7 @@ class OverlayManager {
             hideControlsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    hide();
+                    startHideAnimation(true);
                     ControlsNotification notification = new ControlsNotification(context);
                     notification.sendNotification();
 
@@ -287,30 +287,23 @@ class OverlayManager {
                 @Override
                 public void onClick(View v) {
                     shadeOverlay.show();
-                    hide();
+                    startHideAnimation(false);
                 }
             });
         }
 
-        private void show() {
-            windowManager.addView(controlsLayout, layoutParams);
-            isShown = true;
-            startRevealAnimation();
-        }
-
-        private void hide() {
-            hideControlsButton.setClickable(false);
-            showOverlayButton.setClickable(false);
-            startHideAnimation();
-        }
 
         private void startRevealAnimation() {
-            final int DURATION_MS = 200;
+            windowManager.addView(controlsLayout, layoutParams);
+            isShown = true;
+
+
+            final int ANIMATION_TIME = 200;
 
             ObjectAnimator heightAnimator = ObjectAnimator
                     .ofFloat(this, "LayoutPosX", controlsPosXOnScreen, controlsPosXOffScreen);
 
-            heightAnimator.setDuration(DURATION_MS);
+            heightAnimator.setDuration(ANIMATION_TIME);
             heightAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) { }
@@ -331,12 +324,15 @@ class OverlayManager {
             heightAnimator.start();
         }
 
-        private void startHideAnimation() {
-            final int DURATION_MS = 200;
+        private void startHideAnimation(final boolean stopService) {
+            final int ANIMATION_TIME = 200;
+
+            hideControlsButton.setClickable(false);
+            showOverlayButton.setClickable(false);
 
             ObjectAnimator XPositionAnimator = ObjectAnimator
                     .ofFloat(this, "LayoutPosX", controlsPosXOffScreen, controlsPosXOnScreen)
-                    .setDuration(DURATION_MS);
+                    .setDuration(ANIMATION_TIME);
 
             XPositionAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
@@ -348,6 +344,9 @@ class OverlayManager {
                 public void onAnimationEnd(Animator animation) {
                     windowManager.removeView(controlsLayout);
                     isShown = false;
+                    if (stopService) {
+                        context.stopSelf();
+                    }
                 }
 
                 @Override

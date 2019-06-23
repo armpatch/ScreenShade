@@ -55,28 +55,15 @@ public class SecretScreenFragment extends Fragment {
             }
         });
 
-        Button stopServiceButton = v.findViewById(R.id.stop_service_button);
-        stopServiceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attemptServiceStop();
-            }
-        });
-
     }
 
     private void attemptServiceStart() {
         if (!Settings.canDrawOverlays((context))) {
             requestPermission();
-        } else if (serviceComponent == null) {
+        } else {
             startService();
             //closeActivity();
         }
-    }
-
-    private void startService() {
-        serviceIntent = OverlayService.getIntent(context);
-        serviceComponent = context.startService(serviceIntent);
     }
 
     private void requestPermission() {
@@ -96,30 +83,24 @@ public class SecretScreenFragment extends Fragment {
         }
     }
 
-    private void attemptServiceStop() {
-        if (serviceIntent != null) {
-            stopService();
-            serviceComponent = null;
-        }
+    private void startService() {
+        serviceIntent = OverlayService.getIntent(context);
+        serviceComponent = context.startService(serviceIntent);
     }
 
-    private void stopService() {
+    private void stopOverlayService() {
         context.stopService(serviceIntent);
     }
 
-    private void closeActivity() {
-        startActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME));
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopService();
+        stopOverlayService();
     }
 
     @Override
     public void onStop() {
         super.onStop();
     }
-
 }
