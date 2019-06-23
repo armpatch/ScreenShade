@@ -24,7 +24,7 @@ class OverlayManager {
 
     private static final String TAG = "OverlayManager";
 
-    private Service context;
+    private OverlayService context;
     private WindowManager windowManager;
 
     private ShadeOverlay shadeOverlay;
@@ -32,7 +32,7 @@ class OverlayManager {
 
     private int windowLayoutType;
 
-    OverlayManager(Service service) {
+    OverlayManager(OverlayService service) {
         if (Build.VERSION.SDK_INT >= 26) {
             windowLayoutType = TYPE_APPLICATION_OVERLAY;
         } else {
@@ -77,7 +77,6 @@ class OverlayManager {
         private int PosYWhileHidden;
 
         private boolean isShown = false;
-        boolean isDimmed = false;
 
         DimmerAnimator dimmerAnimator;
 
@@ -101,14 +100,12 @@ class OverlayManager {
             windowManager.addView(shadeLayout, layoutParams);
             isShown = true;
             dimmerAnimator.makeOpaque();
-            isDimmed = false;
             startSlideDownAnimation();
             controlsOverlay.hide();
         }
 
         private void hide() {
             startSlideUpAnimation();
-            controlsOverlay.show();
         }
 
         private void startSlideDownAnimation() {
@@ -145,7 +142,6 @@ class OverlayManager {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     dimmerAnimator.makeOpaque();
-                    isDimmed = false;
                     shadeLayout.setClickable(false);
                 }
 
@@ -153,7 +149,7 @@ class OverlayManager {
                 public void onAnimationEnd(Animator animation) {
                     windowManager.removeView(shadeLayout);
                     isShown = false;
-                    heightAnimator.removeAllListeners();
+                    controlsOverlay.show();
                 }
 
                 @Override
@@ -191,22 +187,20 @@ class OverlayManager {
                                 Log.d(TAG, "dy = " + dy);
                                 lastTouchY = y;
 
-                                break;
-                            }
-
-                            case MotionEvent.ACTION_UP: {
-
                                 if (dy < -30) {
                                     hide();
                                     break;
                                 }
 
-                                if (!isDimmed) {
+                                break;
+                            }
+
+                            case MotionEvent.ACTION_UP: {
+
+                                if (!dimmerAnimator.isTransparent()) {
                                     dimmerAnimator.makeTransparent();
-                                    isDimmed = true;
-                                } else if (isDimmed) {
+                                } else {
                                     dimmerAnimator.makeOpaque();
-                                    isDimmed = false;
                                 }
                                 break;
                             }
@@ -284,6 +278,7 @@ class OverlayManager {
                     hide();
                     ControlsNotification notification = new ControlsNotification(context);
                     notification.sendNotification();
+
                 }
             });
 
@@ -369,6 +364,7 @@ class OverlayManager {
             XPositionAnimator.start();
         }
 
+        @SuppressLint("RtlHardcoded")
         private WindowManager.LayoutParams getLayoutParams() {
             WindowManager.LayoutParams params = new WindowManager.LayoutParams();
             params.width = WindowManager.LayoutParams.WRAP_CONTENT;
