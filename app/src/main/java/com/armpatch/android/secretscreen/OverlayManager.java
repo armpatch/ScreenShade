@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -168,32 +169,47 @@ class OverlayManager {
 
         private void setCustomOnTouchListener(View view) {
             view.setOnTouchListener(new View.OnTouchListener() {
-                long lastTouchClockTime;
-                long timeSinceLastTouch;
-                long DOUBLE_TAP_DURATION = 400;
+                float lastTouchY;
+                float dy;
 
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (shadeLayout.isClickable()){
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                // double tap functionality
-                                timeSinceLastTouch = System.currentTimeMillis() - lastTouchClockTime;
-                                if (timeSinceLastTouch < DOUBLE_TAP_DURATION)
-                                    hide();
-                                lastTouchClockTime = System.currentTimeMillis();
-                                break;
 
-                            case MotionEvent.ACTION_UP:
+                        switch (event.getAction()) {
+
+                            case MotionEvent.ACTION_DOWN: {
+                                dy = 0;
+                                lastTouchY = event.getRawY();
+                                break;
+                            }
+
+                            case MotionEvent.ACTION_MOVE: {
+                                final float y = event.getRawY();
+                                dy = y - lastTouchY;
+                                Log.d(TAG, "dy = " + dy);
+                                lastTouchY = y;
+
+                                break;
+                            }
+
+                            case MotionEvent.ACTION_UP: {
+
+                                if (dy < -30) {
+                                    hide();
+                                    break;
+                                }
+
                                 if (!isDimmed) {
                                     dimmerAnimator.makeTransparent();
                                     isDimmed = true;
-                                } else if (isDimmed){
+                                } else if (isDimmed) {
                                     dimmerAnimator.makeOpaque();
                                     isDimmed = false;
                                 }
                                 break;
+                            }
 
                             default:
                                 break;

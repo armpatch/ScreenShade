@@ -9,8 +9,11 @@ import android.view.animation.DecelerateInterpolator;
 class DimmerAnimator {
 
     private ObjectAnimator colorAnimator;
+    private View view;
+    private boolean isTransparent;
 
     DimmerAnimator(View view, int colorStart, int colorEnd) {
+        this.view = view;
         int DURATION = 200;
 
         colorAnimator = ObjectAnimator
@@ -21,12 +24,19 @@ class DimmerAnimator {
     }
 
     void makeTransparent() {
-        colorAnimator.setInterpolator(new AccelerateInterpolator());
-        colorAnimator.start();
+        if (!isTransparent) {
+            colorAnimator.setInterpolator(new AccelerateInterpolator());
+            colorAnimator.start();
+            isTransparent = true;
+        }
     }
 
     void makeOpaque(){
-        colorAnimator.setInterpolator(new DecelerateInterpolator());
-        colorAnimator.reverse();
+        if (isTransparent){
+            colorAnimator.setInterpolator(new DecelerateInterpolator());
+            colorAnimator.reverse();
+            isTransparent = false;
+        }
+
     }
 }
