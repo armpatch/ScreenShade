@@ -191,7 +191,6 @@ class OverlayManager {
                                     hide();
                                     break;
                                 }
-
                                 break;
                             }
 
@@ -209,18 +208,17 @@ class OverlayManager {
                                 break;
                         }
                     }
-
                     return false;
                 }
             });
         }
 
         private void calculateLayoutVariables() {
-            int height = getDisplayHeight() + getNavBarHeight();
+            int overlayHeight = getDisplayHeight() + getNavBarHeight();
 
-            layoutParams.height = height;
-            shadeImage.getLayoutParams().height = height;
-            PosYWhileHidden = -1 * height;
+            layoutParams.height = overlayHeight;
+            shadeImage.getLayoutParams().height = overlayHeight;
+            PosYWhileHidden = -1 * overlayHeight;
         }
 
         private WindowManager.LayoutParams getLayoutParams() {
@@ -336,9 +334,7 @@ class OverlayManager {
 
             XPositionAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
+                public void onAnimationStart(Animator animation) { }
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -350,14 +346,10 @@ class OverlayManager {
                 }
 
                 @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
+                public void onAnimationCancel(Animator animation) { }
 
                 @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
+                public void onAnimationRepeat(Animator animation) { }
             });
             XPositionAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             XPositionAnimator.start();

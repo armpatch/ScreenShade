@@ -8,8 +8,9 @@
 
     <color name="color_shade_normal">#000000</color>
     <color name="color_shade_transparent">#66000000</color>
+    <color name="color_shade_frame">#81FF3B3B</color>
 
-    <color name="color_controls_frame">#969696</color>
+    <color name="color_controls_frame">#80FFFFFF</color>
     <color name="color_controls_enable_button">#ff0099cc</color>
     <color name="color_controls_disable_button">#E53935</color>
 

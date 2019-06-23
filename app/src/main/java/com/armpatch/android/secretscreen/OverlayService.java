@@ -39,8 +39,6 @@ public class OverlayService extends Service {
         return null;
     }
 
-    
-
     @Override
     public void onDestroy() {
         OverlayManager.stop();
