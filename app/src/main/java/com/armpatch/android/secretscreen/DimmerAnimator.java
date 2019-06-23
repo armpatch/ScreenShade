@@ -4,27 +4,29 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
-class ColorAnimator {
+class DimmerAnimator {
 
     private ObjectAnimator colorAnimator;
 
-    ColorAnimator(View view, int colorStart, int colorEnd) {
+    DimmerAnimator(View view, int colorStart, int colorEnd) {
         int DURATION = 200;
 
         colorAnimator = ObjectAnimator
                 .ofInt(view, "backgroundColor", colorStart, colorEnd)
                 .setDuration(DURATION);
 
-        colorAnimator.setInterpolator(new AccelerateInterpolator());
         colorAnimator.setEvaluator(new ArgbEvaluator());
     }
 
-    void start() {
+    void makeTransparent() {
+        colorAnimator.setInterpolator(new AccelerateInterpolator());
         colorAnimator.start();
     }
 
-    void reverse(){
+    void makeOpaque(){
+        colorAnimator.setInterpolator(new DecelerateInterpolator());
         colorAnimator.reverse();
     }
 }

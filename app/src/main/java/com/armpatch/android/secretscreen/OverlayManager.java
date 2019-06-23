@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -55,9 +54,7 @@ class OverlayManager {
             shadeOverlay.hide();
         if (controlsOverlay.isShown)
             controlsOverlay.hide();
-
     }
-
 
     private int getDisplayHeight() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -67,11 +64,9 @@ class OverlayManager {
 
     private int getNavBarHeight() {
         Resources resources = context.getResources();
-        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return resources.getDimensionPixelSize(resourceId);
-        }
-        return 0;
+        int resourceId = resources.getIdentifier("navigation_bar_height",
+                "dimen", "android");
+        return (resourceId > 0)?  resources.getDimensionPixelSize(resourceId): 0;
     }
 
     class ShadeOverlay {
@@ -81,8 +76,9 @@ class OverlayManager {
         private int PosYWhileHidden;
 
         private boolean isShown = false;
+        boolean isDimmed = false;
 
-        ColorAnimator dimmerAnimator;
+        DimmerAnimator dimmerAnimator;
 
         @SuppressLint("ClickableViewAccessibility")
         ShadeOverlay() {
@@ -91,109 +87,119 @@ class OverlayManager {
             shadeImage = shadeLayout.findViewById(R.id.shade);
             calculateLayoutVariables();
 
-            dimmerAnimator = new ColorAnimator(shadeImage,
+
+            dimmerAnimator = new DimmerAnimator(shadeImage,
                     context.getColor(R.color.color_shade_normal),
                     context.getColor(R.color.color_shade_transparent));
 
-            setDimmerOnTouchListener(shadeLayout);
+            setCustomOnTouchListener(shadeLayout);
             layoutParams.y = PosYWhileHidden;
             }
 
         private void show() {
             windowManager.addView(shadeLayout, layoutParams);
             isShown = true;
-            startRevealAnimation();
+            dimmerAnimator.makeOpaque();
+            isDimmed = false;
+            startSlideDownAnimation();
             controlsOverlay.hide();
         }
 
         private void hide() {
-            startHideAnimation();
+            startSlideUpAnimation();
             controlsOverlay.show();
         }
 
-        private void startRevealAnimation() {
-            float startingPosY = layoutParams.y;
-            float endingPosY = 0;
-            final int DURATION_MS = 400;
-            final int START_DELAY_MS = 0;
+        private void startSlideDownAnimation() {
+            final int DURATION_MS = 600;
 
             ObjectAnimator heightAnimator = ObjectAnimator
-                    .ofFloat(this, "LayoutPosY", startingPosY, endingPosY)
+                    .ofFloat(this, "LayoutPosY", layoutParams.y, 0)
                     .setDuration(DURATION_MS);
 
-            heightAnimator.setInterpolator(new DecelerateInterpolator());
+            heightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            heightAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {shadeLayout.setClickable(false);}
 
-            heightAnimator.setStartDelay(START_DELAY_MS);
+                @Override
+                public void onAnimationEnd(Animator animation) {shadeLayout.setClickable(true);}
+
+                @Override
+                public void onAnimationCancel(Animator animation) { }
+                @Override
+                public void onAnimationRepeat(Animator animation) { }
+            });
             heightAnimator.start();
         }
 
-        private void startHideAnimation() {
-            float startingPosY = layoutParams.y;
-            float endingPosY = PosYWhileHidden;
+        private void startSlideUpAnimation() {
             final int DURATION_MS = 400;
-            final int START_DELAY_MS = 0;
 
-            ObjectAnimator heightAnimator = ObjectAnimator
-                    .ofFloat(this, "LayoutPosY", startingPosY, endingPosY)
+            final ObjectAnimator heightAnimator = ObjectAnimator
+                    .ofFloat(this, "LayoutPosY", layoutParams.y, PosYWhileHidden)
                     .setDuration(DURATION_MS);
+
             heightAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-
+                    dimmerAnimator.makeOpaque();
+                    isDimmed = false;
+                    shadeLayout.setClickable(false);
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     windowManager.removeView(shadeLayout);
                     isShown = false;
+                    heightAnimator.removeAllListeners();
                 }
 
                 @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
+                public void onAnimationCancel(Animator animation) { }
 
                 @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
+                public void onAnimationRepeat(Animator animation) { }
             });
 
             heightAnimator.setInterpolator(new AccelerateInterpolator());
-
-            heightAnimator.setStartDelay(START_DELAY_MS);
             heightAnimator.start();
         }
 
-        private void setDimmerOnTouchListener(View view) {
+        private void setCustomOnTouchListener(View view) {
             view.setOnTouchListener(new View.OnTouchListener() {
-                long lastTime;
-                long duration;
+                long lastTouchClockTime;
+                long timeSinceLastTouch;
                 long DOUBLE_TAP_DURATION = 400;
 
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+                    if (shadeLayout.isClickable()){
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                // double tap functionality
+                                timeSinceLastTouch = System.currentTimeMillis() - lastTouchClockTime;
+                                if (timeSinceLastTouch < DOUBLE_TAP_DURATION)
+                                    hide();
+                                lastTouchClockTime = System.currentTimeMillis();
+                                break;
 
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            dimmerAnimator.start();
+                            case MotionEvent.ACTION_UP:
+                                if (!isDimmed) {
+                                    dimmerAnimator.makeTransparent();
+                                    isDimmed = true;
+                                } else if (isDimmed){
+                                    dimmerAnimator.makeOpaque();
+                                    isDimmed = false;
+                                }
+                                break;
 
-                            // double tap functionality
-                            duration = System.currentTimeMillis() - lastTime;
-                            if (duration < DOUBLE_TAP_DURATION) {
-                                hide();
-                            }
-                            lastTime = System.currentTimeMillis();
-                            break;
-
-                        case MotionEvent.ACTION_UP:
-                            dimmerAnimator.reverse();
-                            break;
-
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
                     }
+
                     return false;
                 }
             });
@@ -230,10 +236,10 @@ class OverlayManager {
     class ControlsOverlay {
         View controlsLayout;
         ImageButton hideControlsButton, showOverlayButton;
-        boolean isShown = false;
+        boolean isShown;
 
         WindowManager.LayoutParams layoutParams;
-        private int controlsXPosShown, controlsXPosHidden, OverlayPosYStart;
+        private int controlsPosXOnScreen, controlsPosXOffScreen, controlsPosYOffScreen;
 
         @SuppressLint("ClickableViewAccessibility")
         ControlsOverlay() {
@@ -243,15 +249,15 @@ class OverlayManager {
             calculateLayoutVariables();
             initButtons();
 
-            layoutParams.x = controlsXPosShown;
-            layoutParams.y = OverlayPosYStart;
+            layoutParams.x = controlsPosXOnScreen;
+            layoutParams.y = controlsPosYOffScreen;
         }
 
         private void calculateLayoutVariables(){
-            controlsXPosShown = -1 * controlsLayout.findViewById(R.id.controls_frame)
+            controlsPosXOnScreen = -1 * controlsLayout.findViewById(R.id.controls_frame)
                     .getLayoutParams().width;
-            controlsXPosHidden = 0;
-            OverlayPosYStart = (getDisplayHeight() / 2);
+            controlsPosXOffScreen = 0;
+            controlsPosYOffScreen = (getDisplayHeight() / 2);
         }
 
         private void initButtons() {
@@ -260,8 +266,8 @@ class OverlayManager {
                 @Override
                 public void onClick(View v) {
                     hide();
-                    ControlsNotification n = new ControlsNotification(context);
-                    n.sendNotification();
+                    ControlsNotification notification = new ControlsNotification(context);
+                    notification.sendNotification();
                 }
             });
 
@@ -282,21 +288,35 @@ class OverlayManager {
         }
 
         private void hide() {
+            hideControlsButton.setClickable(false);
+            showOverlayButton.setClickable(false);
             startHideAnimation();
         }
 
         private void startRevealAnimation() {
-            float startingPosX = controlsXPosShown;
-            float endingPosX = controlsXPosHidden;
             final int DURATION_MS = 200;
-            final int START_DELAY_MS = 0;
 
             ObjectAnimator heightAnimator = ObjectAnimator
-                    .ofFloat(this, "LayoutPosX", startingPosX, endingPosX)
-                    .setDuration(DURATION_MS);
+                    .ofFloat(this, "LayoutPosX", controlsPosXOnScreen, controlsPosXOffScreen);
 
+            heightAnimator.setDuration(DURATION_MS);
+            heightAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) { }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    hideControlsButton.setClickable(true);
+                    showOverlayButton.setClickable(true);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) { }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) { }
+            });
             heightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-            heightAnimator.setStartDelay(START_DELAY_MS);
             heightAnimator.start();
         }
 
@@ -304,7 +324,7 @@ class OverlayManager {
             final int DURATION_MS = 200;
 
             ObjectAnimator XPositionAnimator = ObjectAnimator
-                    .ofFloat(this, "LayoutPosX", controlsXPosHidden, controlsXPosShown)
+                    .ofFloat(this, "LayoutPosX", controlsPosXOffScreen, controlsPosXOnScreen)
                     .setDuration(DURATION_MS);
 
             XPositionAnimator.addListener(new Animator.AnimatorListener() {
@@ -329,9 +349,7 @@ class OverlayManager {
 
                 }
             });
-
             XPositionAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-
             XPositionAnimator.start();
         }
 
@@ -354,6 +372,4 @@ class OverlayManager {
             windowManager.updateViewLayout(controlsLayout, layoutParams);
         }
     }
-
-
 }
