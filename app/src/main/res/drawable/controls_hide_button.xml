@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@android:color/black">
     <item android:id="@+id/circle"
         android:width="50dp"
         android:height="50dp">
         <shape android:shape="oval">
-            <solid android:color="@color/color_controls_disable_button" />
+            <solid android:color="@color/color_controls_hide_controls_button" />
         </shape>
     </item>
 
@@ -42,4 +43,4 @@
         </rotate>
     </item>
 
-</layer-list>
+</ripple>

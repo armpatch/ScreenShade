@@ -12,11 +12,9 @@ class DimmerAnimator {
     private boolean viewIsTransparent;
 
     DimmerAnimator(View view, int colorStart, int colorEnd) {
-        int DURATION = 200;
 
         colorAnimator = ObjectAnimator
-                .ofInt(view, "backgroundColor", colorStart, colorEnd)
-                .setDuration(DURATION);
+                .ofInt(view, "backgroundColor", colorStart, colorEnd);
 
         colorAnimator.setEvaluator(new ArgbEvaluator());
     }
@@ -24,7 +22,9 @@ class DimmerAnimator {
     void makeTransparent() {
         if (!viewIsTransparent) {
             colorAnimator.setInterpolator(new AccelerateInterpolator());
+            colorAnimator.setDuration(AnimationValues.DIMMER_DIM_TIME);
             colorAnimator.start();
+            // view.setBackgroundColor(colorEnd);
             viewIsTransparent = true;
         }
     }
@@ -32,6 +32,7 @@ class DimmerAnimator {
     void makeOpaque(){
         if (viewIsTransparent){
             colorAnimator.setInterpolator(new DecelerateInterpolator());
+            colorAnimator.setDuration(AnimationValues.DIMMER_UNDIM_TIME);
             colorAnimator.reverse();
             viewIsTransparent = false;
         }

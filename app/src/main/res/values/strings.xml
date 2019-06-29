@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">SecretScreen</string>
+    <string name="app_name">ScreenShade</string>
     <string name="ask_permission">Edit Permissions</string>
-    <string name="start_overlay_service">Start Service</string>
+    <string name="start_overlay_text">START</string>
     <string name="stop_overlay_service">Stop Service</string>
     <string name="overlay">Window</string>
     <string name="show">show</string>
@@ -14,4 +14,9 @@
 
     <string name="channel_name">Channel Name</string>
     <string name="channel_description">Channel Description</string>
+
+    <string name="instruction_title">"<u>Instructions:</u>"</string>
+    <string name="instructions">
+        Tap the overlay to toggle transparency. \nSwipe up on the overlay to dismiss. \n
+    </string>
 </resources>

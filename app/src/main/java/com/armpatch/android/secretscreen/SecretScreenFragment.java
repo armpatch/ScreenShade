@@ -47,7 +47,7 @@ public class SecretScreenFragment extends Fragment {
 
     private void initButtons(View v) {
         // ui
-        Button startServiceButton = v.findViewById(R.id.start_service_button);
+        Button startServiceButton = v.findViewById(R.id.start_button);
         startServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

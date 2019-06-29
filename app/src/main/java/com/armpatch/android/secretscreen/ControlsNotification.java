@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -46,18 +47,16 @@ class ControlsNotification {
     private NotificationCompat.Builder getBuilder() {
         Resources resources = context.getResources();
 
-        NotificationCompat.Builder newBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_menu_report_image)
+
+        return new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.window_shade_96)
                 .setContentTitle(resources.getString(R.string.notification_title))
                 .setContentText(resources.getString(R.string.notification_description))
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.controls_show_overlay_button))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(getPendingIntentForService())
                 .setAutoCancel(true);
-
-        // .addAction(R.drawable.ic_snooze, getString(R.string.snooze),
-        //                         snoozePendingIntent);
-
-        return newBuilder;
     }
 
     private PendingIntent getPendingIntentForActivity() {
