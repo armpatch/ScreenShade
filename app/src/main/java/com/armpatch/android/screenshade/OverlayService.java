@@ -1,4 +1,4 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.screenshade;
 
 import android.app.Service;
 import android.content.Context;
@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 public class OverlayService extends Service {
 
-    com.armpatch.android.secretscreen.OverlayManager OverlayManager;
+    com.armpatch.android.screenshade.OverlayManager OverlayManager;
     private boolean overlayManagerStarted;
 
     public static Intent getIntent(Context context) {

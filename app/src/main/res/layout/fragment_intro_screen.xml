@@ -22,7 +22,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/controls_screenshot"
-        android:text="Tap to hide controls."
+        android:text="@string/string_instruction_1"
         android:textColor="@android:color/white" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
         android:layout_toEndOf="@+id/controls_screenshot"
-        android:text="Tap to show shade overlay."
+        android:text="@string/string_instruction_2"
         android:textColor="@android:color/white" />
 
 
@@ -80,6 +80,16 @@
         android:textSize="18sp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"/>
+
+    <Button
+        android:id="@+id/send_feedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/send_feedback" />
 
 
 </RelativeLayout>

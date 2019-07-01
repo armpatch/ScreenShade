@@ -1,4 +1,4 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.screenshade;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -8,7 +8,7 @@ import android.view.animation.DecelerateInterpolator;
 
 class DimmerAnimator {
 
-    private ObjectAnimator colorAnimator;
+    private final ObjectAnimator colorAnimator;
     private boolean viewIsTransparent;
 
     DimmerAnimator(View view, int colorStart, int colorEnd) {

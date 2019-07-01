@@ -1,6 +1,5 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.screenshade;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,15 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class SecretScreenFragment extends Fragment {
+public class ScreenShadeFragment extends Fragment {
 
     private static final int REQUEST_OVERLAY_CODE = 2;
 
-    // variables
+    // variablesk
     private Context context;
-
     private Intent serviceIntent;
-    private ComponentName serviceComponent;
 
 
     @Override
@@ -55,6 +52,13 @@ public class SecretScreenFragment extends Fragment {
             }
         });
 
+        Button feedbackButton = v.findViewById(R.id.send_feedback);
+        feedbackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendFeedback();
+            }
+        });
     }
 
     private void attemptServiceStart() {
@@ -85,11 +89,23 @@ public class SecretScreenFragment extends Fragment {
 
     private void startService() {
         serviceIntent = OverlayService.getIntent(context);
-        serviceComponent = context.startService(serviceIntent);
+        context.startService(serviceIntent);
     }
 
     private void stopOverlayService() {
         context.stopService(serviceIntent);
+    }
+
+    private void sendFeedback() {
+        final String[] myEmail = {"aaronpatch.developer@gmail.com"};
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, myEmail);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ScreenShade - Feedback");
+
+        if (emailIntent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(emailIntent);
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.screenshade;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -15,8 +15,8 @@ import androidx.core.app.NotificationManagerCompat;
 class ControlsNotification {
 
     private static final String CHANNEL_ID = "channel id";
-    private Context context;
-    private NotificationCompat.Builder builder;
+    private final Context context;
+    private final NotificationCompat.Builder builder;
 
 
     ControlsNotification(Context context) {
@@ -60,7 +60,7 @@ class ControlsNotification {
     }
 
     private PendingIntent getPendingIntentForActivity() {
-        Intent intent = new Intent(context, SecretScreenActivity.class);
+        Intent intent = new Intent(context, ScreenShadeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return PendingIntent.getActivity(context, 0, intent, 0);
     }

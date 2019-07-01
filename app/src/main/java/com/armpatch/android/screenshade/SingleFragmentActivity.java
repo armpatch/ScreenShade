@@ -1,17 +1,19 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.screenshade;
 
 import android.os.Bundle;
+
 import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected abstract Fragment createFragment();
 
+    @SuppressWarnings("SameReturnValue")
     @LayoutRes
-    protected int getLayoutResId() {
+    private int getLayoutResId() {
         return R.layout.activity_fragment_holder;
     }
 

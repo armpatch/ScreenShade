@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/outer_shape"
+    <item
         android:gravity="center"
         android:width="50dp"
         android:height="100dp">
@@ -16,7 +16,7 @@
         </shape>
     </item>
 
-    <item android:id="@+id/inner_shape"
+    <item
         android:gravity="center"
         android:width="48dp"
         android:height="98dp">

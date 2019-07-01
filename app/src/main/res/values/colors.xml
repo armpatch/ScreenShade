@@ -5,17 +5,12 @@
     <color name="colorAccent">#FFC107</color>
 
     <color name="color_welcome_screen_background">#111111</color>
-    <color name="color_welcome_text">#D5D5D5</color>
 
     <color name="color_shade_normal">#000000</color>
     <color name="color_shade_dimmed">#66000000</color>
-    <color name="color_shade_border_while_dimmed">#81FF3B3B</color>
 
     <color name="color_controls_frame_background">#40FFFFFF</color>
     <color name="color_controls_enable_button">#0099CC</color>
     <color name="color_controls_hide_controls_button">#E53935</color>
-
-    <color name="color_gradient_center_color">#64B5F6</color>
-    <color name="color_gradient_outer_color">#22002E</color>
 
 </resources>

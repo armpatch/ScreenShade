@@ -1,4 +1,4 @@
-package com.armpatch.android.secretscreen;
+package com.armpatch.android.screenshade;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
@@ -24,13 +24,13 @@ class OverlayManager {
 
     private static final String TAG = "OverlayManager";
 
-    private OverlayService context;
-    private WindowManager windowManager;
+    private final OverlayService context;
+    private final WindowManager windowManager;
 
-    private ShadeOverlay shadeOverlay;
-    private ControlsOverlay controlsOverlay;
+    private final ShadeOverlay shadeOverlay;
+    private final ControlsOverlay controlsOverlay;
 
-    private int windowLayoutType;
+    private final int windowLayoutType;
 
     OverlayManager(OverlayService service) {
         if (Build.VERSION.SDK_INT >= 26) {
@@ -71,14 +71,15 @@ class OverlayManager {
     }
 
     class ShadeOverlay {
-        View shadeLayout, shadeImage;
+        final View shadeLayout;
+        final View shadeImage;
 
-        WindowManager.LayoutParams layoutParams;
+        final WindowManager.LayoutParams layoutParams;
         private int PosYWhileHidden;
 
         private boolean isShown = false;
 
-        DimmerAnimator dimmerAnimator;
+        final DimmerAnimator dimmerAnimator;
 
         @SuppressLint("ClickableViewAccessibility")
         ShadeOverlay() {
@@ -240,11 +241,11 @@ class OverlayManager {
     }
 
     class ControlsOverlay {
-        View controlsLayout;
+        final View controlsLayout;
         ImageButton hideControlsButton, showOverlayButton;
         boolean isShown;
 
-        WindowManager.LayoutParams layoutParams;
+        final WindowManager.LayoutParams layoutParams;
         private int controlsPosXOffScreen, controlsPosXOnScreen;
         private int controlsPosYOffScreen;
 
