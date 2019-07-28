@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name="com.armpatch.android.screenshade.ScreenShadeActivity"
+        <activity android:name="com.armpatch.android.screenshade.activities.ScreenShadeActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.armpatch.android.screenshade.OverlayService" />
+        <service android:name="com.armpatch.android.screenshade.services.OverlayService" />
 
     </application>
 </manifest>

@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade;
+package com.armpatch.android.screenshade.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,12 +16,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.services.OverlayService;
+
 public class ScreenShadeFragment extends Fragment {
 
     private static final int REQUEST_OVERLAY_CODE = 2;
 
-    // variablesk
-    private Context context;
+    // variables
+    private Context context; //TODO rename, this should not be called context, because it's to vague
     private Intent serviceIntent;
 
 

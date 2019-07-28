@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade;
+package com.armpatch.android.screenshade.notifications;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,7 +12,11 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-class ControlsNotification {
+import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.activities.ScreenShadeActivity;
+import com.armpatch.android.screenshade.services.OverlayService;
+
+public class ControlsNotification {
 
     private static final String CHANNEL_ID = "channel id";
     private final Context context;
@@ -71,7 +75,7 @@ class ControlsNotification {
     }
 
 
-    void sendNotification() {
+    public void sendNotification() {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         // notificationId is a unique int for each notification that you must define

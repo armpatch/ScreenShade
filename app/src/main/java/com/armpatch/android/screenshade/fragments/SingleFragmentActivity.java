@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade;
+package com.armpatch.android.screenshade.fragments;
 
 import android.os.Bundle;
 
@@ -6,6 +6,8 @@ import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.armpatch.android.screenshade.R;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity {
 

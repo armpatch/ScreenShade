@@ -17,10 +17,13 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 
+import com.armpatch.android.screenshade.notifications.ControlsNotification;
+import com.armpatch.android.screenshade.services.OverlayService;
+
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
 
-class OverlayManager {
+public class OverlayManager {
 
     private static final String TAG = "OverlayManager";
 
@@ -32,7 +35,7 @@ class OverlayManager {
 
     private final int windowLayoutType;
 
-    OverlayManager(OverlayService service) {
+    public OverlayManager(OverlayService service) {
         if (Build.VERSION.SDK_INT >= 26) {
             windowLayoutType = TYPE_APPLICATION_OVERLAY;
         } else {
@@ -46,11 +49,11 @@ class OverlayManager {
         controlsOverlay = new ControlsOverlay();
     }
 
-    void start() {
+    public void start() {
         controlsOverlay.startRevealAnimation();
     }
 
-    void stop() {
+    public void stop() {
         if (shadeOverlay.isShown)
             shadeOverlay.hide();
         if (controlsOverlay.isShown)
