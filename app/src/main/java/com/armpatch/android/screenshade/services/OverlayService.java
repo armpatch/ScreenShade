@@ -7,12 +7,12 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.armpatch.android.screenshade.OverlayManager;
+import com.armpatch.android.screenshade.overlays.OverlayManager;
 
 public class OverlayService extends Service {
 
-    com.armpatch.android.screenshade.OverlayManager OverlayManager;
-    private boolean overlayManagerStarted;
+    com.armpatch.android.screenshade.overlays.OverlayManager OverlayManager;
+    private boolean isRunning;
 
     public static Intent getIntent(Context context) {
         return new Intent(context, OverlayService.class);
@@ -27,11 +27,10 @@ public class OverlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!overlayManagerStarted){
-            OverlayManager.start();
-            overlayManagerStarted = true;
+        if (!isRunning){
+            OverlayManager.startOverlay();
+            isRunning = true;
         }
-
         return START_STICKY;
     }
 
@@ -43,7 +42,7 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
-        OverlayManager.stop();
+        OverlayManager.stopOverlay();
         super.onDestroy();
     }
 }

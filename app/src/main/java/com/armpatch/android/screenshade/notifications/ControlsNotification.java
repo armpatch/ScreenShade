@@ -23,7 +23,7 @@ public class ControlsNotification {
     private final NotificationCompat.Builder builder;
 
 
-    ControlsNotification(Context context) {
+    public ControlsNotification(Context context) {
         this.context = context;
         builder = getBuilder();
         createNotificationChannel();

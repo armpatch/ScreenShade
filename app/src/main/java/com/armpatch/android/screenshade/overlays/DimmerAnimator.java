@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade;
+package com.armpatch.android.screenshade.overlays;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
