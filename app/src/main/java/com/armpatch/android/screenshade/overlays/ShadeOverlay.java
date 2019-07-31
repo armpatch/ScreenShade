@@ -50,7 +50,8 @@ public class ShadeOverlay {
     }
 
     void hide() {
-        startSlideUpAnimation();
+        if (isShown)
+            startSlideUpAnimation();
     }
 
     private void startSlideDownAnimation() {

@@ -16,7 +16,7 @@ import com.armpatch.android.screenshade.notifications.ControlsNotification;
 public class ControlsOverlay {
 
     final View controlsLayout;
-    ImageButton hideControlsButton, showOverlayButton;
+    ImageButton hideButton, showButton;
     boolean isShown;
 
     final WindowManager.LayoutParams layoutParams;
@@ -43,8 +43,8 @@ public class ControlsOverlay {
     }
 
     private void initButtons() {
-        hideControlsButton = controlsLayout.findViewById(R.id.hide_controls_button);
-        hideControlsButton.setOnClickListener(new View.OnClickListener() {
+        hideButton = controlsLayout.findViewById(R.id.hide_controls_button);
+        hideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startHideAnimation(true);
@@ -54,8 +54,8 @@ public class ControlsOverlay {
             }
         });
 
-        showOverlayButton = controlsLayout.findViewById(R.id.show_overlay_button);
-        showOverlayButton.setOnClickListener(new View.OnClickListener() {
+        showButton = controlsLayout.findViewById(R.id.show_overlay_button);
+        showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 shadeOverlay.show();
@@ -64,7 +64,7 @@ public class ControlsOverlay {
         });
     }
 
-    private void startRevealAnimation() {
+    void startRevealAnimation() {
         windowManager.addView(controlsLayout, layoutParams);
         isShown = true;
 
@@ -79,8 +79,8 @@ public class ControlsOverlay {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                hideControlsButton.setClickable(true);
-                showOverlayButton.setClickable(true);
+                hideButton.setClickable(true);
+                showButton.setClickable(true);
             }
 
             @Override
@@ -95,39 +95,41 @@ public class ControlsOverlay {
         heightAnimator.start();
     }
 
-    private void startHideAnimation(final boolean stopService) {
-        hideControlsButton.setClickable(false);
-        showOverlayButton.setClickable(false);
+    void startHideAnimation(final boolean stopService) {
+        if (isShown) {
+            hideButton.setClickable(false);
+            showButton.setClickable(false);
 
-        ObjectAnimator XPositionAnimator = ObjectAnimator
-                .ofFloat(this, "LayoutPosX", controlsPosXOnScreen, controlsPosXOffScreen)
-                .setDuration(AnimationValues.CONTROLS_HIDE_TIME);
+            ObjectAnimator XPositionAnimator = ObjectAnimator
+                    .ofFloat(this, "LayoutPosX", controlsPosXOnScreen, controlsPosXOffScreen)
+                    .setDuration(AnimationValues.CONTROLS_HIDE_TIME);
 
-        XPositionAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                windowManager.removeView(controlsLayout);
-                isShown = false;
-                if (stopService) {
-                    overlayService.stopSelf();
+            XPositionAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
                 }
-            }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    windowManager.removeView(controlsLayout);
+                    isShown = false;
+                    if (stopService) {
+                        overlayService.stopSelf();
+                    }
+                }
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
 
-        XPositionAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        XPositionAnimator.start();
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+
+            XPositionAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            XPositionAnimator.start();
+        }
     }
 
     @SuppressLint("RtlHardcoded")

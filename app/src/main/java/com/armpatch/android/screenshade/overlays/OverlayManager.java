@@ -1,11 +1,7 @@
 package com.armpatch.android.screenshade.overlays;
 
-import android.os.Build;
-
 import com.armpatch.android.screenshade.services.OverlayService;
 
-import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
 
 public class OverlayManager {
 
@@ -16,38 +12,26 @@ public class OverlayManager {
     private Callbacks callbacks;
 
     interface Callbacks {
-        void hideScreen();
-        void on
+        void onHideShadeRequested();
+        void onHideControlsRequested();
     }
 
     public OverlayManager(OverlayService overlayService) {
         this.overlayService = overlayService;
-
-        initOverlays();
+        callbacks = (Callbacks) this;
+        instantiateOverlayObjects();
     }
 
-    public void startOverlay() {
+    public void showOverlayControls() {
         controlsOverlay.startRevealAnimation();
     }
 
-    public void stopOverlay() {
-        if (shadeOverlay.isShown)
-            shadeOverlay.hide();
-        if (controlsOverlay.isShown)
-            controlsOverlay.startHideAnimation(true);
+    public void hideAllOverlays() {
+        shadeOverlay.hide();
+        controlsOverlay.startHideAnimation(true);
     }
 
-    private int getWindowLayoutType() {
-        int windowLayoutType;
-        if (Build.VERSION.SDK_INT >= 26) {
-            windowLayoutType = TYPE_APPLICATION_OVERLAY;
-        } else {
-            windowLayoutType = TYPE_PHONE;
-        }
-        return windowLayoutType;
-    }
-
-    void initOverlays(){
+    void instantiateOverlayObjects(){
         shadeOverlay = new ShadeOverlay(overlayService);
         controlsOverlay = new ControlsOverlay();
     }

@@ -3,17 +3,18 @@ package com.armpatch.android.screenshade.overlays;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
+
+import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
 
 public class DisplayInfo {
 
     private DisplayInfo displayInfo;
 
-    int displayHeight;
-    int navigationBarHeight;
-    int statusBarHeight;
     Context appContext;
 
     public DisplayInfo get(Context applicationContext) {
@@ -47,4 +48,15 @@ public class DisplayInfo {
             return 0;
         }
     }
+
+    private int getWindowLayoutType() {
+        int windowLayoutType;
+        if (Build.VERSION.SDK_INT >= 26) {
+            windowLayoutType = TYPE_APPLICATION_OVERLAY;
+        } else {
+            windowLayoutType = TYPE_PHONE;
+        }
+        return windowLayoutType;
+    }
+
 }
