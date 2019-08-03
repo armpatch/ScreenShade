@@ -3,6 +3,7 @@ package com.armpatch.android.screenshade.overlays;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
 import android.view.View;
@@ -12,37 +13,51 @@ import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.notifications.ControlsNotification;
+import com.armpatch.android.screenshade.services.OverlayService;
 
-public class ControlsOverlay {
+public class OverlayButton {
 
-    final View controlsLayout;
-    ImageButton hideButton, showButton;
+    OverlayService overlayService;
+    ButtonCallbacks callbacks;
+    WindowManager windowManager;
+
+    View controlsLayout;
+    ImageButton hideButton;
+    ImageButton showButton;
     boolean isShown;
 
-    final WindowManager.LayoutParams layoutParams;
-    private int controlsPosXOffScreen, controlsPosXOnScreen;
+    WindowManager.LayoutParams layoutParams;
+    private int controlsPosXOffScreen;
+    private int controlsPosXOnScreen;
     private int controlsPosYOffScreen;
 
+    interface ButtonCallbacks {
+        void onShowShade();
+    }
+
     @SuppressLint("ClickableViewAccessibility")
-    ControlsOverlay() {
+    OverlayButton(OverlayService overlayService) {
+        this.overlayService = overlayService;
+
+        callbacks = (ButtonCallbacks) overlayService;
         layoutParams = getLayoutParams();
         controlsLayout = View.inflate(overlayService, R.layout.overlay_controls_layout, null);
 
-        calculateLayoutVariables();
-        initButtons();
+        calculateAndSetOverlayPositionVariables();
+        initOverlayButton();
+    }
+
+    private void calculateAndSetOverlayPositionVariables() {
+        controlsPosXOffScreen = -1 * controlsLayout.findViewById(R.id.controls_frame)
+                .getLayoutParams().width;
+        controlsPosXOnScreen = AnimationValues.X_OFFSET;
+        controlsPosYOffScreen = (DisplayInfo.getDisplayHeight(overlayService) / 2);
 
         layoutParams.x = controlsPosXOffScreen;
         layoutParams.y = controlsPosYOffScreen;
     }
 
-    private void calculateLayoutVariables() {
-        controlsPosXOffScreen = -1 * controlsLayout.findViewById(R.id.controls_frame)
-                .getLayoutParams().width;
-        controlsPosXOnScreen = AnimationValues.X_OFFSET;
-        controlsPosYOffScreen = (getDisplayHeight() / 2);
-    }
-
-    private void initButtons() {
+    private void initOverlayButton() {
         hideButton = controlsLayout.findViewById(R.id.hide_controls_button);
         hideButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,41 +73,15 @@ public class ControlsOverlay {
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shadeOverlay.show();
+                callbacks.onShowShade();
                 startHideAnimation(false);
             }
         });
     }
 
     void startRevealAnimation() {
-        windowManager.addView(controlsLayout, layoutParams);
-        isShown = true;
-
-        ObjectAnimator heightAnimator = ObjectAnimator
-                .ofFloat(this, "LayoutPosX", controlsPosXOffScreen, controlsPosXOnScreen);
-
-        heightAnimator.setDuration(AnimationValues.CONTROLS_REVEAL_TIME);
-        heightAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                hideButton.setClickable(true);
-                showButton.setClickable(true);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        heightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        heightAnimator.start();
+        addToWindowManager();
+        createAndStartObjectAnimator();
     }
 
     void startHideAnimation(final boolean stopService) {
@@ -132,13 +121,48 @@ public class ControlsOverlay {
         }
     }
 
+    private void createAndStartObjectAnimator() {
+        ObjectAnimator xPositionAnimator = ObjectAnimator
+                .ofFloat(this, "LayoutPosX", controlsPosXOffScreen, controlsPosXOnScreen);
+
+        xPositionAnimator.setDuration(AnimationValues.CONTROLS_REVEAL_TIME);
+        xPositionAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                hideButton.setClickable(true);
+                showButton.setClickable(true);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        xPositionAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        xPositionAnimator.start();
+    }
+
+    private void addToWindowManager() {
+        WindowManager windowManager = (WindowManager) overlayService.getSystemService(Context.WINDOW_SERVICE);
+
+        windowManager.addView(controlsLayout, layoutParams);
+        isShown = true;
+    }
+
     @SuppressLint("RtlHardcoded")
     private WindowManager.LayoutParams getLayoutParams() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
 
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        params.type = windowLayoutType;
+        params.type = DisplayInfo.getWindowLayoutType();
         params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         params.format = PixelFormat.TRANSPARENT;

@@ -3,6 +3,7 @@ package com.armpatch.android.screenshade.overlays;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -14,19 +15,32 @@ import android.view.animation.AccelerateInterpolator;
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.services.OverlayService;
 
-public class ShadeOverlay {
-    final View shadeLayout;
-    final View shadeImage;
+public class OverlayShade {
 
-    final WindowManager.LayoutParams layoutParams;
+    OverlayService overlayService;
+    WindowManager windowManager;
+    private OverlayCallbacks callbacks;
+
+    View shadeLayout;
+    View shadeImage;
+
+    WindowManager.LayoutParams layoutParams;
     private int PosYWhileHidden;
 
     public boolean isShown = false;
 
     final DimmerAnimator dimmerAnimator;
 
+    interface OverlayCallbacks {
+        void onShowShade();
+    }
+
     @SuppressLint("ClickableViewAccessibility")
-    ShadeOverlay(OverlayService overlayService) {
+    OverlayShade(OverlayService overlayService) {
+        this.overlayService = overlayService;
+        callbacks = (OverlayCallbacks) overlayService;
+
+        windowManager = getWindowManager();
         layoutParams = getLayoutParams();
 
         shadeLayout = View.inflate(overlayService, R.layout.overlay_shade_layout, null);
@@ -46,7 +60,7 @@ public class ShadeOverlay {
         isShown = true;
         dimmerAnimator.makeOpaque();
         startSlideDownAnimation();
-        controlsOverlay.startHideAnimation(false);
+        controlsOverlay.startHideAnimation(false); //TODO left off here
     }
 
     void hide() {
@@ -181,5 +195,9 @@ public class ShadeOverlay {
     private void setLayoutPosY(float y) {
         layoutParams.y = (int) y;
         windowManager.updateViewLayout(shadeLayout, layoutParams);
+    }
+
+    private WindowManager getWindowManager() {
+        return (WindowManager) overlayService.getSystemService(Context.WINDOW_SERVICE);
     }
 }

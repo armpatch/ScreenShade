@@ -3,36 +3,35 @@ package com.armpatch.android.screenshade.overlays;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 
-public class OverlayManager {
+public class OverlayManager implements OverlayButton.ButtonCallbacks{
 
     private OverlayService overlayService;
 
-    private ShadeOverlay shadeOverlay;
-    private ControlsOverlay controlsOverlay;
-    private Callbacks callbacks;
+    private OverlayShade overlayShade;
+    private OverlayButton overlayButton;
 
-    interface Callbacks {
-        void onHideShadeRequested();
-        void onHideControlsRequested();
-    }
 
     public OverlayManager(OverlayService overlayService) {
         this.overlayService = overlayService;
-        callbacks = (Callbacks) this;
         instantiateOverlayObjects();
     }
 
+    void instantiateOverlayObjects(){
+        overlayShade = new OverlayShade(overlayService);
+        overlayButton = new OverlayButton(overlayService);
+    }
+
     public void showOverlayControls() {
-        controlsOverlay.startRevealAnimation();
+        overlayButton.startRevealAnimation();
     }
 
     public void hideAllOverlays() {
-        shadeOverlay.hide();
-        controlsOverlay.startHideAnimation(true);
+        overlayShade.hide();
+        overlayButton.startHideAnimation(true);
     }
 
-    void instantiateOverlayObjects(){
-        shadeOverlay = new ShadeOverlay(overlayService);
-        controlsOverlay = new ControlsOverlay();
+    @Override
+    public void onShowShade() {
+        overlayShade.show();
     }
 }

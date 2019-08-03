@@ -13,31 +13,20 @@ import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
 
 public class DisplayInfo {
 
-    private DisplayInfo displayInfo;
+    private static DisplayInfo displayInfo;
 
     Context appContext;
 
-    public DisplayInfo get(Context applicationContext) {
-        if (displayInfo == null) {
-            displayInfo = new DisplayInfo(applicationContext);
-        }
-        return displayInfo;
-    }
-
-    private DisplayInfo(Context applicationContext) {
-        appContext = applicationContext;
-    }
-
-    public int getDisplayHeight() {
-        WindowManager wManager = (WindowManager) appContext.getSystemService(Service.WINDOW_SERVICE);
+    public static int getDisplayHeight(Context context) {
+        WindowManager wManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
         DisplayMetrics dMetrics = new DisplayMetrics();
 
         wManager.getDefaultDisplay().getMetrics(dMetrics);
         return dMetrics.heightPixels;
     }
 
-    public int getNavBarHeight() {
-        Resources resources = appContext.getResources();
+    public static int getNavBarHeight(Context context) {
+        Resources resources = context.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height",
                 "dimen", "android");
 
@@ -49,7 +38,7 @@ public class DisplayInfo {
         }
     }
 
-    private int getWindowLayoutType() {
+    public static int getWindowLayoutType() {
         int windowLayoutType;
         if (Build.VERSION.SDK_INT >= 26) {
             windowLayoutType = TYPE_APPLICATION_OVERLAY;
