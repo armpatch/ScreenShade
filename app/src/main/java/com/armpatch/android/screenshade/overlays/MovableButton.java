@@ -8,6 +8,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.animation.RevealAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 public class MovableButton {
@@ -17,10 +18,10 @@ public class MovableButton {
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
 
-    private View viewLayout;
+    private View buttonLayout;
     private ImageButton button;
 
-    private Point lastPosition;
+    private Point savedPosition;
 
     MovableButton (OverlayService service) {
         this.service = service;
@@ -32,7 +33,7 @@ public class MovableButton {
     }
 
     void reveal() {
-        if (lastPosition == null) setDefaultPosition();
+        if (savedPosition == null) setPositionToDefault();
 
         addViewToWindowManager();
         startRevealAnimation();
@@ -42,32 +43,33 @@ public class MovableButton {
         removeViewFromWindowManager();
     }
 
-    private void startRevealAnimation() {
-
-    }
-
-    private void setDefaultPosition() {
-        lastPosition = new Point(100,1000);
-
-        layoutParams.x = lastPosition.x;
-        layoutParams.y = lastPosition.y;
-    }
-
     private void inflateViews() {
-        viewLayout = View.inflate(service, R.layout.overlay_controls_new, null);
-        button = viewLayout.findViewById(R.id.show_overlay_button);
+
+        buttonLayout = View.inflate(service, R.layout.overlay_controls_new, null);
+        button = buttonLayout.findViewById(R.id.show_overlay_button);
+    }
+
+    private void startRevealAnimation() {
+        RevealAnimator.get(buttonLayout).start();
+    }
+
+    private void setPositionToDefault() {
+        savedPosition = new Point(100,1000);
+
+        layoutParams.x = savedPosition.x;
+        layoutParams.y = savedPosition.y;
     }
 
     private void addViewToWindowManager() {
         try {
-            windowManager.addView(viewLayout, layoutParams);
+            windowManager.addView(buttonLayout, layoutParams);
         } catch ( WindowManager.BadTokenException e) {
             Log.e("TAG", "View already added to WindowManager.", e);
         }
     }
 
     private void removeViewFromWindowManager() {
-        windowManager.removeView(viewLayout);
+        windowManager.removeView(buttonLayout);
     }
 
 }

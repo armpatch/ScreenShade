@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.overlays;
+package com.armpatch.android.screenshade.animation;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
-class DimmerAnimator {
+public class DimmerAnimator {
 
     private final ObjectAnimator colorAnimator;
     private boolean viewIsTransparent;
 
-    DimmerAnimator(View view, int colorStart, int colorEnd) {
+    public DimmerAnimator(View view, int colorStart, int colorEnd) {
 
         colorAnimator = ObjectAnimator
                 .ofInt(view, "backgroundColor", colorStart, colorEnd);
@@ -19,7 +19,7 @@ class DimmerAnimator {
         colorAnimator.setEvaluator(new ArgbEvaluator());
     }
 
-    void makeTransparent() {
+    public void makeTransparent() {
         if (!viewIsTransparent) {
             colorAnimator.setInterpolator(new AccelerateInterpolator());
             colorAnimator.setDuration(AnimationValues.DIMMER_DIM_TIME);
@@ -29,7 +29,7 @@ class DimmerAnimator {
         }
     }
 
-    void makeOpaque(){
+    public void makeOpaque(){
         if (viewIsTransparent){
             colorAnimator.setInterpolator(new DecelerateInterpolator());
             colorAnimator.setDuration(AnimationValues.DIMMER_UNDIM_TIME);
@@ -39,7 +39,7 @@ class DimmerAnimator {
 
     }
 
-    boolean isTransparent() {
+    public boolean isTransparent() {
         return viewIsTransparent;
     }
 }

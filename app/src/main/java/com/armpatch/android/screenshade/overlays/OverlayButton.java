@@ -10,6 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.animation.AnimationValues;
 import com.armpatch.android.screenshade.notifications.ControlsNotification;
 import com.armpatch.android.screenshade.services.OverlayService;
 

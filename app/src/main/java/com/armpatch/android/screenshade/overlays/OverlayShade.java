@@ -11,6 +11,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 
 import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.animation.AnimationValues;
+import com.armpatch.android.screenshade.animation.DimmerAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 public class OverlayShade {
