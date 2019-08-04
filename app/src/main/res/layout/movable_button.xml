@@ -4,13 +4,14 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/controls_frame"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
+        android:id="@+id/button_container_view"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
         android:src="@drawable/controls_frame_new" />
 
     <ImageButton
-        android:id="@+id/show_overlay_button"
+        android:id="@+id/button"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

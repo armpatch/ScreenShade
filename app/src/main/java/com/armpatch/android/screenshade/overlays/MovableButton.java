@@ -27,9 +27,21 @@ public class MovableButton {
         this.service = service;
 
         windowManager = (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
-        layoutParams = WindowLayoutParams.get(WindowLayoutParams.OPTION_1);
 
         inflateViews();
+        setLayoutParams();
+    }
+
+    private void setLayoutParams() {
+        layoutParams = WindowLayoutParams.get(WindowLayoutParams.OPTION_1);
+
+        View buttonContainer = buttonLayout.findViewById(R.id.button_container_view);
+
+        int width = buttonContainer.getLayoutParams().width;
+        int height = buttonContainer.getLayoutParams().height;
+
+        layoutParams.width = (int) (width * 1.2);
+        layoutParams.height = (int) (height * 1.2);
     }
 
     void reveal() {
@@ -45,8 +57,8 @@ public class MovableButton {
 
     private void inflateViews() {
 
-        buttonLayout = View.inflate(service, R.layout.overlay_controls_new, null);
-        button = buttonLayout.findViewById(R.id.show_overlay_button);
+        buttonLayout = View.inflate(service, R.layout.movable_button, null);
+        button = buttonLayout.findViewById(R.id.button);
     }
 
     private void startRevealAnimation() {

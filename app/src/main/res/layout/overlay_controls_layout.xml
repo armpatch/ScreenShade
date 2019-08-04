@@ -5,7 +5,7 @@
     android:elevation="10dp">
 
     <ImageView
-        android:id="@+id/controls_frame"
+        android:id="@+id/button_container_view"
         android:layout_width="60dp"
         android:layout_height="120dp"
         android:src="@drawable/controls_frame" />
@@ -20,7 +20,7 @@
         android:src="@drawable/controls_hide_button" />
 
     <ImageButton
-        android:id="@+id/show_overlay_button"
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"

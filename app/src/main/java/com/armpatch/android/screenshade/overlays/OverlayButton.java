@@ -47,7 +47,7 @@ public class OverlayButton {
     }
 
     private void setPositionConstants() {
-        controlsPosXOffScreen = -1 * controlsLayout.findViewById(R.id.controls_frame)
+        controlsPosXOffScreen = -1 * controlsLayout.findViewById(R.id.button_container_view)
                 .getLayoutParams().width;
         controlsPosXOnScreen = AnimationValues.X_OFFSET;
         controlsPosYOffScreen = (DisplayInfo.getDisplayHeight(overlayService) / 2);
@@ -68,7 +68,7 @@ public class OverlayButton {
             }
         });
 
-        showButton = controlsLayout.findViewById(R.id.show_overlay_button);
+        showButton = controlsLayout.findViewById(R.id.button);
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

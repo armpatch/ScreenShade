@@ -23,4 +23,5 @@ class WindowLayoutParams {
 
         return params;
     }
+
 }
