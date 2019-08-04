@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.PixelFormat;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,31 +15,30 @@ import com.armpatch.android.screenshade.services.OverlayService;
 
 public class OverlayShade {
 
-    OverlayService overlayService;
-    WindowManager windowManager;
-    private OverlayCallbacks callbacks;
+    private OverlayService overlayService;
+    private WindowManager windowManager;
+    private Callbacks callbacks;
 
-    View shadeLayout;
-    View shadeImage;
+    private View shadeLayout;
+    private View shadeImage;
 
-    WindowManager.LayoutParams layoutParams;
+    private WindowManager.LayoutParams layoutParams;
     private int PosYWhileHidden;
 
-    public boolean isShown = false;
+    private boolean isShown = false;
 
-    final DimmerAnimator dimmerAnimator;
+    private DimmerAnimator dimmerAnimator;
 
-    interface OverlayCallbacks {
-        void onShowShade();
+    interface Callbacks {
+        void onShadeRemoved();
     }
 
     @SuppressLint("ClickableViewAccessibility")
     OverlayShade(OverlayService overlayService) {
         this.overlayService = overlayService;
-        callbacks = (OverlayCallbacks) overlayService;
 
         windowManager = getWindowManager();
-        layoutParams = getLayoutParams();
+        layoutParams = WindowLayoutParams.get(WindowLayoutParams.OPTION_1);
 
         shadeLayout = View.inflate(overlayService, R.layout.overlay_shade_layout, null);
         shadeImage = shadeLayout.findViewById(R.id.shade);
@@ -60,7 +57,7 @@ public class OverlayShade {
         isShown = true;
         dimmerAnimator.makeOpaque();
         startSlideDownAnimation();
-        controlsOverlay.startHideAnimation(false); //TODO left off here
+        callbacks.onShadeRemoved();
     }
 
     void hide() {
@@ -107,7 +104,7 @@ public class OverlayShade {
             public void onAnimationEnd(Animator animation) {
                 windowManager.removeView(shadeLayout);
                 isShown = false;
-                controlsOverlay.startRevealAnimation();
+                callbacks.onShadeRemoved();
             }
 
             @Override
@@ -171,25 +168,15 @@ public class OverlayShade {
     }
 
     private void calculateLayoutVariables() {
-        int overlayHeight = getDisplayHeight() + getNavBarHeight();
+        // int overlayHeight = getDisplayHeight() + getNavBarHeight();
+        int overlayHeight = DisplayInfo.getDisplayHeight(overlayService) +
+                DisplayInfo.getNavBarHeight(overlayService);
 
         layoutParams.height = overlayHeight;
         shadeImage.getLayoutParams().height = overlayHeight;
         PosYWhileHidden = -1 * overlayHeight;
     }
 
-    private WindowManager.LayoutParams getLayoutParams() {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        params.type = windowLayoutType;
-        params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        params.format = PixelFormat.TRANSPARENT;
-        params.gravity = Gravity.TOP;
-
-        return params;
-    }
 
     @SuppressWarnings("unused") //used with ObjectAnimator
     private void setLayoutPosY(float y) {

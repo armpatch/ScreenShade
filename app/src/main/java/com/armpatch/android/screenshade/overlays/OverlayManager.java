@@ -8,26 +8,25 @@ public class OverlayManager implements OverlayButton.ButtonCallbacks{
     private OverlayService overlayService;
 
     private OverlayShade overlayShade;
-    private OverlayButton overlayButton;
-
+    private MovableButton movableButton;
 
     public OverlayManager(OverlayService overlayService) {
         this.overlayService = overlayService;
-        instantiateOverlayObjects();
+        initOverlays();
     }
 
-    void instantiateOverlayObjects(){
-        overlayShade = new OverlayShade(overlayService);
-        overlayButton = new OverlayButton(overlayService);
+    private void initOverlays(){
+        //overlayShade = new OverlayShade(overlayService);
+        movableButton = new MovableButton(overlayService);
     }
 
-    public void showOverlayControls() {
-        overlayButton.startRevealAnimation();
+    public void showControls() {
+        movableButton.reveal();
     }
 
     public void hideAllOverlays() {
         overlayShade.hide();
-        overlayButton.startHideAnimation(true);
+        movableButton.hide();
     }
 
     @Override

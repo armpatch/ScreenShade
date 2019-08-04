@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.PixelFormat;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -40,14 +38,14 @@ public class OverlayButton {
         this.overlayService = overlayService;
 
         callbacks = (ButtonCallbacks) overlayService;
-        layoutParams = getLayoutParams();
+        layoutParams = WindowLayoutParams.get(WindowLayoutParams.OPTION_1);
         controlsLayout = View.inflate(overlayService, R.layout.overlay_controls_layout, null);
 
-        calculateAndSetOverlayPositionVariables();
+        setPositionConstants();
         initOverlayButton();
     }
 
-    private void calculateAndSetOverlayPositionVariables() {
+    private void setPositionConstants() {
         controlsPosXOffScreen = -1 * controlsLayout.findViewById(R.id.controls_frame)
                 .getLayoutParams().width;
         controlsPosXOnScreen = AnimationValues.X_OFFSET;
@@ -154,21 +152,6 @@ public class OverlayButton {
 
         windowManager.addView(controlsLayout, layoutParams);
         isShown = true;
-    }
-
-    @SuppressLint("RtlHardcoded")
-    private WindowManager.LayoutParams getLayoutParams() {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-
-        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        params.type = DisplayInfo.getWindowLayoutType();
-        params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        params.format = PixelFormat.TRANSPARENT;
-        params.gravity = Gravity.TOP | Gravity.LEFT;
-
-        return params;
     }
 
     @SuppressWarnings("unused") //used with ObjectAnimator
