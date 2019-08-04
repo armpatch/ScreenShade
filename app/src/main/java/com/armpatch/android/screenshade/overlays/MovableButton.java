@@ -11,7 +11,7 @@ import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.RevealAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
-public class MovableButton {
+class MovableButton {
 
     private OverlayService service;
 
@@ -56,13 +56,12 @@ public class MovableButton {
     }
 
     private void inflateViews() {
-
         buttonLayout = View.inflate(service, R.layout.movable_button, null);
         button = buttonLayout.findViewById(R.id.button);
     }
 
     private void startRevealAnimation() {
-        RevealAnimator.get(buttonLayout).start();
+        RevealAnimator.getAnimatorForView(buttonLayout).start();
     }
 
     private void setPositionToDefault() {

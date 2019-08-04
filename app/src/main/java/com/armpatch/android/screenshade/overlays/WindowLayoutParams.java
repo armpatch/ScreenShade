@@ -1,22 +1,24 @@
 package com.armpatch.android.screenshade.overlays;
 
+import android.annotation.SuppressLint;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
-import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 
 class WindowLayoutParams {
 
-    public static final int OPTION_1 = 1;
+    static final int OPTION_1 = 1;
 
-    static WindowManager.LayoutParams get(int option) {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+    @SuppressLint("RtlHardcoded")
+    static LayoutParams get(int option) {
+        LayoutParams params = new LayoutParams();
 
         if (option == 1) {
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.width = LayoutParams.WRAP_CONTENT;
+            params.height = LayoutParams.WRAP_CONTENT;
             params.type = DisplayInfo.getWindowLayoutType();
-            params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            params.flags = LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+                    LayoutParams.FLAG_NOT_FOCUSABLE;
             params.format = PixelFormat.TRANSPARENT;
             params.gravity = Gravity.TOP | Gravity.LEFT;
         }
