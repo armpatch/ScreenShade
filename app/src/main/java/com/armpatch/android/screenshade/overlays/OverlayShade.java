@@ -47,7 +47,7 @@ public class OverlayShade {
 
     private void inflateViews() {
         shadeLayout = View.inflate(service, R.layout.overlay_shade_layout, null);
-        shadeImage = shadeLayout.findViewById(R.id.shade);
+        shadeImage = shadeLayout.findViewById(R.id.shade_circle);
     }
 
     private void addViewToWindowManager() {
