@@ -17,8 +17,6 @@
         android:layout_height="match_parent"
         android:background="@color/color_shade_normal">
 
-
-
     </FrameLayout>
 
 </RelativeLayout>

@@ -3,7 +3,7 @@ package com.armpatch.android.screenshade.overlays;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 
-public class OverlayManager implements OverlayButton.ButtonCallbacks{
+public class OverlayManager implements MovableButton.Callbacks{
 
     private OverlayService overlayService;
 
@@ -16,7 +16,7 @@ public class OverlayManager implements OverlayButton.ButtonCallbacks{
     }
 
     private void initOverlays(){
-        //overlayShade = new OverlayShade(overlayService);
+        overlayShade = new OverlayShade(overlayService);
         movableButton = new MovableButton(overlayService);
     }
 
@@ -30,7 +30,7 @@ public class OverlayManager implements OverlayButton.ButtonCallbacks{
     }
 
     @Override
-    public void onShowShade() {
+    public void onButtonClicked() {
         overlayShade.show();
     }
 }

@@ -10,7 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.AnimationValues;
+import com.armpatch.android.screenshade.animation.AnimationConstants;
 import com.armpatch.android.screenshade.notifications.ControlsNotification;
 import com.armpatch.android.screenshade.services.OverlayService;
 
@@ -49,7 +49,7 @@ public class OverlayButton {
     private void setPositionConstants() {
         controlsPosXOffScreen = -1 * controlsLayout.findViewById(R.id.button_container_view)
                 .getLayoutParams().width;
-        controlsPosXOnScreen = AnimationValues.X_OFFSET;
+        controlsPosXOnScreen = AnimationConstants.X_OFFSET;
         controlsPosYOffScreen = (DisplayInfo.getDisplayHeight(overlayService) / 2);
 
         layoutParams.x = controlsPosXOffScreen;
@@ -90,7 +90,7 @@ public class OverlayButton {
 
             ObjectAnimator XPositionAnimator = ObjectAnimator
                     .ofFloat(this, "LayoutPosX", controlsPosXOnScreen, controlsPosXOffScreen)
-                    .setDuration(AnimationValues.CONTROLS_HIDE_TIME);
+                    .setDuration(AnimationConstants.CONTROLS_HIDE_TIME);
 
             XPositionAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
@@ -124,7 +124,7 @@ public class OverlayButton {
         ObjectAnimator xPositionAnimator = ObjectAnimator
                 .ofFloat(this, "LayoutPosX", controlsPosXOffScreen, controlsPosXOnScreen);
 
-        xPositionAnimator.setDuration(AnimationValues.CONTROLS_REVEAL_TIME);
+        xPositionAnimator.setDuration(AnimationConstants.CONTROLS_REVEAL_TIME);
         xPositionAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {

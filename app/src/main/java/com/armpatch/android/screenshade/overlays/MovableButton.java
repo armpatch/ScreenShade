@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.RevealAnimator;
+import com.armpatch.android.screenshade.animation.ButtonRevealAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 class MovableButton {
@@ -35,7 +35,7 @@ class MovableButton {
     MovableButton (OverlayService service) {
         this.service = service;
 
-        windowManager = (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
+        windowManager = getWindowManager(service);
 
         inflateViews();
         setLayoutParams();
@@ -67,7 +67,7 @@ class MovableButton {
     }
 
     private void updatePosition(Point point) {
-        moveWithinScreenBounds(point);
+        adjustPointToScreenBoundaries(point);
 
         layoutParams.x = point.x;
         layoutParams.y = point.y;
@@ -81,7 +81,6 @@ class MovableButton {
         button = buttonLayout.findViewById(R.id.button);
 
         addTouchListenerToButton();
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -140,7 +139,7 @@ class MovableButton {
     }
 
     private void startRevealAnimation() {
-        RevealAnimator.getAnimatorForView(buttonLayout).start();
+        ButtonRevealAnimator.getAnimatorForView(buttonLayout).start();
     }
 
     private void setPositionToDefault() {
@@ -150,7 +149,7 @@ class MovableButton {
         layoutParams.y = savedPosition.y;
     }
 
-    private Point moveWithinScreenBounds(Point point) {
+    private void adjustPointToScreenBoundaries(Point point) {
         int MARGIN_TOP = 0;
         int MARGIN_BOTTOM = 0;
 
@@ -172,7 +171,6 @@ class MovableButton {
         if (Y_MAX < point.y)
             point.y = Y_MAX;
 
-        return point;
     }
 
     private void addViewToWindowManager() {
@@ -193,5 +191,9 @@ class MovableButton {
 
     private int getWidth() {
         return buttonLayout.getLayoutParams().width;
+    }
+
+    private WindowManager getWindowManager(OverlayService service) {
+        return (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
     }
 }
