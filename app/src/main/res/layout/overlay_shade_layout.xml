@@ -6,8 +6,10 @@
 
     <ImageView
         android:id="@+id/shade_circle"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
         android:src="@drawable/expanding_circle">
 
     </ImageView>

@@ -8,7 +8,7 @@
         android:id="@+id/button_container_view"
         android:layout_width="60dp"
         android:layout_height="120dp"
-        android:src="@drawable/controls_frame" />
+        android:src="@drawable/button_frame_old" />
 
     <ImageButton
         android:id="@+id/hide_controls_button"
@@ -17,7 +17,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/controls_hide_button" />
+        android:src="@drawable/button_hide_old" />
 
     <ImageButton
         android:id="@+id/button"
@@ -27,6 +27,6 @@
         android:layout_marginTop="65dp"
         android:background="@android:color/transparent"
         android:rotation="-90"
-        android:src="@drawable/controls_show_overlay_button" />
+        android:src="@drawable/button" />
 
 </RelativeLayout>

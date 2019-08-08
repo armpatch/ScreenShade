@@ -74,7 +74,7 @@
         android:layout_below="@+id/instructions_text"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button_ripple_background"
         android:text="@string/start_overlay_text"
         android:textColor="@android:color/white"
         android:textSize="18sp"

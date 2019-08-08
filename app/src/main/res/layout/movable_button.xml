@@ -8,7 +8,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:src="@drawable/controls_frame_new" />
+        android:src="@drawable/button_frame" />
 
     <ImageButton
         android:id="@+id/button"
@@ -17,6 +17,6 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:rotation="-90"
-        android:src="@drawable/controls_show_overlay_button" />
+        android:src="@drawable/button" />
 
 </FrameLayout>

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.animation.ShadeAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 public class OverlayShade {
@@ -16,7 +17,7 @@ public class OverlayShade {
     private Callbacks callbacks;
 
     private View shadeLayout;
-    private View shadeImage;
+    private View shadeCircle;
 
     private WindowManager.LayoutParams layoutParams;
 
@@ -27,27 +28,29 @@ public class OverlayShade {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    OverlayShade(OverlayService service) {
-        this.service = service;
+    OverlayShade(OverlayManager overlayManager) {
+        this.service = overlayManager.service;
         windowManager = getWindowManager();
+
+        callbacks = (Callbacks) overlayManager;
 
         inflateViews();
         setLayoutParams();
 
     }
 
-    void show() {
+    void reveal() {
         addViewToWindowManager();
-        callbacks.onShadeRemoved();
+        startRevealAnimation();
     }
 
     void hide() {
-        if (isShown) {}
+        startHideAnimation();
     }
 
     private void inflateViews() {
         shadeLayout = View.inflate(service, R.layout.overlay_shade_layout, null);
-        shadeImage = shadeLayout.findViewById(R.id.shade_circle);
+        shadeCircle = shadeLayout.findViewById(R.id.shade_circle);
     }
 
     private void addViewToWindowManager() {
@@ -64,6 +67,14 @@ public class OverlayShade {
 
         layoutParams.height = DisplayInfo.getDisplayHeight(service) +
                 DisplayInfo.getNavBarHeight(service);
+    }
+
+    private void startRevealAnimation() {
+        ShadeAnimator.getRevealAnimator(shadeCircle).start();
+    }
+
+    private void startHideAnimation() {
+        ShadeAnimator.getHideAnimator(shadeCircle).start();
     }
 
     private WindowManager getWindowManager() {

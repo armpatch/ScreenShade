@@ -8,7 +8,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.ButtonRevealAnimator;
@@ -32,8 +31,10 @@ class MovableButton {
         void onButtonClicked();
     }
 
-    MovableButton (OverlayService service) {
-        this.service = service;
+    MovableButton (OverlayManager overlayManager) {
+        this.service = overlayManager.service;
+
+        callbacks = (Callbacks) overlayManager;
 
         windowManager = getWindowManager(service);
 
@@ -124,7 +125,6 @@ class MovableButton {
                         long elapsedTime = currentTime - startTime;
                         if (elapsedTime < 300) {
                             callbacks.onButtonClicked();
-                            Toast.makeText(service, "click", Toast.LENGTH_SHORT).show();
                         }
 
                         //tracker.computeCurrentVelocity(1000);
@@ -139,7 +139,7 @@ class MovableButton {
     }
 
     private void startRevealAnimation() {
-        ButtonRevealAnimator.getAnimatorForView(buttonLayout).start();
+        ButtonRevealAnimator.get(buttonLayout).start();
     }
 
     private void setPositionToDefault() {

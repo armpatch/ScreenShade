@@ -27,7 +27,7 @@ public class OverlayService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!hasBeenStarted){
-            OverlayManager.showControls();
+            OverlayManager.showMovableButton();
             hasBeenStarted = true;
         }
         return START_STICKY;
