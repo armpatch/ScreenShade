@@ -39,7 +39,7 @@ public class OverlayButton {
         this.overlayService = overlayService;
 
         callbacks = (ButtonCallbacks) overlayService;
-        layoutParams = WindowLayoutParams.get(WindowLayoutParams.OPTION_1);
+        layoutParams = WindowLayoutParams.getDefaultParams();
         controlsLayout = View.inflate(overlayService, R.layout.overlay_controls_layout, null);
 
         setPositionConstants();

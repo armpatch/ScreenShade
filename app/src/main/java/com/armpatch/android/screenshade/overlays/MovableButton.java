@@ -1,11 +1,14 @@
 package com.armpatch.android.screenshade.overlays;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.RevealAnimator;
@@ -23,6 +26,12 @@ class MovableButton {
 
     private Point savedPosition;
 
+    private Callbacks callbacks;
+
+    interface Callbacks {
+        void onButtonClicked();
+    }
+
     MovableButton (OverlayService service) {
         this.service = service;
 
@@ -33,15 +42,16 @@ class MovableButton {
     }
 
     private void setLayoutParams() {
-        layoutParams = WindowLayoutParams.get(WindowLayoutParams.OPTION_1);
+        View v = buttonLayout.findViewById(R.id.button_container_view);
 
-        View buttonContainer = buttonLayout.findViewById(R.id.button_container_view);
+        int width = v.getLayoutParams().width;
+        int height = v.getLayoutParams().height;
 
-        int width = buttonContainer.getLayoutParams().width;
-        int height = buttonContainer.getLayoutParams().height;
+        float view_margin = 1.2f;
 
-        layoutParams.width = (int) (width * 1.2);
-        layoutParams.height = (int) (height * 1.2);
+        layoutParams = WindowLayoutParams.getDefaultParams();
+        layoutParams.width = (int) (width * view_margin);
+        layoutParams.height = (int) (height * view_margin);
     }
 
     void reveal() {
@@ -53,11 +63,80 @@ class MovableButton {
 
     void hide() {
         removeViewFromWindowManager();
+
     }
 
+    private void updatePosition(Point point) {
+        moveWithinScreenBounds(point);
+
+        layoutParams.x = point.x;
+        layoutParams.y = point.y;
+
+        windowManager.updateViewLayout(buttonLayout, layoutParams);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private void inflateViews() {
         buttonLayout = View.inflate(service, R.layout.movable_button, null);
         button = buttonLayout.findViewById(R.id.button);
+
+        addTouchListenerToButton();
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void addTouchListenerToButton() {
+        button.setOnTouchListener(new View.OnTouchListener() {
+
+            Point firstDown = new Point();
+            Point location = new Point();
+            Long startTime;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //VelocityTracker tracker = VelocityTracker.obtain();
+
+                event.setLocation(event.getRawX(), event.getRawY());
+                //tracker.addMovement(event);
+
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        firstDown.set((int) event.getX(), (int) event.getY());
+                        location.set(layoutParams.x, layoutParams.y);
+                        startTime = System.currentTimeMillis();
+                        break;
+                    }
+
+                    case MotionEvent.ACTION_MOVE: {
+                        int movementX = (int) event.getX() - firstDown.x;
+                        int movementY = (int) event.getY() - firstDown.y;
+
+                        Point newPosition = new Point();
+                        newPosition.set(
+                                location.x + movementX,
+                                location.y + movementY
+                        );
+                        updatePosition(newPosition);
+                        break;
+                    }
+
+                    case MotionEvent.ACTION_UP: {
+                        long currentTime = System.currentTimeMillis(); // TODO
+                        long elapsedTime = currentTime - startTime;
+                        if (elapsedTime < 300) {
+                            callbacks.onButtonClicked();
+                            Toast.makeText(service, "click", Toast.LENGTH_SHORT).show();
+                        }
+
+                        //tracker.computeCurrentVelocity(1000);
+                        //float velocityX = tracker.getXVelocity();
+                        //float velocityY = tracker.getYVelocity();
+                    }
+                    //tracker.recycle();
+                }
+                return false;
+            }
+        });
     }
 
     private void startRevealAnimation() {
@@ -65,10 +144,35 @@ class MovableButton {
     }
 
     private void setPositionToDefault() {
-        savedPosition = new Point(100,1000);
+        savedPosition = new Point(100,1000); // arbitrary location for testing
 
         layoutParams.x = savedPosition.x;
         layoutParams.y = savedPosition.y;
+    }
+
+    private Point moveWithinScreenBounds(Point point) {
+        int MARGIN_TOP = 0;
+        int MARGIN_BOTTOM = 0;
+
+
+        int Y_MIN = MARGIN_TOP;
+        int Y_MAX = DisplayInfo.getDisplayHeight(service) - MARGIN_BOTTOM - getHeight();
+        int X_MIN = 0;
+        int X_MAX = DisplayInfo.getDisplayWidth(service) - getWidth();
+
+        if (point.x < X_MIN)
+            point.x = X_MIN;
+
+        if (X_MAX < point.x)
+            point.x = X_MAX;
+
+        if (point.y < Y_MIN)
+            point.y = Y_MIN;
+
+        if (Y_MAX < point.y)
+            point.y = Y_MAX;
+
+        return point;
     }
 
     private void addViewToWindowManager() {
@@ -83,4 +187,11 @@ class MovableButton {
         windowManager.removeView(buttonLayout);
     }
 
+    private int getHeight() {
+        return buttonLayout.getLayoutParams().height;
+    }
+
+    private int getWidth() {
+        return buttonLayout.getLayoutParams().width;
+    }
 }

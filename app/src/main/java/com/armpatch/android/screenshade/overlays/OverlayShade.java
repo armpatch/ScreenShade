@@ -40,7 +40,7 @@ public class OverlayShade {
         this.overlayService = overlayService;
 
         windowManager = getWindowManager();
-        layoutParams = WindowLayoutParams.get(WindowLayoutParams.OPTION_1);
+        layoutParams = WindowLayoutParams.getDefaultParams();
 
         shadeLayout = View.inflate(overlayService, R.layout.overlay_shade_layout, null);
         shadeImage = shadeLayout.findViewById(R.id.shade);

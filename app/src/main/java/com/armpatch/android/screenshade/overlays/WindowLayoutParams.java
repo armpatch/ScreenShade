@@ -7,23 +7,18 @@ import android.view.WindowManager.LayoutParams;
 
 class WindowLayoutParams {
 
-    static final int OPTION_1 = 1;
-
     @SuppressLint("RtlHardcoded")
-    static LayoutParams get(int option) {
+    static LayoutParams getDefaultParams() {
         LayoutParams params = new LayoutParams();
 
-        if (option == 1) {
-            params.width = LayoutParams.WRAP_CONTENT;
-            params.height = LayoutParams.WRAP_CONTENT;
-            params.type = DisplayInfo.getWindowLayoutType();
-            params.flags = LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                    LayoutParams.FLAG_NOT_FOCUSABLE;
-            params.format = PixelFormat.TRANSPARENT;
-            params.gravity = Gravity.TOP | Gravity.LEFT;
-        }
+        params.width = LayoutParams.WRAP_CONTENT;
+        params.height = LayoutParams.WRAP_CONTENT;
+        params.type = DisplayInfo.getWindowLayoutType();
+        params.flags = LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+                LayoutParams.FLAG_NOT_FOCUSABLE;
+        params.format = PixelFormat.TRANSPARENT;
+        params.gravity = Gravity.TOP | Gravity.LEFT;
 
         return params;
     }
-
 }

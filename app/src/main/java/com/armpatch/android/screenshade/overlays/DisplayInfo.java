@@ -18,11 +18,11 @@ public class DisplayInfo {
     Context appContext;
 
     public static int getDisplayHeight(Context context) {
-        WindowManager wManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
-        DisplayMetrics dMetrics = new DisplayMetrics();
+        return getDisplayMetrics(context).heightPixels;
+    }
 
-        wManager.getDefaultDisplay().getMetrics(dMetrics);
-        return dMetrics.heightPixels;
+    public static int getDisplayWidth(Context context) {
+        return getDisplayMetrics(context).widthPixels;
     }
 
     public static int getNavBarHeight(Context context) {
@@ -46,5 +46,13 @@ public class DisplayInfo {
             windowLayoutType = TYPE_PHONE;
         }
         return windowLayoutType;
+    }
+
+    private static DisplayMetrics getDisplayMetrics (Context context) {
+        WindowManager wManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
+        DisplayMetrics dMetrics = new DisplayMetrics();
+
+        wManager.getDefaultDisplay().getMetrics(dMetrics);
+        return dMetrics;
     }
 }
