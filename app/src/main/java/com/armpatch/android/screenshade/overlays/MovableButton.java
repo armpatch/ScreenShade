@@ -28,7 +28,7 @@ class MovableButton {
     private Callbacks callbacks;
 
     interface Callbacks {
-        void onButtonClicked();
+        void onButtonClicked(Point currentPoint);
     }
 
     MovableButton (OverlayManager overlayManager) {
@@ -124,7 +124,7 @@ class MovableButton {
                         long currentTime = System.currentTimeMillis(); // TODO
                         long elapsedTime = currentTime - startTime;
                         if (elapsedTime < 300) {
-                            callbacks.onButtonClicked();
+                            callbacks.onButtonClicked(getCenterPoint());
                         }
 
                         //tracker.computeCurrentVelocity(1000);
@@ -195,5 +195,17 @@ class MovableButton {
 
     private WindowManager getWindowManager(OverlayService service) {
         return (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
+    }
+
+    private Point getPosition() {
+        return new Point(layoutParams.x, layoutParams.y);
+    }
+
+    private Point getCenterPoint() {
+        Point point = getPosition();
+
+        point.offset(layoutParams.width, layoutParams.height);
+
+        return point;
     }
 }

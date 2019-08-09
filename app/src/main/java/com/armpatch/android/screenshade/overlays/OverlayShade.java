@@ -2,6 +2,7 @@ package com.armpatch.android.screenshade.overlays;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Point;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,11 +37,12 @@ public class OverlayShade {
 
         inflateViews();
         setLayoutParams();
-
+        setCircleDimensions();
     }
 
-    void reveal() {
+    void revealFromPoint(Point centerPoint) {
         addViewToWindowManager();
+        setCirclePosition(centerPoint);
         startRevealAnimation();
     }
 
@@ -51,6 +53,24 @@ public class OverlayShade {
     private void inflateViews() {
         shadeLayout = View.inflate(service, R.layout.overlay_shade_layout, null);
         shadeCircle = shadeLayout.findViewById(R.id.shade_circle);
+    }
+
+    private void setCircleDimensions() {
+        int maxRadius = DisplayInfo.getDiagonalLength(service);
+
+        shadeCircle.getLayoutParams().height = maxRadius;
+        shadeCircle.getLayoutParams().width = maxRadius;
+    }
+
+    private void setCirclePosition(Point centerPoint) {
+        Point offsetPoint = new Point();
+
+        CoordinateView coordinateView = new CoordinateView(shadeCircle);
+
+        offsetPoint = coordinateView.getCenterShiftedPoint(centerPoint);
+
+        shadeCircle.setX(offsetPoint.x);
+        shadeCircle.setY(offsetPoint.y);
     }
 
     private void addViewToWindowManager() {

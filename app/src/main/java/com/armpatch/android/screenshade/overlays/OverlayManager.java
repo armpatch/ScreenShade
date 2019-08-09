@@ -1,5 +1,6 @@
 package com.armpatch.android.screenshade.overlays;
 
+import android.graphics.Point;
 import android.widget.Toast;
 
 import com.armpatch.android.screenshade.services.OverlayService;
@@ -22,7 +23,7 @@ public class OverlayManager implements MovableButton.Callbacks, OverlayShade.Cal
         movableButton = new MovableButton(this);
     }
 
-    public void showMovableButton() {
+    public void revealMovableButton() {
         movableButton.reveal();
     }
 
@@ -32,8 +33,8 @@ public class OverlayManager implements MovableButton.Callbacks, OverlayShade.Cal
     }
 
     @Override
-    public void onButtonClicked() {
-        overlayShade.reveal();
+    public void onButtonClicked(Point centerPoint) {
+        overlayShade.revealFromPoint(centerPoint);
         Toast.makeText(service, "click", Toast.LENGTH_SHORT).show();
     }
 

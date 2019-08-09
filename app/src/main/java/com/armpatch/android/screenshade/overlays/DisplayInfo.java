@@ -3,13 +3,9 @@ package com.armpatch.android.screenshade.overlays;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
-
-import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-import static android.view.WindowManager.LayoutParams.TYPE_PHONE;
 
 public class DisplayInfo {
 
@@ -25,6 +21,14 @@ public class DisplayInfo {
         return getDisplayMetrics(context).widthPixels;
     }
 
+    public static int getDiagonalLength(Context context) {
+        int height = getDisplayHeight(context);
+        int width = getDisplayWidth(context);
+
+        // pythagorean theorem
+        return (int) Math.sqrt( (height * height) + (width * width) );
+    }
+
     public static int getNavBarHeight(Context context) {
         Resources resources = context.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height",
@@ -36,16 +40,6 @@ public class DisplayInfo {
             Log.i("TAG", "NavBarHeight returned 0");
             return 0;
         }
-    }
-
-    public static int getWindowLayoutType() {
-        int windowLayoutType;
-        if (Build.VERSION.SDK_INT >= 26) {
-            windowLayoutType = TYPE_APPLICATION_OVERLAY;
-        } else {
-            windowLayoutType = TYPE_PHONE;
-        }
-        return windowLayoutType;
     }
 
     private static DisplayMetrics getDisplayMetrics (Context context) {
