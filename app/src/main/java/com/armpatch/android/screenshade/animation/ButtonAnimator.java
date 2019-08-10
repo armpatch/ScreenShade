@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.animation.BaseInterpolator;
 import android.view.animation.OvershootInterpolator;
 
-public class ButtonRevealAnimator {
+public class ButtonAnimator {
 
     public static Animator get(View buttonView) {
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f);

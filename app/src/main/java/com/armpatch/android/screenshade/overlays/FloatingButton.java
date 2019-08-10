@@ -10,7 +10,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.ButtonRevealAnimator;
+import com.armpatch.android.screenshade.animation.ButtonAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -23,10 +23,7 @@ class FloatingButton {
     private WindowManager.LayoutParams layoutParams;
 
     private View buttonContainer;
-    private ImageButton button;
-
     private Point savedPosition;
-
 
     interface Callbacks {
         void onButtonClicked(Point currentPoint);
@@ -36,7 +33,7 @@ class FloatingButton {
         this.service = overlayManager.service;
 
         callbacks = overlayManager;
-        windowManager = getWindowManager(service);
+        windowManager = (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
 
         inflateViews();
         setFloatingWindowDimensions();
@@ -46,7 +43,7 @@ class FloatingButton {
         if (savedPosition == null) setPositionToDefault();
 
         addViewToWindowManager();
-        ButtonRevealAnimator.get(buttonContainer).start();
+        ButtonAnimator.get(buttonContainer).start();
     }
 
     void hide() {
@@ -69,13 +66,13 @@ class FloatingButton {
     }
 
     private void inflateViews() {
-        buttonContainer = View.inflate(service, R.layout.movable_button, null);
-        button = buttonContainer.findViewById(R.id.button);
+        buttonContainer = View.inflate(service, R.layout.floating_button, null);
+        ImageButton button = buttonContainer.findViewById(R.id.button);
 
-        setOnTouchListenerToButton();
+        setOnTouchListener(button);
     }
 
-    private void setOnTouchListenerToButton() {
+    private void setOnTouchListener(ImageButton button) {
         button.setOnTouchListener(new View.OnTouchListener() {
 
             Point firstDown = new Point();
@@ -114,9 +111,9 @@ class FloatingButton {
                         long currentTime = System.currentTimeMillis();
                         long elapsedTime = currentTime - startTime;
                         if (elapsedTime < 300) {
-                            Log.i("FloatingButton.TAG", "FloatingButton.getCenterOfWindow() = "
-                                    + getCenterOfWindow().toString());
-                            callbacks.onButtonClicked(getCenterOfWindow());
+                            Log.i("FloatingButton.TAG", "FloatingButton.getWindowCenterPoint() = "
+                                    + getWindowCenterPoint().toString());
+                            callbacks.onButtonClicked(getWindowCenterPoint());
                         }
 
                         //tracker.computeCurrentVelocity(1000);
@@ -177,11 +174,7 @@ class FloatingButton {
         windowManager.removeView(buttonContainer);
     }
 
-    private WindowManager getWindowManager(OverlayService service) {
-        return (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
-    }
-
-    private Point getCenterOfWindow() {
+    private Point getWindowCenterPoint() {
         Point currentPoint = new Point(layoutParams.x, layoutParams.y);
 
         currentPoint.offset(layoutParams.width / 2, layoutParams.height / 2);

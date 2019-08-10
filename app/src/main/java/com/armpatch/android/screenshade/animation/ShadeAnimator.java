@@ -8,10 +8,10 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BaseInterpolator;
 import android.view.animation.LinearInterpolator;
 
-public class CircularRevealAnimator {
+public class ShadeAnimator {
 
-    private static final int REVEAL_DURATION = 2000;
-    private static final int HIDE_DURATION = 2000;
+    private static final int REVEAL_DURATION = 600;
+    private static final int HIDE_DURATION = 600;
 
     public static Animator getRevealAnimator(View shadeView) {
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f);

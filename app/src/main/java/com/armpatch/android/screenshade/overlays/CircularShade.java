@@ -1,32 +1,35 @@
 package com.armpatch.android.screenshade.overlays;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.CircularRevealAnimator;
+import com.armpatch.android.screenshade.animation.ShadeAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
+@SuppressLint("ClickableViewAccessibility")
 class CircularShade {
 
     private OverlayService service;
     private WindowManager windowManager;
     private Callbacks callbacks;
 
-    private View shadeWindowView;
+    private View floatingShade;
     private View circleImageView;
 
     private WindowManager.LayoutParams layoutParams;
 
     interface Callbacks {
-        void onShadeRemoved();
+        void onShadeRemoved(Point AnimationEndpoint);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     CircularShade(OverlayManager overlayManager) {
         this.service = overlayManager.service;
         windowManager = getWindowManager();
@@ -34,40 +37,76 @@ class CircularShade {
         callbacks = overlayManager;
 
         inflateViews();
-        setLayoutParams();
-        setOverlayFinalDimensions();
+        setWindowLayoutParams();
+        calculateExpandedCircleDimensions();
     }
 
     void revealFromPoint(Point centerPoint) {
         addViewToWindowManager();
-        setAnimationOrigin(centerPoint);
-        startRevealAnimation();
+        setAnimationCenter(centerPoint);
+        ShadeAnimator.getRevealAnimator(circleImageView).start();
     }
 
-    void hideToPoint() {
-        startHideAnimation();
+    void hideToPoint(Point point) {
+        setAnimationCenter(point);
+        Animator animator = ShadeAnimator.getHideAnimator(circleImageView);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                removeViewFromWindowManager();
+            }
+        });
+        animator.start();
     }
 
     private void inflateViews() {
-        shadeWindowView = View.inflate(service, R.layout.overlay_shade, null);
-        circleImageView = shadeWindowView.findViewById(R.id.shade_circle);
+        floatingShade = View.inflate(service, R.layout.floating_shade, null);
+        circleImageView = floatingShade.findViewById(R.id.shade_circle);
+
+        setOnTouchListener(floatingShade);
     }
 
-    private void setLayoutParams() {
+    private void setOnTouchListener(View v) {
+        v.setOnTouchListener(new View.OnTouchListener() {
+            int DOUBLE_TAP_DURATION = 300;
+            long duration;
+            long lastTime;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                event.setLocation(event.getRawX(), event.getRawY());
+
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        duration = System.currentTimeMillis() - lastTime;
+                        if (duration < DOUBLE_TAP_DURATION) {
+                            Point point = new Point((int)event.getRawX(), (int)event.getRawY());
+                            hideToPoint(point);
+                        }
+                        lastTime = System.currentTimeMillis();
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+    private void setWindowLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
 
-        layoutParams.height = Display.getHeight(service) +
-                Display.getNavBarHeight(service);
+        layoutParams.height = Display.getHeight(service) + Display.getNavBarHeight(service);
     }
 
-    private void setOverlayFinalDimensions() {
+    private void calculateExpandedCircleDimensions() {
         int diameter = 2 * ( Display.getDiagonal(service) + Display.getNavBarHeight(service));
 
         circleImageView.getLayoutParams().height = diameter;
         circleImageView.getLayoutParams().width = diameter;
     }
 
-    private void setAnimationOrigin(Point origin) {
+    private void setAnimationCenter(Point origin) {
         Point offsetPoint = CoordinateMaker.getCenterShiftedPoint(circleImageView, origin);
 
         circleImageView.setX(offsetPoint.x);
@@ -76,18 +115,14 @@ class CircularShade {
 
     private void addViewToWindowManager() {
         try {
-            windowManager.addView(shadeWindowView, layoutParams);
+            windowManager.addView(floatingShade, layoutParams);
         } catch ( WindowManager.BadTokenException e) {
             Log.e("TAG", "View already added to WindowManager.", e);
         }
     }
 
-    private void startRevealAnimation() {
-        CircularRevealAnimator.getRevealAnimator(circleImageView).start();
-    }
-
-    private void startHideAnimation() {
-        CircularRevealAnimator.getHideAnimator(circleImageView).start();
+    private void removeViewFromWindowManager() {
+        windowManager.removeView(floatingShade);
     }
 
     private WindowManager getWindowManager() {
