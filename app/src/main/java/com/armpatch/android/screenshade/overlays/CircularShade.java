@@ -11,38 +11,36 @@ import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.CircularRevealAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
-public class OverlayShade {
+class CircularShade {
 
     private OverlayService service;
     private WindowManager windowManager;
     private Callbacks callbacks;
 
-    private View shadeLayout;
-    private View shadeCircle;
+    private View shadeWindowView;
+    private View circleImageView;
 
     private WindowManager.LayoutParams layoutParams;
-
-    private boolean isShown = false;
 
     interface Callbacks {
         void onShadeRemoved();
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    OverlayShade(OverlayManager overlayManager) {
+    CircularShade(OverlayManager overlayManager) {
         this.service = overlayManager.service;
         windowManager = getWindowManager();
 
-        callbacks = (Callbacks) overlayManager;
+        callbacks = overlayManager;
 
         inflateViews();
         setLayoutParams();
-        setCircleDimensions();
+        setOverlayFinalDimensions();
     }
 
     void revealFromPoint(Point centerPoint) {
         addViewToWindowManager();
-        calculateLayoutPositionFrom(centerPoint);
+        setAnimationOrigin(centerPoint);
         startRevealAnimation();
     }
 
@@ -51,46 +49,45 @@ public class OverlayShade {
     }
 
     private void inflateViews() {
-        shadeLayout = View.inflate(service, R.layout.overlay_shade_layout, null);
-        shadeCircle = shadeLayout.findViewById(R.id.shade_circle);
+        shadeWindowView = View.inflate(service, R.layout.overlay_shade, null);
+        circleImageView = shadeWindowView.findViewById(R.id.shade_circle);
     }
 
     private void setLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
 
-        layoutParams.height = DisplayInfo.getDisplayHeight(service) +
-                DisplayInfo.getNavBarHeight(service);
+        layoutParams.height = Display.getHeight(service) +
+                Display.getNavBarHeight(service);
     }
 
-    private void setCircleDimensions() {
-        int maxRadius = DisplayInfo.getDiagonalLength(service);
+    private void setOverlayFinalDimensions() {
+        int diameter = 2 * ( Display.getDiagonal(service) + Display.getNavBarHeight(service));
 
-        shadeCircle.getLayoutParams().height = maxRadius;
-        shadeCircle.getLayoutParams().width = maxRadius;
+        circleImageView.getLayoutParams().height = diameter;
+        circleImageView.getLayoutParams().width = diameter;
+    }
+
+    private void setAnimationOrigin(Point origin) {
+        Point offsetPoint = CoordinateMaker.getCenterShiftedPoint(circleImageView, origin);
+
+        circleImageView.setX(offsetPoint.x);
+        circleImageView.setY(offsetPoint.y);
     }
 
     private void addViewToWindowManager() {
         try {
-            windowManager.addView(shadeLayout, layoutParams);
-            isShown = true;
+            windowManager.addView(shadeWindowView, layoutParams);
         } catch ( WindowManager.BadTokenException e) {
             Log.e("TAG", "View already added to WindowManager.", e);
         }
     }
 
-    private void calculateLayoutPositionFrom(Point animationOrigin) {
-        Point offsetPoint = CoordinateMaker.getCenterShiftedPoint(shadeCircle, animationOrigin);
-
-        shadeCircle.setX(offsetPoint.x);
-        shadeCircle.setY(offsetPoint.y);
-    }
-
     private void startRevealAnimation() {
-        CircularRevealAnimator.getRevealAnimator(shadeCircle).start();
+        CircularRevealAnimator.getRevealAnimator(circleImageView).start();
     }
 
     private void startHideAnimation() {
-        CircularRevealAnimator.getHideAnimator(shadeCircle).start();
+        CircularRevealAnimator.getHideAnimator(circleImageView).start();
     }
 
     private WindowManager getWindowManager() {

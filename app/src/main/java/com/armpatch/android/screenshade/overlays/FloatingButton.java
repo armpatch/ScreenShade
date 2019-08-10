@@ -13,79 +13,69 @@ import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.ButtonRevealAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
-class MovableButton {
+@SuppressLint("ClickableViewAccessibility")
+class FloatingButton {
 
+    private Callbacks callbacks;
     private OverlayService service;
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
 
-    private View buttonLayout;
+    private View buttonContainer;
     private ImageButton button;
 
     private Point savedPosition;
 
-    private Callbacks callbacks;
 
     interface Callbacks {
         void onButtonClicked(Point currentPoint);
     }
 
-    MovableButton (OverlayManager overlayManager) {
+    FloatingButton(OverlayManager overlayManager) {
         this.service = overlayManager.service;
 
-        callbacks = (Callbacks) overlayManager;
-
+        callbacks = overlayManager;
         windowManager = getWindowManager(service);
 
         inflateViews();
-        setLayoutParams();
-    }
-
-    private void setLayoutParams() {
-        View v = buttonLayout.findViewById(R.id.button_container_view);
-
-        int width = v.getLayoutParams().width;
-        int height = v.getLayoutParams().height;
-
-        float view_margin = 1.2f;
-
-        layoutParams = WindowLayoutParams.getDefaultParams();
-        layoutParams.width = (int) (width * view_margin);
-        layoutParams.height = (int) (height * view_margin);
+        setFloatingWindowDimensions();
     }
 
     void reveal() {
         if (savedPosition == null) setPositionToDefault();
 
         addViewToWindowManager();
-        startRevealAnimation();
+        ButtonRevealAnimator.get(buttonContainer).start();
     }
 
     void hide() {
         removeViewFromWindowManager();
-
     }
 
-    private void updatePosition(Point point) {
-        adjustPointToScreenBoundaries(point);
+    private void setFloatingWindowDimensions() {
+        View v = buttonContainer.findViewById(R.id.button_container_view);
 
-        layoutParams.x = point.x;
-        layoutParams.y = point.y;
+        int width = v.getLayoutParams().width;
+        int height = v.getLayoutParams().height;
 
-        windowManager.updateViewLayout(buttonLayout, layoutParams);
+        // a bigger window gives the button extra space to expand into during the reveal
+        // animation without the sides being cropped.
+        float WINDOW_TO_BUTTON_RATIO = 1.2f;
+
+        layoutParams = WindowLayoutParams.getDefaultParams();
+        layoutParams.width = (int) (width * WINDOW_TO_BUTTON_RATIO);
+        layoutParams.height = (int) (height * WINDOW_TO_BUTTON_RATIO);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void inflateViews() {
-        buttonLayout = View.inflate(service, R.layout.movable_button, null);
-        button = buttonLayout.findViewById(R.id.button);
+        buttonContainer = View.inflate(service, R.layout.movable_button, null);
+        button = buttonContainer.findViewById(R.id.button);
 
-        addTouchListenerToButton();
+        setOnTouchListenerToButton();
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private void addTouchListenerToButton() {
+    private void setOnTouchListenerToButton() {
         button.setOnTouchListener(new View.OnTouchListener() {
 
             Point firstDown = new Point();
@@ -121,10 +111,12 @@ class MovableButton {
                     }
 
                     case MotionEvent.ACTION_UP: {
-                        long currentTime = System.currentTimeMillis(); // TODO
+                        long currentTime = System.currentTimeMillis();
                         long elapsedTime = currentTime - startTime;
                         if (elapsedTime < 300) {
-                            callbacks.onButtonClicked(getCenterPoint());
+                            Log.i("FloatingButton.TAG", "FloatingButton.getCenterOfWindow() = "
+                                    + getCenterOfWindow().toString());
+                            callbacks.onButtonClicked(getCenterOfWindow());
                         }
 
                         //tracker.computeCurrentVelocity(1000);
@@ -138,74 +130,63 @@ class MovableButton {
         });
     }
 
-    private void startRevealAnimation() {
-        ButtonRevealAnimator.get(buttonLayout).start();
+    private void updatePosition(Point point) {
+        movePointIntoScreenBounds(point);
+
+        layoutParams.x = point.x;
+        layoutParams.y = point.y;
+
+        windowManager.updateViewLayout(buttonContainer, layoutParams);
     }
 
     private void setPositionToDefault() {
-        savedPosition = new Point(100,1000); // arbitrary location for testing
+        savedPosition = new Point(300,1200); // arbitrary starting location
 
         layoutParams.x = savedPosition.x;
         layoutParams.y = savedPosition.y;
     }
 
-    private void adjustPointToScreenBoundaries(Point point) {
-        int MARGIN_TOP = 0;
-        int MARGIN_BOTTOM = 0;
-
-
-        int Y_MIN = MARGIN_TOP;
-        int Y_MAX = DisplayInfo.getDisplayHeight(service) - MARGIN_BOTTOM - getHeight();
+    private void movePointIntoScreenBounds(Point originalPoint) {
+        int Y_MIN = 0;
+        int Y_MAX = Display.getHeight(service) - buttonContainer.getLayoutParams().height;
         int X_MIN = 0;
-        int X_MAX = DisplayInfo.getDisplayWidth(service) - getWidth();
+        int X_MAX = Display.getWidth(service) - buttonContainer.getLayoutParams().width;
 
-        if (point.x < X_MIN)
-            point.x = X_MIN;
+        if (originalPoint.x < X_MIN)
+            originalPoint.x = X_MIN;
 
-        if (X_MAX < point.x)
-            point.x = X_MAX;
+        if (X_MAX < originalPoint.x)
+            originalPoint.x = X_MAX;
 
-        if (point.y < Y_MIN)
-            point.y = Y_MIN;
+        if (originalPoint.y < Y_MIN)
+            originalPoint.y = Y_MIN;
 
-        if (Y_MAX < point.y)
-            point.y = Y_MAX;
-
+        if (Y_MAX < originalPoint.y)
+            originalPoint.y = Y_MAX;
     }
 
     private void addViewToWindowManager() {
         try {
-            windowManager.addView(buttonLayout, layoutParams);
+            windowManager.addView(buttonContainer, layoutParams);
         } catch ( WindowManager.BadTokenException e) {
             Log.e("TAG", "View already added to WindowManager.", e);
         }
     }
 
     private void removeViewFromWindowManager() {
-        windowManager.removeView(buttonLayout);
-    }
-
-    private int getHeight() {
-        return buttonLayout.getLayoutParams().height;
-    }
-
-    private int getWidth() {
-        return buttonLayout.getLayoutParams().width;
+        windowManager.removeView(buttonContainer);
     }
 
     private WindowManager getWindowManager(OverlayService service) {
         return (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
     }
 
-    private Point getPosition() {
-        return new Point(layoutParams.x, layoutParams.y);
+    private Point getCenterOfWindow() {
+        Point currentPoint = new Point(layoutParams.x, layoutParams.y);
+
+        currentPoint.offset(layoutParams.width / 2, layoutParams.height / 2);
+
+        return currentPoint;
     }
 
-    private Point getCenterPoint() {
-        Point point = getPosition();
-
-        point.offset(layoutParams.width, layoutParams.height);
-
-        return point;
-    }
 }

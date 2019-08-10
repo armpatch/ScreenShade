@@ -25,7 +25,7 @@ class WindowLayoutParams {
         return params;
     }
 
-    public static int getWindowLayoutType() {
+    private static int getWindowLayoutType() {
         int windowLayoutType;
         if (Build.VERSION.SDK_INT >= 26) {
             windowLayoutType = TYPE_APPLICATION_OVERLAY;

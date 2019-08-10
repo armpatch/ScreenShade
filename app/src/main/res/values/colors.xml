@@ -6,7 +6,7 @@
 
     <color name="color_welcome_screen_background">#111111</color>
 
-    <color name="color_shade_normal">#000000</color>
+    <color name="color_shade_normal">#6F000000</color>
     <color name="color_shade_dimmed">#66000000</color>
 
     <color name="color_controls_frame_background">#40FFFFFF</color>

@@ -6,12 +6,12 @@ import android.widget.Toast;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 
-public class OverlayManager implements MovableButton.Callbacks, OverlayShade.Callbacks {
+public class OverlayManager implements FloatingButton.Callbacks, CircularShade.Callbacks {
 
     OverlayService service;
 
-    private OverlayShade overlayShade;
-    private MovableButton movableButton;
+    private CircularShade circularShade;
+    private FloatingButton floatingButton;
 
     public OverlayManager(OverlayService service) {
         this.service = service;
@@ -19,22 +19,22 @@ public class OverlayManager implements MovableButton.Callbacks, OverlayShade.Cal
     }
 
     private void initOverlays(){
-        overlayShade = new OverlayShade(this);
-        movableButton = new MovableButton(this);
+        circularShade = new CircularShade(this);
+        floatingButton = new FloatingButton(this);
     }
 
     public void revealMovableButton() {
-        movableButton.reveal();
+        floatingButton.reveal();
     }
 
     public void hideAllOverlays() {
-        //overlayShade.hideToPoint();
-        movableButton.hide();
+        //circularShade.hideToPoint();
+        floatingButton.hide();
     }
 
     @Override
     public void onButtonClicked(Point centerPoint) {
-        overlayShade.revealFromPoint(centerPoint);
+        circularShade.revealFromPoint(centerPoint);
         Toast.makeText(service, "click", Toast.LENGTH_SHORT).show();
     }
 

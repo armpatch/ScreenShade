@@ -10,8 +10,7 @@
         android:layout_width="500dp"
         android:layout_height="500dp"
         android:layout_gravity="top|left"
-        android:src="@drawable/expanding_circle">
-
+        android:src="@drawable/shade_circle">
     </ImageView>
 
 </FrameLayout>
