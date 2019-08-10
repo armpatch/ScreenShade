@@ -28,7 +28,7 @@ public class OverlayManager implements MovableButton.Callbacks, OverlayShade.Cal
     }
 
     public void hideAllOverlays() {
-        //overlayShade.hide();
+        //overlayShade.hideToPoint();
         movableButton.hide();
     }
 

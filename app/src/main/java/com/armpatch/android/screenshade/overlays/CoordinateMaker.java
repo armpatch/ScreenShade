@@ -3,13 +3,7 @@ package com.armpatch.android.screenshade.overlays;
 import android.graphics.Point;
 import android.view.View;
 
-public class CoordinateView {
-
-    private View view;
-
-    public CoordinateView (View v) {
-        view = v;
-    }
+class CoordinateMaker {
 
     static Point getCenterPoint(View v, Point topLeftPoint) {
         int width = v.getWidth();
@@ -23,14 +17,20 @@ public class CoordinateView {
         return centerPoint;
     }
 
-    public Point getCenterShiftedPoint(Point topLeftPoint) {
-        int width = view.getWidth();
-        int height = view.getHeight();
+    /**
+     * @param v
+     * @param centerPoint
+     * @return a Point above and left of the centerPoint, which when used to position the view
+     * will center it on the centerPoint
+     */
+    static Point getCenterShiftedPoint(View v, Point centerPoint) {
+        int width = v.getLayoutParams().width;
+        int height = v.getLayoutParams().height;
 
         Point shiftedPoint = new Point();
 
-        shiftedPoint.x = topLeftPoint.x - width/2;
-        shiftedPoint.y = topLeftPoint.y - height/2;
+        shiftedPoint.x = centerPoint.x - width/2;
+        shiftedPoint.y = centerPoint.y - height/2;
 
         return shiftedPoint;
     }

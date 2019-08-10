@@ -42,11 +42,11 @@ public class OverlayShade {
 
     void revealFromPoint(Point centerPoint) {
         addViewToWindowManager();
-        setCirclePosition(centerPoint);
+        calculateLayoutPositionFrom(centerPoint);
         startRevealAnimation();
     }
 
-    void hide() {
+    void hideToPoint() {
         startHideAnimation();
     }
 
@@ -55,22 +55,18 @@ public class OverlayShade {
         shadeCircle = shadeLayout.findViewById(R.id.shade_circle);
     }
 
+    private void setLayoutParams() {
+        layoutParams = WindowLayoutParams.getDefaultParams();
+
+        layoutParams.height = DisplayInfo.getDisplayHeight(service) +
+                DisplayInfo.getNavBarHeight(service);
+    }
+
     private void setCircleDimensions() {
         int maxRadius = DisplayInfo.getDiagonalLength(service);
 
         shadeCircle.getLayoutParams().height = maxRadius;
         shadeCircle.getLayoutParams().width = maxRadius;
-    }
-
-    private void setCirclePosition(Point centerPoint) {
-        Point offsetPoint = new Point();
-
-        CoordinateView coordinateView = new CoordinateView(shadeCircle);
-
-        offsetPoint = coordinateView.getCenterShiftedPoint(centerPoint);
-
-        shadeCircle.setX(offsetPoint.x);
-        shadeCircle.setY(offsetPoint.y);
     }
 
     private void addViewToWindowManager() {
@@ -82,11 +78,11 @@ public class OverlayShade {
         }
     }
 
-    private void setLayoutParams() {
-        layoutParams = WindowLayoutParams.getDefaultParams();
+    private void calculateLayoutPositionFrom(Point animationOrigin) {
+        Point offsetPoint = CoordinateMaker.getCenterShiftedPoint(shadeCircle, animationOrigin);
 
-        layoutParams.height = DisplayInfo.getDisplayHeight(service) +
-                DisplayInfo.getNavBarHeight(service);
+        shadeCircle.setX(offsetPoint.x);
+        shadeCircle.setY(offsetPoint.y);
     }
 
     private void startRevealAnimation() {
