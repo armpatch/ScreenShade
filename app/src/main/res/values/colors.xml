@@ -7,10 +7,9 @@
     <color name="color_welcome_screen_background">#111111</color>
 
     <color name="color_shade_normal">#000000</color>
-    <color name="color_shade_dimmed">#66000000</color>
 
     <color name="color_controls_frame_background">#40FFFFFF</color>
-    <color name="color_controls_enable_button">#0099CC</color>
-    <color name="color_controls_hide_controls_button">#E53935</color>
+    <color name="color_button_normal">#0099CC</color>
+    <color name="color_button_pressed">#00455E</color>
 
 </resources>

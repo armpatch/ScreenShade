@@ -10,8 +10,8 @@ import android.view.animation.LinearInterpolator;
 
 public class ShadeAnimator {
 
-    private static final int REVEAL_DURATION = 600;
-    private static final int HIDE_DURATION = 600;
+    private static final int REVEAL_DURATION = 400;
+    private static final int HIDE_DURATION = 400;
 
     public static Animator getRevealAnimator(View shadeView) {
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f);

@@ -19,4 +19,11 @@
         android:rotation="-90"
         android:src="@drawable/button" />
 
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@mipmap/white_bulb"
+        />
+
 </FrameLayout>

@@ -23,6 +23,7 @@ class CircularShade {
 
     private View floatingShade;
     private View circleImageView;
+    Point buttonPoint;
 
     private WindowManager.LayoutParams layoutParams;
 
@@ -42,6 +43,7 @@ class CircularShade {
     }
 
     void revealFromPoint(Point centerPoint) {
+        buttonPoint = centerPoint;
         addViewToWindowManager();
         setAnimationCenter(centerPoint);
         ShadeAnimator.getRevealAnimator(circleImageView).start();
@@ -58,6 +60,8 @@ class CircularShade {
         });
         animator.start();
     }
+
+
 
     private void inflateViews() {
         floatingShade = View.inflate(service, R.layout.floating_shade, null);
@@ -82,7 +86,7 @@ class CircularShade {
                         duration = System.currentTimeMillis() - lastTime;
                         if (duration < DOUBLE_TAP_DURATION) {
                             Point point = new Point((int)event.getRawX(), (int)event.getRawY());
-                            hideToPoint(point);
+                            hideToPoint(buttonPoint);
                         }
                         lastTime = System.currentTimeMillis();
                         break;

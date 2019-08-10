@@ -39,7 +39,7 @@ public class ScreenShadeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         context = inflater.getContext();
 
-        View view = inflater.inflate(R.layout.start_screen_fragment, container, false );
+        View view = inflater.inflate(R.layout.fragment_start_screen, container, false );
 
         initButtons(view);
         return view;
