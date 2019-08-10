@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.activities.ScreenShadeActivity;
+import com.armpatch.android.screenshade.activities.StartScreenActivity;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 public class ControlsNotification {
@@ -64,7 +64,7 @@ public class ControlsNotification {
     }
 
     private PendingIntent getPendingIntentForActivity() {
-        Intent intent = new Intent(context, ScreenShadeActivity.class);
+        Intent intent = new Intent(context, StartScreenActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return PendingIntent.getActivity(context, 0, intent, 0);
     }

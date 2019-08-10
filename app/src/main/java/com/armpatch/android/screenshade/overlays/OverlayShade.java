@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.ShadeAnimator;
+import com.armpatch.android.screenshade.animation.CircularRevealAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 public class OverlayShade {
@@ -86,11 +86,11 @@ public class OverlayShade {
     }
 
     private void startRevealAnimation() {
-        ShadeAnimator.getRevealAnimator(shadeCircle).start();
+        CircularRevealAnimator.getRevealAnimator(shadeCircle).start();
     }
 
     private void startHideAnimation() {
-        ShadeAnimator.getHideAnimator(shadeCircle).start();
+        CircularRevealAnimator.getHideAnimator(shadeCircle).start();
     }
 
     private WindowManager getWindowManager() {
