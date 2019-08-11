@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.animation;
+package com.armpatch.android.screenshade.overlays.animation;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;

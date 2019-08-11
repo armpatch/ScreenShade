@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,8 +25,10 @@ public class ScreenShadeFragment extends Fragment {
     private static final int REQUEST_OVERLAY_CODE = 2;
 
     // variables
-    private Context appContext; //TODO rename, this should not be called this, because it's to vague
+    private Context appContext;
     private Intent serviceIntent;
+
+    private boolean serviceIsRunning;
 
 
     @Override
@@ -45,15 +48,26 @@ public class ScreenShadeFragment extends Fragment {
         return view;
     }
 
-    private void initButtons(View v) {
-        // ui
-        Button startServiceButton = v.findViewById(R.id.start_button);
-        startServiceButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        delayedStart(1000);
+    }
+
+    private void delayedStart(int delayInMS) {
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
             @Override
-            public void onClick(View v) {
+            public void run() {
                 attemptServiceStart();
             }
-        });
+        };
+        handler.postDelayed(runnable, delayInMS);
+    }
+
+
+    private void initButtons(View v) {
+
 
         Button feedbackButton = v.findViewById(R.id.send_feedback);
         feedbackButton.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +83,6 @@ public class ScreenShadeFragment extends Fragment {
             requestPermission();
         } else {
             startService();
-            //closeActivity();
         }
     }
 
@@ -93,10 +106,7 @@ public class ScreenShadeFragment extends Fragment {
     private void startService() {
         serviceIntent = OverlayService.getIntent(appContext);
         appContext.startService(serviceIntent);
-    }
-
-    private void stopOverlayService() {
-        appContext.stopService(serviceIntent);
+        serviceIsRunning = true;
     }
 
     private void sendFeedback() {
@@ -111,11 +121,11 @@ public class ScreenShadeFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopOverlayService();
+
+        if (serviceIsRunning) appContext.stopService(serviceIntent);
     }
 
     @Override

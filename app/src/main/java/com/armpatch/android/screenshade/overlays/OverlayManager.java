@@ -5,35 +5,35 @@ import android.graphics.Point;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 
-public class OverlayManager implements FloatingButton.Callbacks, CircularShade.Callbacks {
+public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Callbacks {
 
     OverlayService service;
 
-    private CircularShade circularShade;
-    private FloatingButton floatingButton;
+    private ShadeOverlay shadeOverlay;
+    private ButtonOverlay buttonOverlay;
 
     public OverlayManager(OverlayService service) {
         this.service = service;
         initOverlays();
     }
 
+    public void start() {
+        buttonOverlay.reveal();
+    }
+
+    public void stop() {
+        shadeOverlay.hide();
+        buttonOverlay.hide();
+    }
+
     private void initOverlays(){
-        circularShade = new CircularShade(this);
-        floatingButton = new FloatingButton(this);
-    }
-
-    public void revealMovableButton() {
-        floatingButton.reveal();
-    }
-
-    public void hideAllOverlays() { //TODO crashes if overlays have not been started yet
-        circularShade.hide();
-        floatingButton.hide();
+        shadeOverlay = new ShadeOverlay(this);
+        buttonOverlay = new ButtonOverlay(this);
     }
 
     @Override
     public void onButtonClicked(Point centerPoint) {
-        circularShade.revealFromPoint(centerPoint);
+        shadeOverlay.revealFromPoint(centerPoint);
 }
 
     @Override

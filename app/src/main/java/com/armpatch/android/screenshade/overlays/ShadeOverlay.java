@@ -12,11 +12,11 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.ShadeAnimatorFactory;
+import com.armpatch.android.screenshade.overlays.animation.ShadeAnimatorFactory;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
-class CircularShade {
+class ShadeOverlay {
 
     private OverlayService service;
     private WindowManager windowManager;
@@ -37,7 +37,7 @@ class CircularShade {
         void onShadeRemoved(Point AnimationEndpoint);
     }
 
-    CircularShade(OverlayManager overlayManager) {
+    ShadeOverlay(OverlayManager overlayManager) {
         this.service = overlayManager.service;
         windowManager = getWindowManager();
 

@@ -13,11 +13,11 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.ButtonAnimatorFactory;
+import com.armpatch.android.screenshade.overlays.animation.ButtonAnimatorFactory;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
-class FloatingButton {
+class ButtonOverlay {
 
     private Callbacks callbacks;
     private OverlayService service;
@@ -37,7 +37,7 @@ class FloatingButton {
         void onButtonClicked(Point currentPoint);
     }
 
-    FloatingButton(OverlayManager overlayManager) {
+    ButtonOverlay(OverlayManager overlayManager) {
         this.service = overlayManager.service;
 
         callbacks = overlayManager;
@@ -61,7 +61,7 @@ class FloatingButton {
 
     void reveal() {
         if (!revealAnimator.isRunning() && !hideAnimator.isRunning()){
-            if (savedPosition == null) setStartingPosition();
+            if (savedPosition == null) setDefaultPosition();
 
             addViewToWindowManager();
 
@@ -161,8 +161,10 @@ class FloatingButton {
         windowManager.updateViewLayout(buttonContainer, layoutParams);
     }
 
-    private void setStartingPosition() {
-        savedPosition = new Point(300,1200); // arbitrary starting location
+    private void setDefaultPosition() {
+        savedPosition = new Point(
+                450,
+                800);
 
         layoutParams.x = savedPosition.x;
         layoutParams.y = savedPosition.y;
