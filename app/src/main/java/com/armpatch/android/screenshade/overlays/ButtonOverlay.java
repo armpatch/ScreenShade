@@ -48,17 +48,6 @@ class ButtonOverlay {
         setAnimators();
     }
 
-    private void setAnimators() {
-        revealAnimator = (ObjectAnimator) ButtonAnimatorFactory.getRevealAnimator(buttonContainer);
-        hideAnimator = (ObjectAnimator) ButtonAnimatorFactory.getHideAnimator(buttonContainer);
-        hideAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                removeViewFromWindowManager();
-            }
-        });
-    }
-
     void reveal() {
         if (!revealAnimator.isRunning() && !hideAnimator.isRunning()){
             if (savedPosition == null) setDefaultPosition();
@@ -77,6 +66,13 @@ class ButtonOverlay {
             hideAnimator.start();
     }
 
+    private void inflateViews() {
+        buttonContainer = View.inflate(service, R.layout.button, null);
+        ImageButton button = buttonContainer.findViewById(R.id.button);
+
+        setOnTouchListener(button);
+    }
+
     private void setInitialLayoutParams() {
         View v = buttonContainer.findViewById(R.id.button_container_view);
 
@@ -92,11 +88,15 @@ class ButtonOverlay {
         layoutParams.height = (int) (height * WINDOW_TO_BUTTON_RATIO);
     }
 
-    private void inflateViews() {
-        buttonContainer = View.inflate(service, R.layout.floating_button, null);
-        ImageButton button = buttonContainer.findViewById(R.id.button);
-
-        setOnTouchListener(button);
+    private void setAnimators() {
+        revealAnimator = (ObjectAnimator) ButtonAnimatorFactory.getRevealAnimator(buttonContainer);
+        hideAnimator = (ObjectAnimator) ButtonAnimatorFactory.getHideAnimator(buttonContainer);
+        hideAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                removeViewFromWindowManager();
+            }
+        });
     }
 
     private void setOnTouchListener(ImageButton button) {
@@ -131,10 +131,12 @@ class ButtonOverlay {
                                 location.y + movementY
                         );
                         setPosition(newPosition);
+                        setDragLook(true);
                         break;
                     }
 
                     case MotionEvent.ACTION_UP: {
+                        setDragLook(false);
                         long currentTime = System.currentTimeMillis();
                         long elapsedTime = currentTime - startTime;
                         if (elapsedTime < 300) {
@@ -215,4 +217,12 @@ class ButtonOverlay {
         return currentPoint;
     }
 
+    private void setDragLook(boolean isDragging) {
+        if (isDragging) {
+            buttonContainer.setAlpha(0.5f);
+
+        } else {
+            buttonContainer.setAlpha(1f);
+        }
+    }
 }

@@ -45,7 +45,7 @@ class ShadeOverlay {
 
         inflateViews();
         setInitialLayoutParams();
-        calculateExpandedCircleDimensions();
+        setVisibleShadeDimensions();
         setAnimators();
     }
 
@@ -84,14 +84,14 @@ class ShadeOverlay {
     }
 
     private void inflateViews() {
-        shadeFrame = View.inflate(service, R.layout.floating_shade, null);
+        shadeFrame = View.inflate(service, R.layout.shade, null);
         shadeImageView = shadeFrame.findViewById(R.id.shade_circle);
 
-        setOnTouchListener(shadeFrame);
+        setOnTouchListener();
     }
 
-    private void setOnTouchListener(View v) {
-        v.setOnTouchListener(new View.OnTouchListener() {
+    private void setOnTouchListener() {
+        shadeFrame.setOnTouchListener(new View.OnTouchListener() {
             int DOUBLE_TAP_DURATION = 300;
             long duration;
             long lastTime;
@@ -119,7 +119,7 @@ class ShadeOverlay {
         layoutParams.height = Display.getHeight(service) + Display.getNavBarHeight(service);
     }
 
-    private void calculateExpandedCircleDimensions() {
+    private void setVisibleShadeDimensions() {
         int diameter = 2 * ( Display.getDiagonal(service) + Display.getNavBarHeight(service));
 
         shadeImageView.getLayoutParams().height = diameter;
