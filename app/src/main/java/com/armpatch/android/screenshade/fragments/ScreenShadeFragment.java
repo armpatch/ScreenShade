@@ -30,7 +30,6 @@ public class ScreenShadeFragment extends Fragment {
 
     private boolean serviceIsRunning;
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +50,11 @@ public class ScreenShadeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        delayedStart(1000);
+        delayedStart();
     }
 
-    private void delayedStart(int delayInMS) {
+
+    private void delayedStart() {
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
@@ -62,7 +62,8 @@ public class ScreenShadeFragment extends Fragment {
                 attemptServiceStart();
             }
         };
-        handler.postDelayed(runnable, delayInMS);
+        int DELAYED_START_TIME = 500;
+        handler.postDelayed(runnable, DELAYED_START_TIME);
     }
 
 
@@ -96,6 +97,7 @@ public class ScreenShadeFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (!Settings.canDrawOverlays((appContext))) {
+
             //create dialog that asks to enable permission
             Toast toast = Toast.makeText(appContext, R.string.permission_denied_toast, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.TOP, 0,200);

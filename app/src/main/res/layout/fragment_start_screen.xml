@@ -19,10 +19,22 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="169dp"
         android:layout_marginTop="333dp"
+        android:textAlignment="center"
+        android:text="Tap Button to Show Overlay \n Double Tap Overlay to Hide"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="200dp"
+        android:textAlignment="center"
         android:text="Drag Me"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
