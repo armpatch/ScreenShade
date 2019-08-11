@@ -1,5 +1,8 @@
 package com.armpatch.android.screenshade.overlays;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
@@ -10,7 +13,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.ButtonAnimator;
+import com.armpatch.android.screenshade.animation.ButtonAnimatorFactory;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -25,6 +28,11 @@ class FloatingButton {
     private View buttonContainer;
     private Point savedPosition;
 
+    private ObjectAnimator revealAnimator;
+    private ObjectAnimator hideAnimator;
+
+    private boolean isAddedToWindowManager;
+
     interface Callbacks {
         void onButtonClicked(Point currentPoint);
     }
@@ -36,21 +44,40 @@ class FloatingButton {
         windowManager = (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
 
         inflateViews();
-        setFloatingWindowDimensions();
+        setInitialLayoutParams();
+        setAnimators();
+    }
+
+    private void setAnimators() {
+        revealAnimator = (ObjectAnimator) ButtonAnimatorFactory.getRevealAnimator(buttonContainer);
+        hideAnimator = (ObjectAnimator) ButtonAnimatorFactory.getHideAnimator(buttonContainer);
+        hideAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                removeViewFromWindowManager();
+            }
+        });
     }
 
     void reveal() {
-        if (savedPosition == null) setPositionToDefault();
+        if (!revealAnimator.isRunning() && !hideAnimator.isRunning()){
+            if (savedPosition == null) setStartingPosition();
 
-        addViewToWindowManager();
-        ButtonAnimator.get(buttonContainer).start();
+            addViewToWindowManager();
+
+            revealAnimator.start();
+        }
     }
 
     void hide() {
-        removeViewFromWindowManager();
+        if (!isAddedToWindowManager)
+            return;
+
+        if (!revealAnimator.isRunning() && !hideAnimator.isRunning())
+            hideAnimator.start();
     }
 
-    private void setFloatingWindowDimensions() {
+    private void setInitialLayoutParams() {
         View v = buttonContainer.findViewById(R.id.button_container_view);
 
         int width = v.getLayoutParams().width;
@@ -103,7 +130,7 @@ class FloatingButton {
                                 location.x + movementX,
                                 location.y + movementY
                         );
-                        updatePosition(newPosition);
+                        setPosition(newPosition);
                         break;
                     }
 
@@ -111,8 +138,6 @@ class FloatingButton {
                         long currentTime = System.currentTimeMillis();
                         long elapsedTime = currentTime - startTime;
                         if (elapsedTime < 300) {
-                            Log.i("FloatingButton.TAG", "FloatingButton.getWindowCenterPoint() = "
-                                    + getWindowCenterPoint().toString());
                             callbacks.onButtonClicked(getWindowCenterPoint());
                         }
 
@@ -127,7 +152,7 @@ class FloatingButton {
         });
     }
 
-    private void updatePosition(Point point) {
+    private void setPosition(Point point) {
         movePointIntoScreenBounds(point);
 
         layoutParams.x = point.x;
@@ -136,7 +161,7 @@ class FloatingButton {
         windowManager.updateViewLayout(buttonContainer, layoutParams);
     }
 
-    private void setPositionToDefault() {
+    private void setStartingPosition() {
         savedPosition = new Point(300,1200); // arbitrary starting location
 
         layoutParams.x = savedPosition.x;
@@ -165,13 +190,19 @@ class FloatingButton {
     private void addViewToWindowManager() {
         try {
             windowManager.addView(buttonContainer, layoutParams);
+            isAddedToWindowManager = true;
         } catch ( WindowManager.BadTokenException e) {
             Log.e("TAG", "View already added to WindowManager.", e);
         }
     }
 
     private void removeViewFromWindowManager() {
-        windowManager.removeView(buttonContainer);
+        try {
+            windowManager.removeView(buttonContainer);
+            isAddedToWindowManager = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private Point getWindowCenterPoint() {

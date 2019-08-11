@@ -26,8 +26,8 @@ public class OverlayManager implements FloatingButton.Callbacks, CircularShade.C
         floatingButton.reveal();
     }
 
-    public void hideAllOverlays() {
-        //circularShade.hideToPoint();
+    public void hideAllOverlays() { //TODO crashes if overlays have not been started yet
+        circularShade.hide();
         floatingButton.hide();
     }
 
@@ -38,6 +38,6 @@ public class OverlayManager implements FloatingButton.Callbacks, CircularShade.C
 
     @Override
     public void onShadeRemoved(Point AnimationEndpoint) {
-        revealMovableButton();
+
     }
 }

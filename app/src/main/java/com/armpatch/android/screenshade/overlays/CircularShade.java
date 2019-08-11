@@ -2,6 +2,7 @@ package com.armpatch.android.screenshade.overlays;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
@@ -11,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.animation.ShadeAnimator;
+import com.armpatch.android.screenshade.animation.ShadeAnimatorFactory;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -21,11 +22,16 @@ class CircularShade {
     private WindowManager windowManager;
     private Callbacks callbacks;
 
-    private View floatingShade;
-    private View circleImageView;
-    Point buttonPoint;
+    private View shadeFrame;
+    private View shadeImageView;
+    private Point viewCenterPoint;
+
+    private ObjectAnimator revealAnimator;
+    private ObjectAnimator hideAnimator;
 
     private WindowManager.LayoutParams layoutParams;
+
+    private boolean isAddedToWindowManager;
 
     interface Callbacks {
         void onShadeRemoved(Point AnimationEndpoint);
@@ -38,36 +44,50 @@ class CircularShade {
         callbacks = overlayManager;
 
         inflateViews();
-        setWindowLayoutParams();
+        setInitialLayoutParams();
         calculateExpandedCircleDimensions();
+        setAnimators();
     }
 
     void revealFromPoint(Point centerPoint) {
-        buttonPoint = centerPoint;
-        addViewToWindowManager();
-        setAnimationCenter(centerPoint);
-        ShadeAnimator.getRevealAnimator(circleImageView).start();
+        if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
+            this.viewCenterPoint = centerPoint;
+            addViewToWindowManager();
+            setImageViewXYFrom(centerPoint);
+
+            revealAnimator.start();
+        }
     }
 
-    void hideToPoint(Point point) {
-        setAnimationCenter(point);
-        Animator animator = ShadeAnimator.getHideAnimator(circleImageView);
-        animator.addListener(new AnimatorListenerAdapter() {
+    void hide() {
+        if (!isAddedToWindowManager)
+            return;
+
+        if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
+            setImageViewXYFrom(viewCenterPoint);
+
+            hideAnimator.start();
+        }
+    }
+
+    private void setAnimators() {
+        revealAnimator = (ObjectAnimator) ShadeAnimatorFactory.getRevealAnimator(shadeImageView);
+
+        hideAnimator = (ObjectAnimator) ShadeAnimatorFactory.getHideAnimator(shadeImageView);
+        hideAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 removeViewFromWindowManager();
+
             }
         });
-        animator.start();
     }
 
-
-
     private void inflateViews() {
-        floatingShade = View.inflate(service, R.layout.floating_shade, null);
-        circleImageView = floatingShade.findViewById(R.id.shade_circle);
+        shadeFrame = View.inflate(service, R.layout.floating_shade, null);
+        shadeImageView = shadeFrame.findViewById(R.id.shade_circle);
 
-        setOnTouchListener(floatingShade);
+        setOnTouchListener(shadeFrame);
     }
 
     private void setOnTouchListener(View v) {
@@ -81,23 +101,19 @@ class CircularShade {
 
                 event.setLocation(event.getRawX(), event.getRawY());
 
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        duration = System.currentTimeMillis() - lastTime;
-                        if (duration < DOUBLE_TAP_DURATION) {
-                            Point point = new Point((int)event.getRawX(), (int)event.getRawY());
-                            hideToPoint(buttonPoint);
-                        }
-                        lastTime = System.currentTimeMillis();
-                        break;
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    duration = System.currentTimeMillis() - lastTime;
+                    if (duration < DOUBLE_TAP_DURATION) {
+                        hide();
                     }
+                    lastTime = System.currentTimeMillis();
                 }
                 return false;
             }
         });
     }
 
-    private void setWindowLayoutParams() {
+    private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
 
         layoutParams.height = Display.getHeight(service) + Display.getNavBarHeight(service);
@@ -106,27 +122,33 @@ class CircularShade {
     private void calculateExpandedCircleDimensions() {
         int diameter = 2 * ( Display.getDiagonal(service) + Display.getNavBarHeight(service));
 
-        circleImageView.getLayoutParams().height = diameter;
-        circleImageView.getLayoutParams().width = diameter;
+        shadeImageView.getLayoutParams().height = diameter;
+        shadeImageView.getLayoutParams().width = diameter;
     }
 
-    private void setAnimationCenter(Point origin) {
-        Point offsetPoint = CoordinateMaker.getCenterShiftedPoint(circleImageView, origin);
+    private void setImageViewXYFrom(Point origin) {
+        Point offsetPoint = CoordinateMaker.getCenterShiftedPoint(shadeImageView, origin);
 
-        circleImageView.setX(offsetPoint.x);
-        circleImageView.setY(offsetPoint.y);
+        shadeImageView.setX(offsetPoint.x);
+        shadeImageView.setY(offsetPoint.y);
     }
 
     private void addViewToWindowManager() {
         try {
-            windowManager.addView(floatingShade, layoutParams);
+            windowManager.addView(shadeFrame, layoutParams);
+            isAddedToWindowManager = true;
         } catch ( WindowManager.BadTokenException e) {
             Log.e("TAG", "View already added to WindowManager.", e);
         }
     }
 
     private void removeViewFromWindowManager() {
-        windowManager.removeView(floatingShade);
+        try {
+            windowManager.removeView(shadeFrame);
+            isAddedToWindowManager = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private WindowManager getWindowManager() {

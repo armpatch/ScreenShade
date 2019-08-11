@@ -20,8 +20,8 @@ class CoordinateMaker {
     /**
      * @param v
      * @param centerPoint
-     * @return a Point above and left of the centerPoint, which when used to position the view
-     * will center it on the centerPoint
+     * @return a Point above and left of the viewCenterPoint, which when used to position the view
+     * will center it on the viewCenterPoint
      */
     static Point getCenterShiftedPoint(View v, Point centerPoint) {
         int width = v.getLayoutParams().width;

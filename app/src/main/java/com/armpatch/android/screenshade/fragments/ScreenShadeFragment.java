@@ -24,7 +24,7 @@ public class ScreenShadeFragment extends Fragment {
     private static final int REQUEST_OVERLAY_CODE = 2;
 
     // variables
-    private Context context; //TODO rename, this should not be called context, because it's to vague
+    private Context appContext; //TODO rename, this should not be called this, because it's to vague
     private Intent serviceIntent;
 
 
@@ -37,7 +37,7 @@ public class ScreenShadeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        context = inflater.getContext();
+        appContext = inflater.getContext();
 
         View view = inflater.inflate(R.layout.fragment_start_screen, container, false );
 
@@ -65,7 +65,7 @@ public class ScreenShadeFragment extends Fragment {
     }
 
     private void attemptServiceStart() {
-        if (!Settings.canDrawOverlays((context))) {
+        if (!Settings.canDrawOverlays((appContext))) {
             requestPermission();
         } else {
             startService();
@@ -75,28 +75,28 @@ public class ScreenShadeFragment extends Fragment {
 
     private void requestPermission() {
         Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:" + context.getPackageName()));
+                Uri.parse("package:" + appContext.getPackageName()));
         startActivityForResult(i, REQUEST_OVERLAY_CODE );
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (!Settings.canDrawOverlays((context))) {
+        if (!Settings.canDrawOverlays((appContext))) {
             //create dialog that asks to enable permission
-            Toast toast = Toast.makeText(context, R.string.permission_denied_toast, Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(appContext, R.string.permission_denied_toast, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.TOP, 0,200);
             toast.show();
         }
     }
 
     private void startService() {
-        serviceIntent = OverlayService.getIntent(context);
-        context.startService(serviceIntent);
+        serviceIntent = OverlayService.getIntent(appContext);
+        appContext.startService(serviceIntent);
     }
 
     private void stopOverlayService() {
-        context.stopService(serviceIntent);
+        appContext.stopService(serviceIntent);
     }
 
     private void sendFeedback() {
@@ -106,8 +106,8 @@ public class ScreenShadeFragment extends Fragment {
         emailIntent.putExtra(Intent.EXTRA_EMAIL, myEmail);
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ScreenShade - Feedback");
 
-        if (emailIntent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(emailIntent);
+        if (emailIntent.resolveActivity(appContext.getPackageManager()) != null) {
+            appContext.startActivity(emailIntent);
         }
     }
 
