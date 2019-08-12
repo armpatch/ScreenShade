@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.overlays.animation.ButtonAnimatorFactory;
+import com.armpatch.android.screenshade.overlays.animation.DimmerAnimatorFactory;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -26,6 +27,8 @@ class ButtonOverlay {
     private WindowManager.LayoutParams layoutParams;
 
     private View buttonContainer;
+    ImageButton imageButton;
+
     private Point savedPosition;
 
     private ObjectAnimator revealAnimator;
@@ -68,9 +71,9 @@ class ButtonOverlay {
 
     private void inflateViews() {
         buttonContainer = View.inflate(service, R.layout.button, null);
-        ImageButton button = buttonContainer.findViewById(R.id.button);
+        imageButton = buttonContainer.findViewById(R.id.button);
 
-        setOnTouchListener(button);
+        setOnTouchListener(imageButton);
     }
 
     private void setInitialLayoutParams() {
@@ -79,7 +82,7 @@ class ButtonOverlay {
         int width = v.getLayoutParams().width;
         int height = v.getLayoutParams().height;
 
-        // a bigger window gives the button extra space to expand into during the reveal
+        // a bigger window gives the imageButton extra space to expand into during the reveal
         // animation without the sides being cropped.
         float WINDOW_TO_BUTTON_RATIO = 1.2f;
 
@@ -218,11 +221,13 @@ class ButtonOverlay {
     }
 
     private void setDragLook(boolean isDragging) {
-        if (isDragging) {
-            buttonContainer.setAlpha(0.5f);
+        View button = buttonContainer;
+        float minAlpha = 0.5f;
 
+        if (isDragging) {
+            button.setAlpha(minAlpha);
         } else {
-            buttonContainer.setAlpha(1f);
+            DimmerAnimatorFactory.getAnimator(button, minAlpha, 1.f).start();
         }
     }
 }

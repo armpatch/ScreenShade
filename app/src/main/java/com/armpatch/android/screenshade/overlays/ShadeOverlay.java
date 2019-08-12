@@ -71,9 +71,10 @@ class ShadeOverlay {
     }
 
     private void setAnimators() {
-        revealAnimator = (ObjectAnimator) ShadeAnimatorFactory.getRevealAnimator(shadeImageView);
+        revealAnimator = ShadeAnimatorFactory.getRevealAnimatorSet(shadeImageView);
 
-        hideAnimator = (ObjectAnimator) ShadeAnimatorFactory.getHideAnimator(shadeImageView);
+
+        hideAnimator = ShadeAnimatorFactory.getHideAnimator(shadeImageView);
         hideAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

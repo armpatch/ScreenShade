@@ -1,24 +1,29 @@
 package com.armpatch.android.screenshade.overlays.animation;
 
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BaseInterpolator;
-import android.view.animation.LinearInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 public class ShadeAnimatorFactory {
 
     private static final int REVEAL_DURATION = 400;
     private static final int HIDE_DURATION = 400;
 
-    public static Animator getRevealAnimator(View shadeView) {
-        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f);
-        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0f, 1f);
+
+    private static final float MIN_SIZE = 0f;
+    private static final float MIN_ALPHA = .6f;
+
+
+    public static ObjectAnimator getRevealAnimatorSet(View shadeView) {
+        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, MIN_SIZE, 1f);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, MIN_SIZE, 1f);
+        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat(View.ALPHA, MIN_ALPHA, 1f);
 
         ObjectAnimator animator =
-                ObjectAnimator.ofPropertyValuesHolder(shadeView, scaleX, scaleY);
+                ObjectAnimator.ofPropertyValuesHolder(shadeView, scaleX, scaleY, alpha);
 
         BaseInterpolator interpolator = new AccelerateInterpolator();
 
@@ -28,14 +33,16 @@ public class ShadeAnimatorFactory {
         return animator;
     }
 
-    public static Animator getHideAnimator(View shadeView) {
-        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0f);
-        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0f);
+    public static ObjectAnimator getHideAnimator(View shadeView) {
+        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, MIN_SIZE);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, MIN_SIZE);
+        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, MIN_ALPHA);
+
 
         ObjectAnimator animator =
-                ObjectAnimator.ofPropertyValuesHolder(shadeView, scaleX, scaleY);
+                ObjectAnimator.ofPropertyValuesHolder(shadeView, scaleX, scaleY, alpha);
 
-        BaseInterpolator interpolator = new LinearInterpolator();
+        BaseInterpolator interpolator = new DecelerateInterpolator();
 
         animator.setInterpolator(interpolator);
         animator.setDuration(HIDE_DURATION);

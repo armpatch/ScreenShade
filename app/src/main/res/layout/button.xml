@@ -8,7 +8,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:src="@drawable/button_frame" />
+        android:src="@drawable/button_frame"
+        android:clickable="false"/>
 
     <ImageButton
         android:id="@+id/button"
@@ -25,6 +26,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:src="@mipmap/white_bulb"
+        android:clickable="false"
         />
 
 </FrameLayout>
