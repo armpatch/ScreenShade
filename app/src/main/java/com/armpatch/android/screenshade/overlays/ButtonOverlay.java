@@ -119,8 +119,8 @@ class ButtonOverlay {
             Point location = new Point();
             Long startTime;
 
-            int movementX;
-            int movementY;
+            int dX;
+            int dY;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -138,16 +138,15 @@ class ButtonOverlay {
                     }
 
                     case MotionEvent.ACTION_MOVE: {
-                        movementX = (int) event.getX() - firstDown.x;
-                        movementY = (int) event.getY() - firstDown.y;
+                        dX = (int) event.getX() - firstDown.x;
+                        dY = (int) event.getY() - firstDown.y;
 
-                        if (2 < Math.abs(movementX) && 2 < Math.abs(movementY))
-                            makeButtonTransparent();
+                        if (isOverThreshold(dX, dY)) makeButtonTransparent();
 
                         Point newPosition = new Point();
                         newPosition.set(
-                                location.x + movementX,
-                                location.y + movementY
+                                location.x + dX,
+                                location.y + dY
                         );
                         updatePosition(newPosition);
                         break;
@@ -157,7 +156,7 @@ class ButtonOverlay {
                         makeButtonOpaque();
                         long currentTime = System.currentTimeMillis();
                         long timeSincePress = currentTime - startTime;
-                        if (timeSincePress < 300 && Math.abs(movementX) < 2 && Math.abs(movementY) < 2) {
+                        if (timeSincePress < 300 && isUnderThreshold(dX, dY)) {
                             callbacks.onButtonClicked(getWindowCenterPoint());
                             fadeAwayAnimator.start();
                             //shrinkAnimator.start();
@@ -251,14 +250,15 @@ class ButtonOverlay {
     }
 
     private boolean pointIsInTrashZone(Point point) {
-        int Y_MIN = Display.getHeight(service) - 400;
+        int zoneHeight = 400;
+        return Display.getHeight(service) - zoneHeight < point.y;
+    }
 
-        boolean result = Y_MIN < point.y;
+    private boolean isOverThreshold(int dx, int dy) {
+        return 2 < Math.abs(dx) && 2 < Math.abs(dy);
+    }
 
-        Log.i("coordinate", "--- Is in Zone --- " + result);
-        return result;
-    } // TODO method refactor out of class
-
-
-
+    private boolean isUnderThreshold(int dx, int dy) {
+        return Math.abs(dx) < 2 && Math.abs(dy) < 2;
+    }
 }
