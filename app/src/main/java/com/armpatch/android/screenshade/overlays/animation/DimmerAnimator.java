@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.animation.BaseInterpolator;
 import android.view.animation.LinearInterpolator;
 
-public class DimmerAnimatorFactory {
+public class DimmerAnimator {
 
     private static int DURATION = 200;
     private static float MIN_ALPHA = 0.7f;

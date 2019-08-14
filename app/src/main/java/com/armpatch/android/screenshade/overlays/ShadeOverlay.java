@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.overlays.animation.ShadeAnimatorFactory;
+import com.armpatch.android.screenshade.overlays.animation.ShadeAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -71,10 +71,10 @@ class ShadeOverlay {
     }
 
     private void setAnimators() {
-        revealAnimator = ShadeAnimatorFactory.getRevealAnimatorSet(shadeImageView);
+        revealAnimator = ShadeAnimator.getRevealAnimatorSet(shadeImageView);
 
 
-        hideAnimator = ShadeAnimatorFactory.getHideAnimator(shadeImageView);
+        hideAnimator = ShadeAnimator.getHideAnimator(shadeImageView);
         hideAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

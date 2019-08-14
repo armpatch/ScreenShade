@@ -7,7 +7,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BaseInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
-public class ShadeAnimatorFactory {
+public class ShadeAnimator {
 
     private static final int REVEAL_DURATION = 400;
     private static final int HIDE_DURATION = 400;
