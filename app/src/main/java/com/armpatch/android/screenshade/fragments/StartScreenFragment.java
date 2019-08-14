@@ -28,7 +28,7 @@ public class StartScreenFragment extends Fragment {
     private Context appContext;
     private Intent serviceIntent;
 
-    private boolean serviceIsRunning;
+    private boolean serviceIsRunning; // TODO create a better solution for running service check
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,37 +53,34 @@ public class StartScreenFragment extends Fragment {
         delayedStart();
     }
 
-
     private void delayedStart() {
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                attemptServiceStart();
+                attemptToStartService();
             }
         };
         int DELAYED_START_TIME = 500;
         handler.postDelayed(runnable, DELAYED_START_TIME);
     }
 
-
     private void initButtons(View v) {
-
-
         Button feedbackButton = v.findViewById(R.id.send_feedback);
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendFeedback();
+                sendEmailFeedback();
             }
         });
     }
 
-    private void attemptServiceStart() {
+    private void attemptToStartService() {
         if (!Settings.canDrawOverlays((appContext))) {
             requestPermission();
         } else {
-            startService();
+            serviceIntent = OverlayService.getIntent(appContext);
+            appContext.startService(serviceIntent);
         }
     }
 
@@ -105,13 +102,7 @@ public class StartScreenFragment extends Fragment {
         }
     }
 
-    private void startService() {
-        serviceIntent = OverlayService.getIntent(appContext);
-        appContext.startService(serviceIntent);
-        serviceIsRunning = true;
-    }
-
-    private void sendFeedback() {
+    private void sendEmailFeedback() {
         final String[] myEmail = {"aaronpatch.developer@gmail.com"};
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
         emailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
@@ -126,8 +117,7 @@ public class StartScreenFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if (serviceIsRunning) appContext.stopService(serviceIntent);
+        appContext.stopService(serviceIntent);
     }
 
     @Override

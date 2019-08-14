@@ -31,6 +31,8 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
         buttonOverlay = new ButtonOverlay(this);
     }
 
+    // Callback methods
+
     @Override
     public void onButtonClicked(Point centerPoint) {
         shadeOverlay.revealFromPoint(centerPoint);
@@ -39,5 +41,10 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
     @Override
     public void onShadeRemoved() {
         buttonOverlay.reveal();
+    }
+
+    @Override
+    public void onButtonTrashed() {
+        service.stopSelf();
     }
 }

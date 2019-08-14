@@ -39,6 +39,7 @@ class ButtonOverlay {
 
     interface Callbacks {
         void onButtonClicked(Point currentPoint);
+        void onButtonTrashed();
     }
 
     ButtonOverlay(OverlayManager overlayManager) {
@@ -164,6 +165,7 @@ class ButtonOverlay {
                         Point upPoint = new Point((int)event.getRawX(), (int)event.getRawY());
                         if (isInTrashZone(upPoint)) {
                             hide();
+                            callbacks.onButtonTrashed();
                         }
                         //tracker.computeCurrentVelocity(1000);
                         //float velocityX = tracker.getXVelocity();
