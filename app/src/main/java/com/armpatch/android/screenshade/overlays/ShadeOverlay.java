@@ -34,7 +34,7 @@ class ShadeOverlay {
     private boolean isAddedToWindowManager;
 
     interface Callbacks {
-        void onShadeRemoved(Point AnimationEndpoint);
+        void onShadeRemoved();
     }
 
     ShadeOverlay(OverlayManager overlayManager) {
@@ -79,7 +79,7 @@ class ShadeOverlay {
             @Override
             public void onAnimationEnd(Animator animation) {
                 removeViewFromWindowManager();
-
+                callbacks.onShadeRemoved();
             }
         });
     }

@@ -119,6 +119,9 @@ class ButtonOverlay {
             Point location = new Point();
             Long startTime;
 
+            int movementX;
+            int movementY;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 //VelocityTracker tracker = VelocityTracker.obtain();
@@ -135,12 +138,11 @@ class ButtonOverlay {
                     }
 
                     case MotionEvent.ACTION_MOVE: {
-                        int movementX = (int) event.getX() - firstDown.x;
-                        int movementY = (int) event.getY() - firstDown.y;
+                        movementX = (int) event.getX() - firstDown.x;
+                        movementY = (int) event.getY() - firstDown.y;
 
                         if (2 < Math.abs(movementX) && 2 < Math.abs(movementY))
                             makeButtonTransparent();
-
 
                         Point newPosition = new Point();
                         newPosition.set(
@@ -154,10 +156,11 @@ class ButtonOverlay {
                     case MotionEvent.ACTION_UP: {
                         makeButtonOpaque();
                         long currentTime = System.currentTimeMillis();
-                        long elapsedTime = currentTime - startTime;
-                        if (elapsedTime < 300 ) {
+                        long timeSincePress = currentTime - startTime;
+                        if (timeSincePress < 300 && Math.abs(movementX) < 2 && Math.abs(movementY) < 2) {
                             callbacks.onButtonClicked(getWindowCenterPoint());
                             fadeAwayAnimator.start();
+                            //shrinkAnimator.start();
                         }
                         Point upPoint = new Point((int)event.getRawX(), (int)event.getRawY());
                         if (pointIsInTrashZone(upPoint)) {
@@ -255,5 +258,7 @@ class ButtonOverlay {
         Log.i("coordinate", "--- Is in Zone --- " + result);
         return result;
     } // TODO method refactor out of class
+
+
 
 }

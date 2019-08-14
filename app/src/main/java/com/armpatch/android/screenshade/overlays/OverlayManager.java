@@ -37,7 +37,7 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
 }
 
     @Override
-    public void onShadeRemoved(Point AnimationEndpoint) {
-
+    public void onShadeRemoved() {
+        buttonOverlay.reveal();
     }
 }
