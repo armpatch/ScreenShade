@@ -27,7 +27,7 @@ class ButtonOverlay {
     private WindowManager.LayoutParams layoutParams;
 
     private View buttonContainer;
-    ImageButton imageButton;
+    private ImageButton imageButton;
 
     private Point savedPosition;
 
@@ -134,18 +134,18 @@ class ButtonOverlay {
                                 location.y + movementY
                         );
                         setPosition(newPosition);
-                        setDragLook(true);
+                        makeButtonTransparent();
                         break;
                     }
 
                     case MotionEvent.ACTION_UP: {
-                        setDragLook(false);
+                        makeButtonOpaque();
                         long currentTime = System.currentTimeMillis();
                         long elapsedTime = currentTime - startTime;
                         if (elapsedTime < 300) {
                             callbacks.onButtonClicked(getWindowCenterPoint());
                         }
-
+                        isPointInTrashZone(new Point((int)event.getRawX(), (int)event.getRawY()));
                         //tracker.computeCurrentVelocity(1000);
                         //float velocityX = tracker.getXVelocity();
                         //float velocityY = tracker.getYVelocity();
@@ -220,14 +220,33 @@ class ButtonOverlay {
         return currentPoint;
     }
 
-    private void setDragLook(boolean isDragging) {
-        View button = buttonContainer;
+    private void makeButtonTransparent() {
         float minAlpha = 0.5f;
 
-        if (isDragging) {
-            button.setAlpha(minAlpha);
-        } else {
-            DimmerAnimatorFactory.getAnimator(button, minAlpha, 1.f).start();
-        }
+        buttonContainer.setAlpha(minAlpha);
+    }
+
+    private void makeButtonOpaque() {
+        float minAlpha = 0.5f;
+
+        DimmerAnimatorFactory.getAnimator(buttonContainer,
+                buttonContainer.getAlpha(), 1f).start();
+    }
+
+    private boolean isPointInTrashZone(Point point) {
+        int Y_MIN = Display.getHeight(service) - 400;
+        int offCenterline = 100;
+
+
+
+        int X_MIN =  Display.getWidth(service)/2 - offCenterline;
+        int X_MAX =  Display.getWidth(service)/2 + offCenterline;
+
+        boolean result =    Y_MIN < point.y &&
+                            point.x < X_MAX &&
+                            X_MIN < point.x;
+
+        Log.i("coordinate", "--- Is in Zone --- " + result);
+        return result;
     }
 }
