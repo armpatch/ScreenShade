@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.services.OverlayService;
 
-public class ScreenShadeFragment extends Fragment {
+public class StartScreenFragment extends Fragment {
 
     private static final int REQUEST_OVERLAY_CODE = 2;
 

@@ -162,7 +162,7 @@ class ButtonOverlay {
                             //shrinkAnimator.start();
                         }
                         Point upPoint = new Point((int)event.getRawX(), (int)event.getRawY());
-                        if (pointIsInTrashZone(upPoint)) {
+                        if (isInTrashZone(upPoint)) {
                             hide();
                         }
                         //tracker.computeCurrentVelocity(1000);
@@ -249,7 +249,7 @@ class ButtonOverlay {
                 buttonContainer.getAlpha(), 1f).start();
     }
 
-    private boolean pointIsInTrashZone(Point point) {
+    private boolean isInTrashZone(Point point) {
         int zoneHeight = 400;
         return Display.getHeight(service) - zoneHeight < point.y;
     }
