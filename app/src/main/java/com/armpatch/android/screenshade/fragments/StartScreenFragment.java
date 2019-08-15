@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.UserFeedback;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 public class StartScreenFragment extends Fragment {
@@ -28,11 +29,10 @@ public class StartScreenFragment extends Fragment {
     private Context appContext;
     private Intent serviceIntent;
 
-    private boolean serviceIsRunning; // TODO create a better solution for running service check
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
@@ -70,7 +70,7 @@ public class StartScreenFragment extends Fragment {
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendEmailFeedback();
+                UserFeedback.sendEmailFeedback(appContext);
             }
         });
     }
@@ -102,26 +102,10 @@ public class StartScreenFragment extends Fragment {
         }
     }
 
-    private void sendEmailFeedback() {
-        final String[] myEmail = {"aaronpatch.developer@gmail.com"};
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, myEmail);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ScreenShade - Feedback");
-
-        if (emailIntent.resolveActivity(appContext.getPackageManager()) != null) {
-            appContext.startActivity(emailIntent);
-        }
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         appContext.stopService(serviceIntent);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 }

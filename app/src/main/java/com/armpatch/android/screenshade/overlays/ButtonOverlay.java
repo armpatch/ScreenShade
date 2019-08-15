@@ -10,12 +10,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.overlays.animation.ButtonAnimator;
-import com.armpatch.android.screenshade.overlays.animation.DimmerAnimator;
-import com.armpatch.android.screenshade.overlays.animation.FadeAnimator;
+import com.armpatch.android.screenshade.overlays.animators.ButtonAnimator;
+import com.armpatch.android.screenshade.overlays.animators.DimmerAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -28,12 +26,11 @@ class ButtonOverlay {
     private WindowManager.LayoutParams layoutParams;
 
     private View buttonContainer;
-
     private Point savedPosition;
 
     private ObjectAnimator expandAnimator;
     private ObjectAnimator shrinkAnimator;
-    private ObjectAnimator fadeAwayAnimator;
+    private ObjectAnimator buttonClickedAnimator;
 
     private boolean isAddedToWindowManager;
 
@@ -73,9 +70,8 @@ class ButtonOverlay {
 
     private void inflateViews() {
         buttonContainer = View.inflate(service, R.layout.button, null);
-        ImageButton imageButton = buttonContainer.findViewById(R.id.button);
 
-        setOnTouchListener(imageButton);
+        setOnTouchListener(buttonContainer.findViewById(R.id.button));
     }
 
     private void setInitialLayoutParams() {
@@ -104,17 +100,19 @@ class ButtonOverlay {
             }
         });
 
-        fadeAwayAnimator = FadeAnimator.getFadeAwayAnimator(buttonContainer);
-        fadeAwayAnimator.addListener(new AnimatorListenerAdapter() {
+        buttonClickedAnimator = ButtonAnimator.getHideAnimator(buttonContainer);
+        buttonClickedAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 removeViewFromWindowManager();
+                callbacks.onButtonClicked(getWindowCenterPoint());
             }
         });
+
     }
 
-    private void setOnTouchListener(ImageButton button) {
-        button.setOnTouchListener(new View.OnTouchListener() {
+    private void setOnTouchListener(View view) {
+        view.setOnTouchListener(new View.OnTouchListener() {
 
             Point firstDown = new Point();
             Point location = new Point();
@@ -158,12 +156,10 @@ class ButtonOverlay {
                         long currentTime = System.currentTimeMillis();
                         long timeSincePress = currentTime - startTime;
                         if (timeSincePress < 300 && isUnderThreshold(dX, dY)) {
-                            callbacks.onButtonClicked(getWindowCenterPoint());
-                            fadeAwayAnimator.start();
-                            //shrinkAnimator.start();
+                            buttonClickedAnimator.start();
                         }
                         Point upPoint = new Point((int)event.getRawX(), (int)event.getRawY());
-                        if (isInTrashZone(upPoint)) {
+                        if (Display.isInTrashZone(service, upPoint)) {
                             hide();
                             callbacks.onButtonTrashed();
                         }
@@ -179,7 +175,7 @@ class ButtonOverlay {
     }
 
     private void updatePosition(Point point) {
-        movePointIntoScreenBounds(point);
+        Display.moveIntoScreenBounds(buttonContainer, service, point);
 
         layoutParams.x = point.x;
         layoutParams.y = point.y;
@@ -194,25 +190,6 @@ class ButtonOverlay {
 
         layoutParams.x = savedPosition.x;
         layoutParams.y = savedPosition.y;
-    }
-
-    private void movePointIntoScreenBounds(Point originalPoint) {
-        int Y_MIN = 0;
-        int Y_MAX = Display.getHeight(service) - buttonContainer.getLayoutParams().height;
-        int X_MIN = 0;
-        int X_MAX = Display.getWidth(service) - buttonContainer.getLayoutParams().width;
-
-        if (originalPoint.x < X_MIN)
-            originalPoint.x = X_MIN;
-
-        if (X_MAX < originalPoint.x)
-            originalPoint.x = X_MAX;
-
-        if (originalPoint.y < Y_MIN)
-            originalPoint.y = Y_MIN;
-
-        if (Y_MAX < originalPoint.y)
-            originalPoint.y = Y_MAX;
     }
 
     private void addViewToWindowManager() {
@@ -249,11 +226,6 @@ class ButtonOverlay {
     private void makeButtonOpaque() {
         DimmerAnimator.getAnimator(buttonContainer,
                 buttonContainer.getAlpha(), 1f).start();
-    }
-
-    private boolean isInTrashZone(Point point) {
-        int zoneHeight = 400;
-        return Display.getHeight(service) - zoneHeight < point.y;
     }
 
     private boolean isOverThreshold(int dx, int dy) {
