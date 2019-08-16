@@ -188,9 +188,7 @@ class ButtonOverlay {
     }
 
     private void setDefaultPosition() {
-        savedPosition = new Point(
-                450,
-                800);
+        savedPosition = new Point(450, 800);
 
         layoutParams.x = savedPosition.x;
         layoutParams.y = savedPosition.y;
