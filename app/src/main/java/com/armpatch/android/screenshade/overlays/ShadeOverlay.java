@@ -41,8 +41,8 @@ class ShadeOverlay {
     ShadeOverlay(OverlayManager overlayManager) {
         this.service = overlayManager.service;
         windowManager = getWindowManager();
-
         callbacks = overlayManager;
+        displayInfo = new DisplayInfo(service);
 
         inflateViews();
         setInitialLayoutParams();
@@ -124,8 +124,6 @@ class ShadeOverlay {
         layoutParams.width = displayInfo.getWidth();
 
         layoutParams.height = displayInfo.getHeight() + displayInfo.getNavBarHeight();
-
-
     }
 
 
