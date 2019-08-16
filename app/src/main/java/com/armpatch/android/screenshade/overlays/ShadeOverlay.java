@@ -117,11 +117,11 @@ class ShadeOverlay {
     private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
 
-        layoutParams.height = Display.getHeight(service) + Display.getNavBarHeight(service);
+        layoutParams.height = Display.getHeight() + Display.getNavBarHeight();
     }
 
     private void setVisibleShadeDimensions() {
-        int diameter = 2 * ( Display.getDiagonal(service) + Display.getNavBarHeight(service));
+        int diameter = 2 * ( Display.getDiagonal() + Display.getNavBarHeight());
 
         shadeImageView.getLayoutParams().height = diameter;
         shadeImageView.getLayoutParams().width = diameter;

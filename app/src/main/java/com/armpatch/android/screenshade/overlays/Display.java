@@ -7,35 +7,50 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
-class Display {
+public class Display {
 
+    private static int screenHeight;
+    private static int screenWidth;
+    private static int diagonalLength;
+    private static int navBarHeight;
 
-    static int getHeight(Context context) {
-        return getDisplayMetrics(context).heightPixels;
+    // public methods
+
+    public Display(Context context) {
+        screenHeight = getDisplayMetrics(context).heightPixels;
+        screenWidth = getDisplayMetrics(context).widthPixels;
+        diagonalLength = (int) Math.sqrt(Math.pow(screenHeight,2)+ Math.pow(screenWidth,2));
+        setNavBarHeight(context);
     }
 
-    static int getWidth(Context context) {
-        return getDisplayMetrics(context).widthPixels;
+    static int getHeight() {
+        return screenHeight;
     }
 
-    public static int getDiagonal(Context context) {
-        int height = getHeight(context);
-        int width = getWidth(context);
-
-        // pythagorean theorem
-        return (int) Math.sqrt( (height * height) + (width * width) );
+    static int getWidth() {
+        return screenWidth;
     }
 
-    static int getNavBarHeight(Context context) {
+    static int getDiagonal() {
+        return diagonalLength;
+    }
+
+    static int getNavBarHeight() {
+        return navBarHeight;
+    }
+
+    // private methods
+
+    private static void setNavBarHeight(Context context) {
         Resources resources = context.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height",
                 "dimen", "android");
 
         if (resourceId > 0) {
-            return resources.getDimensionPixelSize(resourceId);
+            navBarHeight = resources.getDimensionPixelSize(resourceId);
         } else {
             Log.i("TAG", "NavBarHeight returned 0");
-            return 0;
+            navBarHeight = 0;
         }
     }
 
