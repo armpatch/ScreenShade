@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.overlays.animators;
+package com.armpatch.android.screenshade.overlays.animation;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;

@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.overlays.Display;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 public class StartScreenFragment extends Fragment {
@@ -28,7 +27,6 @@ public class StartScreenFragment extends Fragment {
     // variables
     private Context appContext;
     private Intent serviceIntent;
-    private Display display;
 
     private boolean serviceIsRunning; // TODO create a better solution for running service check
 
@@ -43,7 +41,6 @@ public class StartScreenFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         appContext = inflater.getContext();
-        display = new Display(appContext);
 
         View view = inflater.inflate(R.layout.fragment_start_screen, container, false );
 

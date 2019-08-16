@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.overlays.animators.ShadeAnimator;
+import com.armpatch.android.screenshade.overlays.animation.ShadeAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -21,6 +21,7 @@ class ShadeOverlay {
     private OverlayService service;
     private WindowManager windowManager;
     private Callbacks callbacks;
+    private DisplayInfo displayInfo;
 
     private View shadeFrame;
     private View shadeImageView;
@@ -45,7 +46,7 @@ class ShadeOverlay {
 
         inflateViews();
         setInitialLayoutParams();
-        setVisibleShadeDimensions();
+        setShadeDimensions();
         setAnimators();
     }
 
@@ -53,7 +54,7 @@ class ShadeOverlay {
         if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
             this.viewCenterPoint = centerPoint;
             addViewToWindowManager();
-            setImageViewXYFrom(centerPoint);
+            setShadeCirclePosition(centerPoint);
 
             revealAnimator.start();
         }
@@ -64,7 +65,7 @@ class ShadeOverlay {
             return;
 
         if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
-            setImageViewXYFrom(viewCenterPoint);
+            setShadeCirclePosition(viewCenterPoint);
 
             hideAnimator.start();
         }
@@ -116,19 +117,30 @@ class ShadeOverlay {
 
     private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
-        layoutParams.height = Display.getHeight() + Display.getNavBarHeight();
+        layoutParams.width = displayInfo.getWidth();
+
+        layoutParams.height = displayInfo.getHeight() + displayInfo.getNavBarHeight();
+
+
     }
 
-    private void setVisibleShadeDimensions() {
-        int diameter = 2 * ( Display.getDiagonal() + Display.getNavBarHeight());
 
-        shadeImageView.getLayoutParams().height = diameter;
-        shadeImageView.getLayoutParams().width = diameter;
+
+
+
+    private void setShadeDimensions() {
+        int circleDiameter = 2 * ( displayInfo.getDiagonal() + displayInfo.getNavBarHeight());
+
+        shadeImageView.getLayoutParams().height = circleDiameter;
+        shadeImageView.getLayoutParams().width = circleDiameter;
     }
 
-    private void setImageViewXYFrom(Point origin) {
-        Point offsetPoint = Display.getCenterShiftedPoint(shadeImageView, origin);
+    private void setShadeCirclePosition(Point origin) {
+        Point offsetPoint = DisplayInfo.getCenterShiftedPoint(shadeImageView, origin);
 
         shadeImageView.setX(offsetPoint.x);
         shadeImageView.setY(offsetPoint.y);

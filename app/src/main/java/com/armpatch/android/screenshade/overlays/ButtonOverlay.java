@@ -23,12 +23,12 @@ class ButtonOverlay {
 
     private Callbacks callbacks;
     private OverlayService service;
+    private DisplayInfo displayInfo;
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
 
     private View buttonContainer;
-
     private Point savedPosition;
 
     private ObjectAnimator expandAnimator;
@@ -198,9 +198,9 @@ class ButtonOverlay {
 
     private void movePointIntoScreenBounds(Point originalPoint) {
         int Y_MIN = 0;
-        int Y_MAX = Display.getHeight() - buttonContainer.getLayoutParams().height;
+        int Y_MAX = displayInfo.getHeight() - buttonContainer.getLayoutParams().height;
         int X_MIN = 0;
-        int X_MAX = Display.getWidth() - buttonContainer.getLayoutParams().width;
+        int X_MAX = displayInfo.getWidth() - buttonContainer.getLayoutParams().width;
 
         if (originalPoint.x < X_MIN)
             originalPoint.x = X_MIN;
@@ -252,8 +252,8 @@ class ButtonOverlay {
     }
 
     private boolean isInTrashZone(Point point) {
-        int zoneHeight = 400;
-        return Display.getHeight() - zoneHeight < point.y;
+        int zoneHeight = 200;
+        return displayInfo.getHeight() - zoneHeight < point.y;
     }
 
     private boolean isOverThreshold(int dx, int dy) {
