@@ -1,10 +1,10 @@
-package com.armpatch.android.screenshade.overlays.animation;
+package com.armpatch.android.screenshade.overlays.animators;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.view.View;
-import android.view.animation.AnticipateInterpolator;
 import android.view.animation.BaseInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 public class ButtonAnimator {
@@ -33,10 +33,10 @@ public class ButtonAnimator {
         ObjectAnimator animator =
                 ObjectAnimator.ofPropertyValuesHolder(buttonView, scaleX, scaleY, alpha);
 
-        BaseInterpolator interpolator = new AnticipateInterpolator();
+        BaseInterpolator interpolator = new LinearInterpolator();
 
         animator.setInterpolator(interpolator);
-        animator.setDuration(400);
+        animator.setDuration(200);
 
         return animator;
     }

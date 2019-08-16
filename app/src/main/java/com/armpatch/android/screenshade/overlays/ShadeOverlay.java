@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.overlays.animation.ShadeAnimator;
+import com.armpatch.android.screenshade.overlays.animators.ShadeAnimator;
 import com.armpatch.android.screenshade.services.OverlayService;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -128,7 +128,7 @@ class ShadeOverlay {
     }
 
     private void setImageViewXYFrom(Point origin) {
-        Point offsetPoint = CoordinateMaker.getCenterShiftedPoint(shadeImageView, origin);
+        Point offsetPoint = Display.getCenterShiftedPoint(shadeImageView, origin);
 
         shadeImageView.setX(offsetPoint.x);
         shadeImageView.setY(offsetPoint.y);
