@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">ScreenShade</string>
-    <string name="start_overlay_text">START</string>
 
     <string name="permission_denied_toast">Permission is needed to use overlay.</string>
 
@@ -10,11 +9,9 @@
     <string name="channel_name">Channel Name</string>
     <string name="channel_description">Channel Description</string>
 
-    <string name="instruction_title">"<u>Instructions:</u>"</string>
-    <string name="instructions">
-        Tap the overlay to toggle transparency. \nSwipe up on the overlay to dismiss. \n
-    </string>
-    <string name="string_instruction_2">Tap to show shade overlay.</string>
-    <string name="string_instruction_1">Tap to hide controls.</string>
     <string name="send_feedback">send feedback</string>
+
+    <string name="drag_to_dismiss">drag down to dismiss</string>
+
+
 </resources>

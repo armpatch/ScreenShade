@@ -126,10 +126,6 @@ class ShadeOverlay {
         layoutParams.height = displayInfo.getHeight() + displayInfo.getNavBarHeight();
     }
 
-
-
-
-
     private void setShadeDimensions() {
         int circleDiameter = 2 * ( displayInfo.getDiagonal() + displayInfo.getNavBarHeight());
 

@@ -5,7 +5,7 @@
         android:width="50dp"
         android:height="50dp">
         <shape android:shape="oval">
-            <solid android:color="@color/button_color" />
+            <solid android:color="@color/color_button_normal" />
         </shape>
     </item>
 
