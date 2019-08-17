@@ -44,6 +44,7 @@ class ButtonOverlay {
 
     ButtonOverlay(OverlayManager overlayManager) {
         this.service = overlayManager.service;
+        displayInfo = new DisplayInfo(service);
 
         callbacks = overlayManager;
         windowManager = (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
