@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.overlays;
+package com.armpatch.android.screenshade.overlay;
 
 import android.app.Service;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.fragments;
+package com.armpatch.android.screenshade.fragment;
 
 import android.os.Bundle;
 

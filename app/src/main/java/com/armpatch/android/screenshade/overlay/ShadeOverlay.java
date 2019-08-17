@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.overlays;
+package com.armpatch.android.screenshade.overlay;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -6,45 +6,38 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.overlays.animation.ShadeAnimator;
-import com.armpatch.android.screenshade.services.OverlayService;
+import com.armpatch.android.screenshade.animation.ShadeAnimator;
 
 @SuppressLint("ClickableViewAccessibility")
-class ShadeOverlay {
+class ShadeOverlay extends Overlay{
 
-    private OverlayService service;
-    private WindowManager windowManager;
     private Callbacks callbacks;
-    private DisplayInfo displayInfo;
 
-    private View shadeFrame;
-    private View shadeImageView;
+    private View shadeCircle;
     private Point viewCenterPoint;
 
     private ObjectAnimator revealAnimator;
     private ObjectAnimator hideAnimator;
 
-    private WindowManager.LayoutParams layoutParams;
 
-    private boolean isAddedToWindowManager;
-
-    interface Callbacks {
+    interface Callbacks{
         void onShadeRemoved();
     }
 
-    ShadeOverlay(OverlayManager overlayManager) {
-        this.service = overlayManager.service;
-        windowManager = getWindowManager();
-        callbacks = overlayManager;
-        displayInfo = new DisplayInfo(service);
+    ShadeOverlay(Callbacks callbacks, Context appContext) {
+        super(appContext);
 
-        inflateViews();
+        this.callbacks = callbacks;
+
+        windowManagerView = View.inflate(appContext, R.layout.shade, null);
+        shadeCircle = windowManagerView.findViewById(R.id.shade_circle);
+
+        setOnTouchListener();
         setInitialLayoutParams();
         setShadeDimensions();
         setAnimators();
@@ -52,7 +45,7 @@ class ShadeOverlay {
 
     void revealFromPoint(Point centerPoint) {
         if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
-            this.viewCenterPoint = centerPoint;
+            viewCenterPoint = centerPoint;
             addViewToWindowManager();
             setShadeCirclePosition(centerPoint);
 
@@ -72,10 +65,9 @@ class ShadeOverlay {
     }
 
     private void setAnimators() {
-        revealAnimator = ShadeAnimator.getRevealAnimatorSet(shadeImageView);
+        revealAnimator = ShadeAnimator.getRevealAnimatorSet(shadeCircle);
 
-
-        hideAnimator = ShadeAnimator.getHideAnimator(shadeImageView);
+        hideAnimator = ShadeAnimator.getHideAnimator(shadeCircle);
         hideAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -85,15 +77,8 @@ class ShadeOverlay {
         });
     }
 
-    private void inflateViews() {
-        shadeFrame = View.inflate(service, R.layout.shade, null);
-        shadeImageView = shadeFrame.findViewById(R.id.shade_circle);
-
-        setOnTouchListener();
-    }
-
     private void setOnTouchListener() {
-        shadeFrame.setOnTouchListener(new View.OnTouchListener() {
+        windowManagerView.setOnTouchListener(new View.OnTouchListener() {
             int DOUBLE_TAP_DURATION = 300;
             long duration;
             long lastTime;
@@ -115,7 +100,7 @@ class ShadeOverlay {
         });
     }
 
-    private void setInitialLayoutParams() {
+    void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
@@ -129,36 +114,16 @@ class ShadeOverlay {
     private void setShadeDimensions() {
         int circleDiameter = 2 * ( displayInfo.getDiagonal() + displayInfo.getNavBarHeight());
 
-        shadeImageView.getLayoutParams().height = circleDiameter;
-        shadeImageView.getLayoutParams().width = circleDiameter;
+        shadeCircle.getLayoutParams().height = circleDiameter;
+        shadeCircle.getLayoutParams().width = circleDiameter;
     }
 
     private void setShadeCirclePosition(Point origin) {
-        Point offsetPoint = DisplayInfo.getCenterShiftedPoint(shadeImageView, origin);
+        Point offsetPoint = DisplayInfo.getCenterShiftedPoint(shadeCircle, origin);
 
-        shadeImageView.setX(offsetPoint.x);
-        shadeImageView.setY(offsetPoint.y);
+        shadeCircle.setX(offsetPoint.x);
+        shadeCircle.setY(offsetPoint.y);
     }
 
-    private void addViewToWindowManager() {
-        try {
-            windowManager.addView(shadeFrame, layoutParams);
-            isAddedToWindowManager = true;
-        } catch ( WindowManager.BadTokenException e) {
-            Log.e("TAG", "View already added to WindowManager.", e);
-        }
-    }
 
-    private void removeViewFromWindowManager() {
-        try {
-            windowManager.removeView(shadeFrame);
-            isAddedToWindowManager = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private WindowManager getWindowManager() {
-        return (WindowManager) service.getSystemService(Context.WINDOW_SERVICE);
-    }
 }

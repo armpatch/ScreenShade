@@ -1,11 +1,11 @@
-package com.armpatch.android.screenshade.activities;
+package com.armpatch.android.screenshade.activity;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import com.armpatch.android.screenshade.fragments.SingleFragmentActivity;
-import com.armpatch.android.screenshade.fragments.StartScreenFragment;
+import com.armpatch.android.screenshade.fragment.SingleFragmentActivity;
+import com.armpatch.android.screenshade.fragment.StartScreenFragment;
 
 public class StartScreenActivity extends SingleFragmentActivity {
 

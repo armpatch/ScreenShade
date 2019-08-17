@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.notifications;
+package com.armpatch.android.screenshade.notification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,8 +13,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.activities.StartScreenActivity;
-import com.armpatch.android.screenshade.services.OverlayService;
+import com.armpatch.android.screenshade.activity.StartScreenActivity;
+import com.armpatch.android.screenshade.service.OverlayService;
 
 public class ControlsNotification {
 

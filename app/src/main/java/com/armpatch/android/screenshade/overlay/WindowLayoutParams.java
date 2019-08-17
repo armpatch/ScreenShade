@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.overlays;
+package com.armpatch.android.screenshade.overlay;
 
 import android.annotation.SuppressLint;
 import android.graphics.PixelFormat;

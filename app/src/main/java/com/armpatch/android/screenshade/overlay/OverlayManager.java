@@ -1,8 +1,8 @@
-package com.armpatch.android.screenshade.overlays;
+package com.armpatch.android.screenshade.overlay;
 
 import android.graphics.Point;
 
-import com.armpatch.android.screenshade.services.OverlayService;
+import com.armpatch.android.screenshade.service.OverlayService;
 
 
 public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Callbacks {
@@ -27,15 +27,15 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
     }
 
     private void initOverlays(){
-        shadeOverlay = new ShadeOverlay(this);
-        buttonOverlay = new ButtonOverlay(this);
+        shadeOverlay = new ShadeOverlay(this, service);
+        buttonOverlay = new ButtonOverlay(this, service);
     }
 
     // Callback methods
 
     @Override
-    public void onButtonClicked(Point centerPoint) {
-        shadeOverlay.revealFromPoint(centerPoint);
+    public void onButtonClicked(Point center) {
+        shadeOverlay.revealFromPoint(center);
 }
 
     @Override

@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.fragments;
+package com.armpatch.android.screenshade.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.armpatch.android.screenshade.R;
-import com.armpatch.android.screenshade.services.OverlayService;
+import com.armpatch.android.screenshade.service.OverlayService;
 
 public class StartScreenFragment extends Fragment {
 

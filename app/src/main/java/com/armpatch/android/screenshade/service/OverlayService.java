@@ -1,4 +1,4 @@
-package com.armpatch.android.screenshade.services;
+package com.armpatch.android.screenshade.service;
 
 import android.app.Service;
 import android.content.Context;
@@ -7,11 +7,11 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.armpatch.android.screenshade.overlays.OverlayManager;
+import com.armpatch.android.screenshade.overlay.OverlayManager;
 
 public class OverlayService extends Service {
 
-    com.armpatch.android.screenshade.overlays.OverlayManager OverlayManager;
+    com.armpatch.android.screenshade.overlay.OverlayManager OverlayManager;
     private boolean isRunning;
 
     public static Intent getIntent(Context context) {
