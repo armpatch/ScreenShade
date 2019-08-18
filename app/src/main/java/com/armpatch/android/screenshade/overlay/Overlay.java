@@ -11,7 +11,6 @@ public abstract class Overlay {
     WindowManager.LayoutParams layoutParams;
 
     View windowManagerView;
-
     DisplayInfo displayInfo;
 
     boolean isAddedToWindowManager;
@@ -39,13 +38,14 @@ public abstract class Overlay {
         }
     }
 
-    void updatePosition(Point point) {
+    void updatePositionOnScreen(Point point) {
         layoutParams.x = point.x;
         layoutParams.y = point.y;
 
         if (isAddedToWindowManager)
             windowManager.updateViewLayout(windowManagerView, layoutParams);
     }
+
 
 
 }

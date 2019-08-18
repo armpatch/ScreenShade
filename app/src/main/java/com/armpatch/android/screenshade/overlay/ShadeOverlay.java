@@ -43,7 +43,7 @@ class ShadeOverlay extends Overlay{
         setAnimators();
     }
 
-    void revealFromPoint(Point centerPoint) {
+    void startRevealAnimationFromPoint(Point centerPoint) {
         if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
             viewCenterPoint = centerPoint;
             addViewToWindowManager();

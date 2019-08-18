@@ -14,37 +14,32 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
 
     public OverlayManager(OverlayService service) {
         this.service = service;
-        initOverlays();
-    }
 
-    public void start() {
-        buttonOverlay.reveal();
-    }
-
-    public void stop() {
-        shadeOverlay.hide();
-        buttonOverlay.hide();
-    }
-
-    private void initOverlays(){
         shadeOverlay = new ShadeOverlay(this, service);
         buttonOverlay = new ButtonOverlay(this, service);
     }
 
-    // Callback methods
+    public void showOverlays() {
+        buttonOverlay.startRevealAnimation();
+    }
+
+    public void hideOverlays() {
+        shadeOverlay.hide();
+        buttonOverlay.dismissButton();
+    }
 
     @Override
-    public void onButtonClicked(Point center) {
-        shadeOverlay.revealFromPoint(center);
+    public void onButtonTapped(Point centerOfButton) {
+        shadeOverlay.startRevealAnimationFromPoint(centerOfButton);
 }
 
     @Override
     public void onShadeRemoved() {
-        buttonOverlay.reveal();
+        buttonOverlay.startRevealAnimation();
     }
 
     @Override
-    public void onButtonTrashed() {
+    public void onButtonDismissed() {
         service.stopSelf();
     }
 }
