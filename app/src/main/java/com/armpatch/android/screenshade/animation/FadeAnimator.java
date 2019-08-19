@@ -7,7 +7,6 @@ import android.view.animation.BaseInterpolator;
 import android.view.animation.LinearInterpolator;
 
 public class FadeAnimator {
-
     public static ObjectAnimator getFadeAnimator(View v) {
         PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat(View.ALPHA, v.getAlpha(), 0.0f);
 
@@ -21,5 +20,4 @@ public class FadeAnimator {
 
         return animator;
     }
-
 }

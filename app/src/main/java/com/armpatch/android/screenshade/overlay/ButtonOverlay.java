@@ -91,15 +91,15 @@ class ButtonOverlay extends Overlay{
 
     private void setInitialLayoutParams() {
 
-        View buttonOutline = windowManagerView.findViewById(R.id.button_outline);
+        View button = windowManagerView.findViewById(R.id.button);
 
         // a bigger window gives the imageButton extra space to expand into during the reveal
         // animation without the sides being cropped.
         float WINDOW_TO_BUTTON_RATIO = 1.2f;
 
         layoutParams = WindowLayoutParams.getDefaultParams();
-        layoutParams.width = (int) (buttonOutline.getLayoutParams().width * WINDOW_TO_BUTTON_RATIO);
-        layoutParams.height = (int) (buttonOutline.getLayoutParams().height * WINDOW_TO_BUTTON_RATIO);
+        layoutParams.width = (int) (button.getLayoutParams().width * WINDOW_TO_BUTTON_RATIO);
+        layoutParams.height = (int) (button.getLayoutParams().height * WINDOW_TO_BUTTON_RATIO);
     }
 
     private void setupAnimators() {
