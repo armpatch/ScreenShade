@@ -34,7 +34,7 @@ class ShadeOverlay extends Overlay{
 
         this.callbacks = callbacks;
 
-        windowManagerView = View.inflate(appContext, R.layout.shade, null);
+        windowManagerView = View.inflate(appContext, R.layout.shade_overlay, null);
         shadeCircle = windowManagerView.findViewById(R.id.shade_circle);
 
         setOnTouchListener();

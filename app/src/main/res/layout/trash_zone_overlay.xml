@@ -4,7 +4,7 @@
     <ImageView
         android:id="@+id/gradient"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:src="@drawable/remove_button_zone"
         android:layout_alignParentBottom="true"/>
     <TextView
@@ -13,7 +13,7 @@
         android:text="@string/drag_to_dismiss"
         android:layout_above="@+id/gradient"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-30dp"
+        android:layout_marginBottom="-40dp"
         android:textColor="@android:color/white"
         android:shadowColor="@android:color/black"
         android:shadowDx="-1.5"

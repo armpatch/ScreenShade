@@ -24,6 +24,8 @@ import java.util.ArrayList;
 @SuppressLint("ClickableViewAccessibility")
 class ButtonOverlay extends Overlay{
 
+    private TrashZoneOverlay trashZoneOverlay;
+
     private Callbacks callbacks;
 
     private ArrayList<Animator> animatorList = new ArrayList<>();
@@ -41,8 +43,9 @@ class ButtonOverlay extends Overlay{
 
         this.callbacks = callbacks;
 
-        windowManagerView = View.inflate(appContext, R.layout.button, null);
+        windowManagerView = View.inflate(appContext, R.layout.button_overlay, null);
         windowManagerView.setLayoutParams(new FrameLayout.LayoutParams(0,0));
+        trashZoneOverlay = new TrashZoneOverlay(appContext);
 
         setInitialLayoutParams();
         setupButtonWithTouchListener();
@@ -126,7 +129,7 @@ class ButtonOverlay extends Overlay{
         ImageButton button = windowManagerView.findViewById(R.id.button);
         button.setOnTouchListener(new View.OnTouchListener() {
 
-            Point firstDown = new Point();
+            Point touchFirstDown = new Point();
             Point buttonStart = new Point();
             Long startTime;
 
@@ -140,33 +143,39 @@ class ButtonOverlay extends Overlay{
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN: {
-                        firstDown.set((int) event.getX(), (int) event.getY());
+                        touchFirstDown.set((int) event.getX(), (int) event.getY());
                         buttonStart.set(layoutParams.x, layoutParams.y);
                         startTime = System.currentTimeMillis();
                         break;
                     }
 
                     case MotionEvent.ACTION_MOVE: {
-                        dX = (int) event.getX() - firstDown.x;
-                        dY = (int) event.getY() - firstDown.y;
+                        dX = (int) event.getX() - touchFirstDown.x;
+                        dY = (int) event.getY() - touchFirstDown.y;
 
-                        if (isOverThreshold(dX, dY)) windowManagerView.setAlpha(0.5f);
+                        if (hasSufficientMagnitude(dX, dY)) {
+                            trashZoneOverlay.show();
+                            windowManagerView.setAlpha(0.5f);
+                        }
 
-                        Point newButtonPosition = new Point(buttonStart.x + dX,buttonStart.y + dY);
-                        updatePositionOnScreen(newButtonPosition);
+                        Point ButtonNewPosition = new Point(buttonStart.x + dX,buttonStart.y + dY);
+                        updatePositionOnScreen(ButtonNewPosition);
                         break;
                     }
 
                     case MotionEvent.ACTION_UP: {
                         animateTransparencyToNormal();
+                        trashZoneOverlay.hide();
 
                         long timeSincePress = System.currentTimeMillis() - startTime;
 
-                        if (timeSincePress < 300 && !isOverThreshold(dX, dY)) {
+                        if (timeSincePress < 300 && !hasSufficientMagnitude(dX, dY)) {
                             hideButtonAndShowShade();
                         }
 
-                        if (isInTrashZone((int) event.getRawX())) dismissButton();
+                        if (isInTrashZone((int) event.getRawY())) {
+                            dismissButton();
+                        }
                     }
                 }
                 return false;
@@ -203,7 +212,7 @@ class ButtonOverlay extends Overlay{
         return displayInfo.getHeight() - ZONE_HEIGHT < positionY;
     }
 
-    private boolean isOverThreshold(int dx, int dy) { // TODO needs better name
+    private boolean hasSufficientMagnitude(int dx, int dy) { // TODO needs better name
         return  2 < Math.abs(dx) ||
                 2 < Math.abs(dy);
     }
