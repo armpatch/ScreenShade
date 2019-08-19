@@ -130,7 +130,8 @@ class ButtonOverlay extends Overlay{
         button.setOnTouchListener(new View.OnTouchListener() {
 
             Point touchFirstDown = new Point();
-            Point buttonStart = new Point();
+            Point buttonStartPosition = new Point();
+            Point ButtonCurrentPosition;
             Long startTime;
 
             int dX;
@@ -144,8 +145,9 @@ class ButtonOverlay extends Overlay{
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN: {
                         touchFirstDown.set((int) event.getX(), (int) event.getY());
-                        buttonStart.set(layoutParams.x, layoutParams.y);
+                        buttonStartPosition.set(layoutParams.x, layoutParams.y);
                         startTime = System.currentTimeMillis();
+                        trashZoneOverlay.show();
                         break;
                     }
 
@@ -154,12 +156,11 @@ class ButtonOverlay extends Overlay{
                         dY = (int) event.getY() - touchFirstDown.y;
 
                         if (hasSufficientMagnitude(dX, dY)) {
-                            trashZoneOverlay.show();
                             windowManagerView.setAlpha(0.5f);
                         }
 
-                        Point ButtonNewPosition = new Point(buttonStart.x + dX,buttonStart.y + dY);
-                        updatePositionOnScreen(ButtonNewPosition);
+                        ButtonCurrentPosition = new Point(buttonStartPosition.x + dX, buttonStartPosition.y + dY);
+                        updatePositionOnScreen(ButtonCurrentPosition);
                         break;
                     }
 
