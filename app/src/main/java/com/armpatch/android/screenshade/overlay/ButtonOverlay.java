@@ -60,7 +60,7 @@ class ButtonOverlay extends Overlay{
 
     void startRevealAnimation() {
         addViewToWindowManager();
-
+        windowManagerView.setVisibility(View.VISIBLE);
         expandAnimator.start();
     }
 
@@ -119,6 +119,7 @@ class ButtonOverlay extends Overlay{
         fadeAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
+                windowManagerView.setVisibility(View.INVISIBLE);
                 removeViewFromWindowManager();
             }
         });
