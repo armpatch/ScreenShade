@@ -127,7 +127,7 @@ class ButtonOverlay extends Overlay{
         button.setOnTouchListener(new View.OnTouchListener() {
 
             Point firstDown = new Point();
-            Point location = new Point();
+            Point buttonStart = new Point();
             Long startTime;
 
             int dX;
@@ -136,12 +136,12 @@ class ButtonOverlay extends Overlay{
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                event.setLocation(event.getRawX(), event.getRawY());
+                event.setLocation(event.getRawX(), event.getRawY()); //sets the absolute location not relative to views
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN: {
                         firstDown.set((int) event.getX(), (int) event.getY());
-                        location.set(layoutParams.x, layoutParams.y);
+                        buttonStart.set(layoutParams.x, layoutParams.y);
                         startTime = System.currentTimeMillis();
                         break;
                     }
@@ -152,23 +152,21 @@ class ButtonOverlay extends Overlay{
 
                         if (isOverThreshold(dX, dY)) windowManagerView.setAlpha(0.5f);
 
-                        Point newPosition = new Point(location.x + dX, location.y + dY);
-                        updatePositionOnScreen(newPosition);
+                        Point newButtonPosition = new Point(buttonStart.x + dX,buttonStart.y + dY);
+                        updatePositionOnScreen(newButtonPosition);
                         break;
                     }
 
                     case MotionEvent.ACTION_UP: {
-                        animateButtonTransparencyToNormal();
+                        animateTransparencyToNormal();
 
-                        long currentTime = System.currentTimeMillis();
-                        long timeSincePress = currentTime - startTime;
+                        long timeSincePress = System.currentTimeMillis() - startTime;
+
                         if (timeSincePress < 300 && !isOverThreshold(dX, dY)) {
                             hideButtonAndShowShade();
                         }
-                        Point upPoint = new Point((int)event.getRawX(), (int)event.getRawY());
-                        if (isInTrashZone(upPoint.y)) {
-                            dismissButton();
-                        }
+
+                        if (isInTrashZone((int) event.getRawX())) dismissButton();
                     }
                 }
                 return false;
@@ -176,7 +174,7 @@ class ButtonOverlay extends Overlay{
         });
     }
 
-    private void animateButtonTransparencyToNormal() {
+    private void animateTransparencyToNormal() {
         DimmerAnimator.getAnimator(windowManagerView, windowManagerView.getAlpha(), 1f).start();
     }
 
