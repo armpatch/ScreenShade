@@ -9,7 +9,8 @@
     <color name="colorSecondaryLight">#ffab4f</color>
     <color name="colorSecondaryDark">#ad4d00</color>
 
-    <color name="color_welcome_screen_background">#131B3A</color>
+    <color name="color_background">#011B52</color>
+    <color name="color_background_edges">#43000000</color>
 
     <color name="color_shade_normal">#000000</color>
 
