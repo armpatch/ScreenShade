@@ -144,11 +144,12 @@ class ButtonOverlay extends Overlay{
                 event.setLocation(event.getRawX(), event.getRawY()); //sets the absolute location not relative to views
 
                 switch (event.getActionMasked()) {
+
                     case MotionEvent.ACTION_DOWN: {
                         touchFirstDown.set((int) event.getX(), (int) event.getY());
                         buttonStartPosition.set(layoutParams.x, layoutParams.y);
                         startTime = System.currentTimeMillis();
-                        trashZoneOverlay.show();
+
                         break;
                     }
 
@@ -158,6 +159,7 @@ class ButtonOverlay extends Overlay{
 
                         if (hasSufficientMagnitude(dX, dY)) {
                             windowManagerView.setAlpha(0.5f);
+                            trashZoneOverlay.show();
                         }
 
                         ButtonCurrentPosition = new Point(buttonStartPosition.x + dX, buttonStartPosition.y + dY);

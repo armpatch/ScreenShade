@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 public class TrashZoneOverlay extends Overlay {
 
+    private boolean isShown;
+
     private ArrayList<ObjectAnimator> animatorList = new ArrayList<>();
     private ObjectAnimator revealAnimator;
     private ObjectAnimator hideAnimator;
@@ -32,6 +34,8 @@ public class TrashZoneOverlay extends Overlay {
         layoutParams = WindowLayoutParams.getDefaultParams();
         layoutParams.width = displayInfo.getWidth();
         layoutParams.y = displayInfo.getNavBarHeight();
+
+        windowManagerView.setVisibility(View.INVISIBLE);
     }
 
     private void setupAnimators() {
@@ -49,9 +53,11 @@ public class TrashZoneOverlay extends Overlay {
     }
 
     void show() {
-        addViewToWindowManager();
-        windowManagerView.setVisibility(View.VISIBLE);
-        revealAnimator.start();
+        if (View.INVISIBLE == windowManagerView.getVisibility()) {
+            addViewToWindowManager();
+            windowManagerView.setVisibility(View.VISIBLE);
+            revealAnimator.start();
+        }
     }
 
     void hide() {
