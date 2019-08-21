@@ -47,7 +47,7 @@ class ButtonOverlay extends Overlay{
         setInitialLayoutParams();
         setupButtonWithTouchListener();
         setupAnimators();
-        updatePositionOnScreen(new Point(450, 800)); // TODO needs to work for multiple screen sizes
+        updatePositionOnScreen(new Point(450, 1000)); // TODO needs to work for multiple screen sizes
     }
 
     @Override

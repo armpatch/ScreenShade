@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/color_background">
 
-
     <ImageView
         android:layout_width="80dp"
         android:layout_height="match_parent"
@@ -23,9 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/send_feedback" />
 
     <TextView
@@ -33,9 +32,20 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="333dp"
+        android:layout_marginTop="400dp"
         android:textAlignment="center"
         android:text="@string/intro_instructions_2"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="32dp"
+        android:textAlignment="center"
+        android:text="@string/intro_instructions_3"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
@@ -45,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="280dp"
         android:textAlignment="center"
         android:text="@string/intro_instructions_1"
         android:textColor="@android:color/white"

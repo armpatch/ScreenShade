@@ -28,12 +28,18 @@ class ShadeOverlay extends Overlay{
         void onShadeRemoved();
     }
 
-    ShadeOverlay(Callbacks callbacks, Context appContext) {
+    ShadeOverlay(final Callbacks callbacks, Context appContext) {
         super(appContext);
 
         this.callbacks = callbacks;
 
-        windowManagerView = View.inflate(appContext, R.layout.shade_overlay, null);
+        windowManagerView = new OverlayView(appContext, R.layout.shade_overlay, null) {
+            @Override
+            void onBackPressed() {
+                hide();
+            }
+        };
+
         shadeCircle = windowManagerView.findViewById(R.id.shade_circle);
 
         setOnTouchListener();
@@ -78,7 +84,7 @@ class ShadeOverlay extends Overlay{
 
     private void setOnTouchListener() {
         windowManagerView.setOnTouchListener(new View.OnTouchListener() {
-            int DOUBLE_TAP_DURATION = 200;
+            int DOUBLE_TAP_DURATION = 300;
             long duration;
             long lastTime;
 
@@ -102,7 +108,6 @@ class ShadeOverlay extends Overlay{
     private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
         layoutParams.y = -displayInfo.getStatusBarHeight();

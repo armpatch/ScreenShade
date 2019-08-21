@@ -12,8 +12,13 @@
     <string name="send_feedback">send feedback</string>
 
     <string name="drag_to_dismiss">Drag down to dismiss</string>
-    <string name="intro_instructions_2">Tap Button to Show Overlay   Double Tap Overlay to Hide</string>
-    <string name="intro_instructions_1">Drag Me</string>
+    <string name="intro_instructions_1">Drag me</string>
+    <string name="intro_instructions_2">Tap to Enable
+    </string>
+
+    <string name="intro_instructions_3">To Hide: \n
+        Back button or Double Tap Screen
+    </string>
 
 
 </resources>
