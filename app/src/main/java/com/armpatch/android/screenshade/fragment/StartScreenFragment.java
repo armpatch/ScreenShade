@@ -28,8 +28,6 @@ public class StartScreenFragment extends Fragment {
     private Context appContext;
     private Intent serviceIntent;
 
-    private boolean serviceIsRunning; // TODO create a better solution for running service check
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,10 +117,5 @@ public class StartScreenFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         appContext.stopService(serviceIntent);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 }

@@ -35,7 +35,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="333dp"
         android:textAlignment="center"
-        android:text="Tap Button to Show Overlay \n Double Tap Overlay to Hide"
+        android:text="@string/intro_instructions_2"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
@@ -47,7 +47,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="200dp"
         android:textAlignment="center"
-        android:text="Drag Me"
+        android:text="@string/intro_instructions_1"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 

@@ -10,18 +10,12 @@ import android.widget.RelativeLayout;
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.TrashZoneAnimator;
 
-import java.util.ArrayList;
+class TrashZoneOverlay extends Overlay {
 
-
-public class TrashZoneOverlay extends Overlay {
-
-    private boolean isShown;
-
-    private ArrayList<ObjectAnimator> animatorList = new ArrayList<>();
     private ObjectAnimator revealAnimator;
     private ObjectAnimator hideAnimator;
 
-    public TrashZoneOverlay(Context appContext) {
+    TrashZoneOverlay(Context appContext) {
         super(appContext);
 
         DisplayInfo displayInfo = new DisplayInfo(appContext);
@@ -48,8 +42,6 @@ public class TrashZoneOverlay extends Overlay {
                 removeViewFromWindowManager();
             }
         });
-        animatorList.add(revealAnimator);
-        animatorList.add(hideAnimator);
     }
 
     void show() {

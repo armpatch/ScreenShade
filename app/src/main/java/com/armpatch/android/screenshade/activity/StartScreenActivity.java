@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import com.armpatch.android.screenshade.fragment.SingleFragmentActivity;
 import com.armpatch.android.screenshade.fragment.StartScreenFragment;
 
 public class StartScreenActivity extends SingleFragmentActivity {

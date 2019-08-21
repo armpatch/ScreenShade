@@ -24,8 +24,6 @@ class ShadeOverlay extends Overlay{
     private ObjectAnimator revealAnimator;
     private ObjectAnimator hideAnimator;
 
-    int STATUS_BAR_HEIGHT = 100;
-
     interface Callbacks{
         void onShadeRemoved();
     }
@@ -80,7 +78,7 @@ class ShadeOverlay extends Overlay{
 
     private void setOnTouchListener() {
         windowManagerView.setOnTouchListener(new View.OnTouchListener() {
-            int DOUBLE_TAP_DURATION = 300;
+            int DOUBLE_TAP_DURATION = 200;
             long duration;
             long lastTime;
 
@@ -101,7 +99,7 @@ class ShadeOverlay extends Overlay{
         });
     }
 
-    void setInitialLayoutParams() {
+    private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |

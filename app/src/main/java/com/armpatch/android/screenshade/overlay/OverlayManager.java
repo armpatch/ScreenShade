@@ -7,7 +7,7 @@ import com.armpatch.android.screenshade.service.OverlayService;
 
 public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Callbacks {
 
-    OverlayService service;
+    private OverlayService service;
 
     private ShadeOverlay shadeOverlay;
     private ButtonOverlay buttonOverlay;

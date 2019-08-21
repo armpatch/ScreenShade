@@ -6,13 +6,10 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-
-import androidx.annotation.Nullable;
 
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.ButtonAnimator;
@@ -219,19 +216,6 @@ class ButtonOverlay extends Overlay{
     private boolean hasSufficientMagnitude(int dx, int dy) { // TODO needs better name
         return  2 < Math.abs(dx) ||
                 2 < Math.abs(dy);
-    }
-
-    private void logIsNull(@Nullable Object object) {
-        String messageStart = "Null Test :  ";
-        String messageEnd;
-
-        if (object == null) {
-            messageEnd = "----------- NULL -----------";
-        } else {
-            messageEnd = object.toString();
-        }
-
-        Log.i("logThis", messageStart + messageEnd);
     }
 
 }

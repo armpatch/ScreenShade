@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
-public class DisplayInfo {
+class DisplayInfo {
 
     private Context context;
 
@@ -109,13 +109,5 @@ public class DisplayInfo {
 
         wManager.getDefaultDisplay().getMetrics(dMetrics);
         return dMetrics;
-    }
-
-    private void getNotchCutout() {
-        int statusBarHeight = 0;
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
-        }
     }
 }

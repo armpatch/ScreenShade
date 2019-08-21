@@ -5,7 +5,7 @@ import android.graphics.Point;
 import android.view.View;
 import android.view.WindowManager;
 
-public abstract class Overlay {
+abstract class Overlay {
 
     private WindowManager windowManager;
     WindowManager.LayoutParams layoutParams;
@@ -15,7 +15,7 @@ public abstract class Overlay {
 
     boolean isAddedToWindowManager;
 
-    public Overlay(Context appContext) {
+    Overlay(Context appContext) {
         windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
         displayInfo = new DisplayInfo(appContext);
     }

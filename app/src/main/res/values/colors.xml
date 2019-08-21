@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#1e88e5</color>
-    <color name="colorPrimaryLight">#6ab7ff</color>
     <color name="colorPrimaryDark">#005cb2</color>
     <color name="colorAccent">#e57b1d</color>
-
-    <color name="colorSecondary">#e57b1d</color>
-    <color name="colorSecondaryLight">#ffab4f</color>
-    <color name="colorSecondaryDark">#ad4d00</color>
 
     <color name="color_background">#011B52</color>
     <color name="color_background_edges">#43000000</color>
 
     <color name="color_shade_normal">#000000</color>
-
-    <color name="color_button_normal">#0099CC</color>
 
     <color name="color_trash_zone_transparent">#00000000</color>
     <color name="color_trash_zone_normal">#000000</color>

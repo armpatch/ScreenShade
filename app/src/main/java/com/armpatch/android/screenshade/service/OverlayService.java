@@ -11,7 +11,7 @@ import com.armpatch.android.screenshade.overlay.OverlayManager;
 
 public class OverlayService extends Service {
 
-    com.armpatch.android.screenshade.overlay.OverlayManager OverlayManager;
+    com.armpatch.android.screenshade.overlay.OverlayManager overlayManager;
     private boolean isRunning;
 
     public static Intent getIntent(Context context) {
@@ -21,13 +21,13 @@ public class OverlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        OverlayManager = new OverlayManager(this);
+        overlayManager = new OverlayManager(this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!isRunning){
-            OverlayManager.showOverlays();
+            overlayManager.showOverlays();
             isRunning = true;
         }
         return START_STICKY;
@@ -41,7 +41,7 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
-        OverlayManager.hideOverlays();
+        overlayManager.hideOverlays();
         super.onDestroy();
     }
 }
