@@ -19,29 +19,30 @@ public class DisplayInfo {
     private int navBarHeight;
     private int statusBarHeight;
 
-    // public methods
+    // non-private methods
 
-    public DisplayInfo(Context context) {
+    DisplayInfo(Context context) {
         this.context = context;
         update();
     }
 
-    public void update() {
+    private void update() {
         setScreenHeight();
         screenWidth = getDisplayMetrics().widthPixels;
         diagonalLength = (int) Math.sqrt(Math.pow(screenHeight,2)+ Math.pow(screenWidth,2));
         setNavBarHeight();
+        setStatusBarHeight();
     }
 
-    int getHeight() {
+    int getScreenHeight() {
         return screenHeight;
     }
 
-    int getWidth() {
+    int getScreenWidth() {
         return screenWidth;
     }
 
-    int getDiagonal() {
+    int getScreenDiagonal() {
         return diagonalLength;
     }
 
@@ -49,13 +50,44 @@ public class DisplayInfo {
         return navBarHeight;
     }
 
-    // private methods
+    int getStatusBarHeight() {
+        return statusBarHeight;
+    }
+
+    static Point getCenterShiftedPoint(View v, Point centerPoint) {
+        int width = v.getLayoutParams().width;
+        int height = v.getLayoutParams().height;
+
+        Point shiftedPoint = new Point();
+
+        shiftedPoint.x = centerPoint.x - width/2;
+        shiftedPoint.y = centerPoint.y - height/2;
+
+        return shiftedPoint;
+    }
+
+    public static int convertDpToPixel (float dp){
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return Math.round(px);
+    }
+
+    public static int convertPixelToDp (float px){
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        float dp = 160f * px / metrics.densityDpi;
+        return Math.round(dp);
+    }
+
+    private void setStatusBarHeight() {
+        int resourceId = context.getResources().getIdentifier(
+                "status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
+        } else { statusBarHeight = 0; }
+    }
 
     private void setScreenHeight() {
         screenHeight = getDisplayMetrics().heightPixels;
-
-
-
     }
 
     private void setNavBarHeight() {
@@ -79,29 +111,11 @@ public class DisplayInfo {
         return dMetrics;
     }
 
-    static Point getCenterShiftedPoint(View v, Point centerPoint) {
-        int width = v.getLayoutParams().width;
-        int height = v.getLayoutParams().height;
-
-        Point shiftedPoint = new Point();
-
-        shiftedPoint.x = centerPoint.x - width/2;
-        shiftedPoint.y = centerPoint.y - height/2;
-
-        return shiftedPoint;
-    }
-
     private void getNotchCutout() {
         int statusBarHeight = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
         }
-    }
-
-    public static int convertDpToPixel (float dp){
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return Math.round(px);
     }
 }

@@ -32,7 +32,7 @@ public class TrashZoneOverlay extends Overlay {
         setupAnimators();
 
         layoutParams = WindowLayoutParams.getDefaultParams();
-        layoutParams.width = displayInfo.getWidth();
+        layoutParams.width = displayInfo.getScreenWidth();
         layoutParams.y = displayInfo.getNavBarHeight();
 
         windowManagerView.setVisibility(View.INVISIBLE);

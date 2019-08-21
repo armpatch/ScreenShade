@@ -194,8 +194,8 @@ class ButtonOverlay extends Overlay{
     private Point getPointWithinScreenBounds(Point original) {
         Point result = new Point(original);
 
-        int Y_MAX = displayInfo.getHeight() - windowManagerView.getLayoutParams().height;
-        int X_MAX = displayInfo.getWidth() - windowManagerView.getLayoutParams().width;
+        int Y_MAX = displayInfo.getScreenHeight() - windowManagerView.getLayoutParams().height;
+        int X_MAX = displayInfo.getScreenWidth() - windowManagerView.getLayoutParams().width;
 
         if (X_MAX < result.x) result.x = X_MAX;
         if (Y_MAX < result.y) result.y = Y_MAX;
@@ -213,7 +213,7 @@ class ButtonOverlay extends Overlay{
 
     private boolean isInTrashZone(int positionY) {
         int ZONE_HEIGHT = 200;
-        return displayInfo.getHeight() - ZONE_HEIGHT < positionY;
+        return displayInfo.getScreenHeight() - ZONE_HEIGHT < positionY;
     }
 
     private boolean hasSufficientMagnitude(int dx, int dy) { // TODO needs better name

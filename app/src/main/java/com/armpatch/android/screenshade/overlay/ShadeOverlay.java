@@ -24,6 +24,7 @@ class ShadeOverlay extends Overlay{
     private ObjectAnimator revealAnimator;
     private ObjectAnimator hideAnimator;
 
+    int STATUS_BAR_HEIGHT = 100;
 
     interface Callbacks{
         void onShadeRemoved();
@@ -106,23 +107,25 @@ class ShadeOverlay extends Overlay{
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
-        layoutParams.width = displayInfo.getWidth();
-
-        layoutParams.height = displayInfo.getHeight() + displayInfo.getNavBarHeight();
+        layoutParams.y = -displayInfo.getStatusBarHeight();
+        layoutParams.width = displayInfo.getScreenWidth();
+        layoutParams.height = displayInfo.getScreenHeight() + displayInfo.getNavBarHeight() +
+                displayInfo.getStatusBarHeight();
     }
 
     private void setShadeDimensions() {
-        int circleDiameter = 2 * ( displayInfo.getDiagonal() + displayInfo.getNavBarHeight());
+        int circleDiameter = 2 * ( displayInfo.getScreenDiagonal() + displayInfo.getNavBarHeight());
 
         shadeCircle.getLayoutParams().height = circleDiameter;
         shadeCircle.getLayoutParams().width = circleDiameter;
     }
 
     private void setShadeCirclePosition(Point origin) {
-        Point offsetPoint = DisplayInfo.getCenterShiftedPoint(shadeCircle, origin);
+        Point offsetTopLeftPoint = DisplayInfo.getCenterShiftedPoint(shadeCircle, origin);
+        offsetTopLeftPoint.offset(0, displayInfo.getStatusBarHeight());
 
-        shadeCircle.setX(offsetPoint.x);
-        shadeCircle.setY(offsetPoint.y);
+        shadeCircle.setX(offsetTopLeftPoint.x);
+        shadeCircle.setY(offsetTopLeftPoint.y);
     }
 
 
