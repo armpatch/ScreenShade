@@ -8,6 +8,8 @@ import android.view.animation.LinearInterpolator;
 
 public class DimmerAnimator {
 
+    private static int DURATION = 200;
+
     public static ObjectAnimator getAnimator(View view, float start, float end) {
 
         PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat(View.ALPHA, start, end);
@@ -16,11 +18,9 @@ public class DimmerAnimator {
         BaseInterpolator interpolator = new LinearInterpolator();
 
         animator.setInterpolator(interpolator);
-        int DURATION = 200;
+
         animator.setDuration(DURATION);
 
         return animator;
     }
-
-
 }

@@ -12,10 +12,8 @@ public class ShadeAnimator {
     private static final int REVEAL_DURATION = 400;
     private static final int HIDE_DURATION = 400;
 
-
     private static final float MIN_SIZE = 0f;
     private static final float MIN_ALPHA = .6f;
-
 
     public static ObjectAnimator getRevealAnimatorSet(View shadeView) {
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, MIN_SIZE, 1f);
@@ -37,7 +35,6 @@ public class ShadeAnimator {
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, MIN_SIZE);
         PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, MIN_SIZE);
         PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, MIN_ALPHA);
-
 
         ObjectAnimator animator =
                 ObjectAnimator.ofPropertyValuesHolder(shadeView, scaleX, scaleY, alpha);

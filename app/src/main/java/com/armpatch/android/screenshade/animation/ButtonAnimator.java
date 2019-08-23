@@ -9,6 +9,9 @@ import android.view.animation.OvershootInterpolator;
 
 public class ButtonAnimator {
 
+    private static int REVEAL_DURATION = 400;
+    private static int HIDE_DURATION = 200;
+
     public static ObjectAnimator getRevealAnimator(View buttonView) {
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f);
         PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0f, 1f);
@@ -20,7 +23,7 @@ public class ButtonAnimator {
         BaseInterpolator interpolator = new OvershootInterpolator();
 
         animator.setInterpolator(interpolator);
-        animator.setDuration(400);
+        animator.setDuration(REVEAL_DURATION);
 
         return animator;
     }
@@ -36,7 +39,7 @@ public class ButtonAnimator {
         BaseInterpolator interpolator = new LinearInterpolator();
 
         animator.setInterpolator(interpolator);
-        animator.setDuration(200);
+        animator.setDuration(HIDE_DURATION);
 
         return animator;
     }
