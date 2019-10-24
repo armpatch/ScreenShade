@@ -18,11 +18,3 @@ The app is available for free on the play store. The source can also be download
 ### Prerequisites
 
 The minimum Android SDK version is currently 23.
-
-## Authors
-
-* **Aaron Patch** - (https://github.com/armpatch)
-
-## Acknowledgments
-
-* Thanks to the Boston Android Community
