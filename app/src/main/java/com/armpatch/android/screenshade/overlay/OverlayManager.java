@@ -29,13 +29,13 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
     }
 
     @Override
-    public void onButtonTapped(Point centerOfButton) {
-        shadeOverlay.startRevealAnimationFromPoint(centerOfButton);
-}
-
-    @Override
     public void onShadeRemoved() {
         buttonOverlay.startRevealAnimation();
+    }
+
+    @Override
+    public void onButtonTapped(Point centerOfButton) {
+        shadeOverlay.startRevealAnimationFromPoint(centerOfButton);
     }
 
     @Override
