@@ -10,15 +10,9 @@ import androidx.annotation.LayoutRes;
 
 public abstract class OverlayView extends FrameLayout {
 
-    abstract void onBackPressed();
-
     public OverlayView(Context context, @LayoutRes int resource, ViewGroup root) {
         super(context);
-        initView(context, resource, root);
-    }
-
-    private void initView(Context context, @LayoutRes int resource, ViewGroup root) {
-        this.addView(View.inflate(context, resource, root));
+        addView(View.inflate(context, resource, root));
     }
 
     @Override
@@ -30,4 +24,6 @@ public abstract class OverlayView extends FrameLayout {
 
         return super.dispatchKeyEvent(event);
     }
+
+    abstract void onBackPressed();
 }
