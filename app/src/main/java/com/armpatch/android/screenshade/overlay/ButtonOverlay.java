@@ -9,11 +9,9 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.animation.ButtonAnimator;
-import com.armpatch.android.screenshade.animation.DimmerAnimator;
 import com.armpatch.android.screenshade.animation.FadeAnimator;
 
 import java.util.ArrayList;
@@ -45,14 +43,14 @@ class ButtonOverlay extends Overlay{
         trashZoneOverlay = new TrashZoneOverlay(appContext);
 
         setInitialLayoutParams();
-        setupButtonWithTouchListener();
-        setupAnimators();
+        setTouchListener();
+        getAnimators();
         updatePositionOnScreen(new Point(450, 1000)); // TODO needs to work for multiple screen sizes
     }
 
     @Override
     void updatePositionOnScreen(Point point) {
-        super.updatePositionOnScreen(getPointWithinScreenBounds(point));
+        super.updatePositionOnScreen(moveViewIntoScreenBounds(point));
     }
 
     void startRevealAnimation() {
@@ -61,7 +59,7 @@ class ButtonOverlay extends Overlay{
         expandAnimator.start();
     }
 
-    private void hideButtonAndShowShade() {
+    private void pressButton() {
         fadeAnimator.start();
         callbacks.onButtonTapped(getWindowCenterPoint());
     }
@@ -87,19 +85,10 @@ class ButtonOverlay extends Overlay{
     }
 
     private void setInitialLayoutParams() {
-
-        View button = windowManagerView.findViewById(R.id.button);
-
-        // a bigger window gives the imageButton extra space to expand into during the reveal
-        // animation without the sides being cropped.
-        float WINDOW_TO_BUTTON_RATIO = 1.2f;
-
         layoutParams = WindowLayoutParams.getDefaultParams();
-        layoutParams.width = (int) (button.getLayoutParams().width * WINDOW_TO_BUTTON_RATIO);
-        layoutParams.height = (int) (button.getLayoutParams().height * WINDOW_TO_BUTTON_RATIO);
     }
 
-    private void setupAnimators() {
+    private void getAnimators() {
         expandAnimator = ButtonAnimator.getRevealAnimator(windowManagerView);
         animatorList.add(expandAnimator);
 
@@ -123,14 +112,14 @@ class ButtonOverlay extends Overlay{
         animatorList.add(shrinkAnimator);
     }
 
-    private void setupButtonWithTouchListener() {
-        ImageButton button = windowManagerView.findViewById(R.id.button);
-        button.setOnTouchListener(new View.OnTouchListener() {
+    private void setTouchListener() {
+        View frame = windowManagerView.findViewById(R.id.button_frame);
 
-            Point touchFirstDown = new Point();
-            Point buttonStartPosition = new Point();
-            Point ButtonCurrentPosition;
-            Long startTime;
+        frame.setOnTouchListener(new View.OnTouchListener() {
+
+            Point initialTouchPos = new Point();
+            Point initialPosition = new Point();
+            Long pressTime;
 
             int dX;
             int dY;
@@ -138,45 +127,39 @@ class ButtonOverlay extends Overlay{
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                event.setLocation(event.getRawX(), event.getRawY()); //sets the absolute location not relative to views
+                event.setLocation(event.getRawX(), event.getRawY());
 
                 switch (event.getActionMasked()) {
 
                     case MotionEvent.ACTION_DOWN: {
-                        touchFirstDown.set((int) event.getX(), (int) event.getY());
-                        buttonStartPosition.set(layoutParams.x, layoutParams.y);
-                        startTime = System.currentTimeMillis();
+                        initialTouchPos.set((int) event.getX(), (int) event.getY());
+                        initialPosition.set(layoutParams.x, layoutParams.y);
+                        pressTime = System.currentTimeMillis();
+
+                        trashZoneOverlay.show();
 
                         break;
                     }
 
                     case MotionEvent.ACTION_MOVE: {
-                        dX = (int) event.getX() - touchFirstDown.x;
-                        dY = (int) event.getY() - touchFirstDown.y;
+                        dX = (int) event.getX() - initialTouchPos.x;
+                        dY = (int) event.getY() - initialTouchPos.y;
 
-                        if (hasSufficientMagnitude(dX, dY)) {
-                            windowManagerView.setAlpha(0.5f);
-                            trashZoneOverlay.show();
-                        }
-
-                        ButtonCurrentPosition = new Point(buttonStartPosition.x + dX, buttonStartPosition.y + dY);
-                        updatePositionOnScreen(ButtonCurrentPosition);
+                        Point currentPosition = new Point(initialPosition.x + dX, initialPosition.y + dY);
+                        updatePositionOnScreen(currentPosition);
                         break;
                     }
 
                     case MotionEvent.ACTION_UP: {
-                        animateTransparencyToNormal();
                         trashZoneOverlay.hide();
 
-                        long timeSincePress = System.currentTimeMillis() - startTime;
+                        long timeSincePress = System.currentTimeMillis() - pressTime;
 
-                        if (timeSincePress < 300 && !hasSufficientMagnitude(dX, dY)) {
-                            hideButtonAndShowShade();
-                        }
+                        if (timeSincePress < 300 && !buttonMoved(dX, dY))
+                            pressButton();
 
-                        if (isInTrashZone((int) event.getRawY())) {
+                        if (isInTrashZone( (int) event.getRawY() ) )
                             dismissButton();
-                        }
                     }
                 }
                 return false;
@@ -184,26 +167,25 @@ class ButtonOverlay extends Overlay{
         });
     }
 
-    private void animateTransparencyToNormal() {
-        DimmerAnimator.getAnimator(windowManagerView, windowManagerView.getAlpha(), 1f).start();
-    }
+    private Point moveViewIntoScreenBounds(Point point) {
+        int Y_MAX = displayInfo.getScreenHeight() - windowManagerView.getHeight();
+        int X_MAX = displayInfo.getScreenWidth() - windowManagerView.getWidth();
 
-    private Point getPointWithinScreenBounds(Point original) {
-        Point result = new Point(original);
+        // Adjust x
+        if (point.x < 0) point.x = 0;
+        if (point.x > X_MAX) point.x = X_MAX;
 
-        int Y_MAX = displayInfo.getScreenHeight() - windowManagerView.getLayoutParams().height;
-        int X_MAX = displayInfo.getScreenWidth() - windowManagerView.getLayoutParams().width;
+        // Adjust Y
+        if (point.y < 0) point.y = 0;
+        if (point.y > Y_MAX) point.y = Y_MAX;
 
-        if (X_MAX < result.x) result.x = X_MAX;
-        if (Y_MAX < result.y) result.y = Y_MAX;
-
-        return result;
+        return point;
     }
 
     private Point getWindowCenterPoint() {
         Point currentPoint = new Point(layoutParams.x, layoutParams.y);
 
-        currentPoint.offset(layoutParams.width / 2, layoutParams.height / 2);
+        currentPoint.offset(windowManagerView.getWidth() / 2, windowManagerView.getWidth() / 2);
 
         return currentPoint;
     }
@@ -213,7 +195,7 @@ class ButtonOverlay extends Overlay{
         return displayInfo.getScreenHeight() - ZONE_HEIGHT < positionY;
     }
 
-    private boolean hasSufficientMagnitude(int dx, int dy) { // TODO needs better name
+    private boolean buttonMoved(int dx, int dy) { // TODO needs better name
         return  2 < Math.abs(dx) ||
                 2 < Math.abs(dy);
     }

@@ -3,28 +3,31 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:padding="10dp"
     tools:ignore="ContentDescription"
+    android:id="@+id/button_frame"
+    android:background="@android:color/darker_gray"
     >
 
     <ImageButton
         android:id="@+id/button"
         android:layout_gravity="center"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:background="@android:color/transparent"
         android:rotation="-90"
-        android:src="@drawable/button"
-         />
+        android:src="@drawable/button_circle"
+        android:clickable="false"
+        />
 
     <ImageView
         android:layout_gravity="center"
         android:layout_marginTop="-2dp"
-        android:layout_marginLeft="-2dp"
+        android:layout_marginStart="-2dp"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_touch_app_black_24dp"
+        android:src="@drawable/touch_icon_24dp"
         android:clickable="false"
-        tools:ignore="RtlHardcoded"
         />
 
 </FrameLayout>

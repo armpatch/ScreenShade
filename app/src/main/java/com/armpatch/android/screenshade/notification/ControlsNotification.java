@@ -57,7 +57,7 @@ public class ControlsNotification {
                 .setContentTitle(resources.getString(R.string.notification_title))
                 .setContentText(resources.getString(R.string.notification_description))
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.button))
+                        R.drawable.button_circle))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(getPendingIntentForService())
                 .setAutoCancel(true);

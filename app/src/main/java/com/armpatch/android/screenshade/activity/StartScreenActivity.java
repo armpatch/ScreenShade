@@ -1,12 +1,10 @@
 package com.armpatch.android.screenshade.activity;
 
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.view.Gravity;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,11 +59,14 @@ public class StartScreenActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (!Settings.canDrawOverlays((this))) {
 
-            Toast toast = Toast.makeText(this, R.string.permission_denied_toast, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.TOP, 0,200);
-            toast.show();
+        if (requestCode == REQUEST_OVERLAY_CODE) {
+            if (Settings.canDrawOverlays((this))) {
+                attemptToStartService();
+            } else {
+                Toast.makeText(this, R.string.permission_denied_toast, Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
     }
 
