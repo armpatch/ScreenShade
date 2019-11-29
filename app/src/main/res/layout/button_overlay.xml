@@ -6,7 +6,6 @@
     android:padding="10dp"
     tools:ignore="ContentDescription"
     android:id="@+id/button_frame"
-    android:background="@android:color/darker_gray"
     >
 
     <ImageButton

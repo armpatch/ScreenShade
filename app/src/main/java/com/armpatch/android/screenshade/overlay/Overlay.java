@@ -38,14 +38,12 @@ abstract class Overlay {
         }
     }
 
-    void updatePositionOnScreen(Point point) {
+    void setPositionOnScreen(Point point) {
         layoutParams.x = point.x;
         layoutParams.y = point.y;
 
         if (isAddedToWindowManager)
             windowManager.updateViewLayout(windowManagerView, layoutParams);
     }
-
-
 
 }

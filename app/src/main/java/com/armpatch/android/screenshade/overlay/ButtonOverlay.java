@@ -3,11 +3,15 @@ package com.armpatch.android.screenshade.overlay;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.armpatch.android.screenshade.R;
@@ -19,14 +23,18 @@ import java.util.ArrayList;
 @SuppressLint("ClickableViewAccessibility")
 class ButtonOverlay extends Overlay{
 
+    public static final String TAG = "ButtonOverlayTag";
+
     private TrashZoneOverlay trashZoneOverlay;
 
     private Callbacks callbacks;
+    private WindowPosition windowPosition;
 
     private ArrayList<Animator> animatorList = new ArrayList<>();
     private ObjectAnimator expandAnimator;
     private ObjectAnimator shrinkAnimator;
     private ObjectAnimator fadeAnimator;
+    private ObjectAnimator inertiaAnimator;
 
     interface Callbacks {
         void onButtonTapped(Point centerOfButton);
@@ -42,15 +50,16 @@ class ButtonOverlay extends Overlay{
         windowManagerView.setLayoutParams(new FrameLayout.LayoutParams(0,0));
         trashZoneOverlay = new TrashZoneOverlay(appContext);
 
+
         setInitialLayoutParams();
         setTouchListener();
-        getAnimators();
-        updatePositionOnScreen(new Point(450, 1000)); // TODO needs to work for multiple screen sizes
+        setupAnimators();
+        setPositionOnScreen(new Point(450, 1000)); // TODO needs to work for multiple screen sizes
     }
 
     @Override
-    void updatePositionOnScreen(Point point) {
-        super.updatePositionOnScreen(moveViewIntoScreenBounds(point));
+    void setPositionOnScreen(Point point) {
+        super.setPositionOnScreen(moveViewIntoScreenBounds(point));
     }
 
     void startRevealAnimation() {
@@ -86,11 +95,11 @@ class ButtonOverlay extends Overlay{
 
     private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
+        windowPosition = new WindowPosition(this, layoutParams);
     }
 
-    private void getAnimators() {
+    private void setupAnimators() {
         expandAnimator = ButtonAnimator.getRevealAnimator(windowManagerView);
-        animatorList.add(expandAnimator);
 
         shrinkAnimator = ButtonAnimator.getHideAnimator(windowManagerView);
         shrinkAnimator.addListener(new AnimatorListenerAdapter() {
@@ -99,7 +108,6 @@ class ButtonOverlay extends Overlay{
                 removeViewFromWindowManager();
             }
         });
-        animatorList.add(shrinkAnimator);
 
         fadeAnimator = FadeAnimator.getFadeAnimator(windowManagerView);
         fadeAnimator.addListener(new AnimatorListenerAdapter() {
@@ -109,7 +117,13 @@ class ButtonOverlay extends Overlay{
                 removeViewFromWindowManager();
             }
         });
+
+        inertiaAnimator = new ObjectAnimator();
+
+        animatorList.add(expandAnimator);
         animatorList.add(shrinkAnimator);
+        animatorList.add(fadeAnimator);
+        animatorList.add(inertiaAnimator);
     }
 
     private void setTouchListener() {
@@ -117,6 +131,7 @@ class ButtonOverlay extends Overlay{
 
         frame.setOnTouchListener(new View.OnTouchListener() {
 
+            VelocityTracker velocityTracker;
             Point initialTouchPos = new Point();
             Point initialPosition = new Point();
             Long pressTime;
@@ -132,6 +147,7 @@ class ButtonOverlay extends Overlay{
                 switch (event.getActionMasked()) {
 
                     case MotionEvent.ACTION_DOWN: {
+                        velocityTracker = VelocityTracker.obtain();
                         initialTouchPos.set((int) event.getX(), (int) event.getY());
                         initialPosition.set(layoutParams.x, layoutParams.y);
                         pressTime = System.currentTimeMillis();
@@ -144,14 +160,25 @@ class ButtonOverlay extends Overlay{
                     case MotionEvent.ACTION_MOVE: {
                         dX = (int) event.getX() - initialTouchPos.x;
                         dY = (int) event.getY() - initialTouchPos.y;
+                        velocityTracker.addMovement(event);
 
                         Point currentPosition = new Point(initialPosition.x + dX, initialPosition.y + dY);
-                        updatePositionOnScreen(currentPosition);
+                        setPositionOnScreen(currentPosition);
                         break;
                     }
 
                     case MotionEvent.ACTION_UP: {
                         trashZoneOverlay.hide();
+
+                        velocityTracker.computeCurrentVelocity(1);
+                        float xVelocity = velocityTracker.getXVelocity();
+                        float yVelocity = velocityTracker.getYVelocity();
+
+                        if (Math.abs(xVelocity) > .5 || Math.abs(yVelocity) > .5) {
+                            startInertiaAnimator(xVelocity, yVelocity);
+                        }
+
+                        velocityTracker.recycle();
 
                         long timeSincePress = System.currentTimeMillis() - pressTime;
 
@@ -200,4 +227,35 @@ class ButtonOverlay extends Overlay{
                 2 < Math.abs(dy);
     }
 
+    private void startInertiaAnimator(float xSpeed, float ySpeed) {
+        Log.d(TAG, "Velocities = " + xSpeed + ", " + ySpeed);
+        int k_T = 500; // constant used to adjust duration of animation
+        int k_d = 400; // constant used to adjust distance traveled
+
+        // equations based on parabolic motion
+        double rVel = Math.hypot(xSpeed,ySpeed);
+        int time = (int) (100 + (500*(rVel/2 + 1)) / k_T);
+        int r_dist = (2 * time - (time * time))/k_T;
+
+        Log.d(TAG, "time = " + time);
+        Log.d(TAG, "r_dist = " + r_dist);
+
+        float xStart = windowPosition.getXPosition();
+        float xEnd = (float) ( xStart - r_dist * (xSpeed/rVel));
+
+        float yStart = windowPosition.getYPosition();
+        float yEnd = (float) ( yStart - r_dist * (ySpeed/rVel));
+
+                PropertyValuesHolder xValue = PropertyValuesHolder.ofFloat("xPosition",xStart, xEnd );
+        PropertyValuesHolder yValue = PropertyValuesHolder.ofFloat("yPosition",yStart, yEnd );
+
+        inertiaAnimator = new ObjectAnimator();
+        inertiaAnimator.setTarget(windowPosition);
+        inertiaAnimator.setValues(xValue,yValue);
+
+        inertiaAnimator.setInterpolator(new DecelerateInterpolator());
+        inertiaAnimator.setDuration(time);
+
+        inertiaAnimator.start();
+    }
 }
