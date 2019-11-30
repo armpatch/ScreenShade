@@ -19,6 +19,8 @@
     <string name="intro_instructions_3">To Hide: \n
         Back button or Double Tap Screen
     </string>
+    <string name="enable_button">ENABLE</string>
+    <string name="instructions">"1. Tap the enable button to show the floating button\n 2. Tap the button to hide the screen. \n 3. Tap the back button or double tap the screen to show the screen.</string>
 
 
 </resources>
