@@ -11,8 +11,8 @@
     <ImageButton
         android:id="@+id/button"
         android:layout_gravity="center"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@android:color/transparent"
         android:rotation="-90"
         android:src="@drawable/button_circle"

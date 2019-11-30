@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,20 +9,22 @@
         android:id="@+id/gradient"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_alignParentBottom="true"
-        android:src="@drawable/remove_button_zone" />
+        android:src="@drawable/trash_zone_gradient"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/gradient"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-80dp"
+        android:layout_marginBottom="60dp"
         android:shadowColor="@android:color/black"
         android:shadowDx="-1.5"
         android:shadowDy="1.5"
         android:shadowRadius=".5"
         android:text="@string/drag_to_dismiss"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

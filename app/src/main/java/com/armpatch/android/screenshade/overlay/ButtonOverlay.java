@@ -50,7 +50,6 @@ class ButtonOverlay extends Overlay{
         windowManagerView.setLayoutParams(new FrameLayout.LayoutParams(0,0));
         trashZoneOverlay = new TrashZoneOverlay(appContext);
 
-
         setInitialLayoutParams();
         setTouchListener();
         setupAnimators();
@@ -127,7 +126,7 @@ class ButtonOverlay extends Overlay{
     }
 
     private void setTouchListener() {
-        View frame = windowManagerView.findViewById(R.id.button_frame);
+        final View frame = windowManagerView.findViewById(R.id.button_frame);
 
         frame.setOnTouchListener(new View.OnTouchListener() {
 
@@ -151,6 +150,8 @@ class ButtonOverlay extends Overlay{
                         initialTouchPos.set((int) event.getX(), (int) event.getY());
                         initialPosition.set(layoutParams.x, layoutParams.y);
                         pressTime = System.currentTimeMillis();
+                        frame.setScaleX(1.1f);
+                        frame.setScaleY(1.1f);
 
                         trashZoneOverlay.show();
 
@@ -169,24 +170,28 @@ class ButtonOverlay extends Overlay{
 
                     case MotionEvent.ACTION_UP: {
                         trashZoneOverlay.hide();
+                        frame.setScaleX(1.0f);
+                        frame.setScaleY(1.0f);
 
                         velocityTracker.computeCurrentVelocity(1);
                         float xVelocity = velocityTracker.getXVelocity();
                         float yVelocity = velocityTracker.getYVelocity();
 
-                        if (Math.abs(xVelocity) > .5 || Math.abs(yVelocity) > .5) {
+                        if (Math.abs(xVelocity) > .5 || Math.abs(yVelocity) > .5)
                             startInertiaAnimator(xVelocity, yVelocity);
-                        }
 
                         velocityTracker.recycle();
 
                         long timeSincePress = System.currentTimeMillis() - pressTime;
 
-                        if (timeSincePress < 300 && !buttonMoved(dX, dY))
+                        if (timeSincePress < 300 && !buttonMoved(dX, dY)) {
                             pressButton();
-
-                        if (isInTrashZone( (int) event.getRawY() ) )
+                            break;
+                        }
+                        if (isInTrashZone( (int) event.getRawY() ))
                             dismissButton();
+
+                        break;
                     }
                 }
                 return false;
@@ -235,16 +240,16 @@ class ButtonOverlay extends Overlay{
         // equations based on parabolic motion
         double rVel = Math.hypot(xSpeed,ySpeed);
         int time = (int) (100 + ((rVel/2 + 1)) * k_T);
-        int r_dist = (2 * time - (time * time))/k_d;
+        int r_dist = -(2 * time - (time * time))/k_d;
 
         Log.d(TAG, "time = " + time);
         Log.d(TAG, "r_dist = " + r_dist);
 
         float xStart = windowPosition.getXPosition();
-        float xEnd = (float) ( xStart - r_dist * (xSpeed/rVel));
+        float xEnd = (float) ( xStart + r_dist * (xSpeed/rVel));
 
         float yStart = windowPosition.getYPosition();
-        float yEnd = (float) ( yStart - r_dist * (ySpeed/rVel));
+        float yEnd = (float) ( yStart + r_dist * (ySpeed/rVel));
 
                 PropertyValuesHolder xValue = PropertyValuesHolder.ofFloat("xPosition",xStart, xEnd );
         PropertyValuesHolder yValue = PropertyValuesHolder.ofFloat("yPosition",yStart, yEnd );

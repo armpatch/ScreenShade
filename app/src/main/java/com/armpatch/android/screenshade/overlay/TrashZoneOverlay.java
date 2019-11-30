@@ -27,6 +27,8 @@ class TrashZoneOverlay extends Overlay {
 
         layoutParams = WindowLayoutParams.getDefaultParams();
         layoutParams.width = displayInfo.getScreenWidth();
+        layoutParams.height = displayInfo.getScreenHeight();
+
         layoutParams.y = displayInfo.getNavBarHeight();
 
         windowManagerView.setVisibility(View.INVISIBLE);

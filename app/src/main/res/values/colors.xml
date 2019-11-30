@@ -10,6 +10,6 @@
     <color name="color_shade_normal">#000000</color>
 
     <color name="color_trash_zone_transparent">#00000000</color>
-    <color name="color_trash_zone_normal">#000000</color>
+    <color name="color_trash_zone_dark">#E6000000</color>
 
 </resources>

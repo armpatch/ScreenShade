@@ -7,7 +7,7 @@ import android.view.animation.LinearInterpolator;
 
 public class TrashZoneAnimator {
 
-    private static final int ANIMATION_DURATION = 200;
+    private static final int ANIMATION_DURATION = 300;
 
     public static ObjectAnimator getRevealAnimator(View view) {
         return getAnimator(view, 0f, 1.0f);
