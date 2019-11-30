@@ -229,13 +229,13 @@ class ButtonOverlay extends Overlay{
 
     private void startInertiaAnimator(float xSpeed, float ySpeed) {
         Log.d(TAG, "Velocities = " + xSpeed + ", " + ySpeed);
-        int k_T = 500; // constant used to adjust duration of animation
-        int k_d = 400; // constant used to adjust distance traveled
+        int k_T = 75; // constant used to adjust duration of animation
+        int k_d = 200; // constant used to adjust distance traveled
 
         // equations based on parabolic motion
         double rVel = Math.hypot(xSpeed,ySpeed);
-        int time = (int) (100 + (500*(rVel/2 + 1)) / k_T);
-        int r_dist = (2 * time - (time * time))/k_T;
+        int time = (int) (100 + ((rVel/2 + 1)) * k_T);
+        int r_dist = (2 * time - (time * time))/k_d;
 
         Log.d(TAG, "time = " + time);
         Log.d(TAG, "r_dist = " + r_dist);
