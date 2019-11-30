@@ -3,7 +3,6 @@ package com.armpatch.android.screenshade.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
@@ -31,24 +30,6 @@ public class StartScreenActivity extends AppCompatActivity {
                 attemptToStartService();
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //delayedStart();
-    }
-
-    private void delayedStart() {
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                attemptToStartService();
-            }
-        };
-        int DELAYED_START_TIME = 0;
-        handler.postDelayed(runnable, DELAYED_START_TIME);
     }
 
     private void attemptToStartService() {
@@ -83,7 +64,7 @@ public class StartScreenActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopService(serviceIntent);
+        if (serviceIntent != null)
+            stopService(serviceIntent);
     }
-
 }
