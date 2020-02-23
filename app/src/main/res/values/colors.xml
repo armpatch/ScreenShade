@@ -4,8 +4,12 @@
     <color name="colorPrimaryDark">#005cb2</color>
     <color name="colorAccent">#e57b1d</color>
 
-    <color name="color_background">#131313</color>
+    <color name="start_screen_background">#EEEEEE</color>
+    <color name="start_screen_text">#000000</color>
+    <color name="button_text">#FFFFFF</color>
+
     <color name="color_background_edges">#43000000</color>
+
 
     <color name="color_shade_normal">#000000</color>
 
