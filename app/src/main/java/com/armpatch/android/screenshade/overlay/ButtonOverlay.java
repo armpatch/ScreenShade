@@ -53,6 +53,7 @@ class ButtonOverlay extends Overlay{
         setInitialLayoutParams();
         setTouchListener();
         setupAnimators();
+
         setPositionOnScreen(new Point(450, 1000)); // TODO needs to work for multiple screen sizes
     }
 
@@ -150,8 +151,7 @@ class ButtonOverlay extends Overlay{
                         initialTouchPos.set((int) event.getX(), (int) event.getY());
                         initialPosition.set(layoutParams.x, layoutParams.y);
                         pressTime = System.currentTimeMillis();
-                        frame.setScaleX(1.1f);
-                        frame.setScaleY(1.1f);
+                        //frame.setAlpha(0.8f);
 
                         trashZoneOverlay.show();
 
@@ -170,15 +170,15 @@ class ButtonOverlay extends Overlay{
 
                     case MotionEvent.ACTION_UP: {
                         trashZoneOverlay.hide();
-                        frame.setScaleX(1.0f);
-                        frame.setScaleY(1.0f);
+                        //frame.setAlpha(1.0f);
+
 
                         velocityTracker.computeCurrentVelocity(1);
                         float xVelocity = velocityTracker.getXVelocity();
                         float yVelocity = velocityTracker.getYVelocity();
 
                         if (Math.abs(xVelocity) > .5 || Math.abs(yVelocity) > .5)
-                            startInertiaAnimator(xVelocity, yVelocity);
+                            //startInertiaAnimation(xVelocity, yVelocity);
 
                         velocityTracker.recycle();
 
@@ -232,7 +232,7 @@ class ButtonOverlay extends Overlay{
                 2 < Math.abs(dy);
     }
 
-    private void startInertiaAnimator(float xSpeed, float ySpeed) {
+    private void startInertiaAnimation(float xSpeed, float ySpeed) {
         Log.d(TAG, "Velocities = " + xSpeed + ", " + ySpeed);
         int k_T = 75; // constant used to adjust duration of animation
         int k_d = 200; // constant used to adjust distance traveled
