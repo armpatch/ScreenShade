@@ -40,6 +40,7 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
 
     @Override
     public void onButtonDismissed() {
+        service.broadcastServiceDestroyed();
         service.stopSelf();
     }
 }

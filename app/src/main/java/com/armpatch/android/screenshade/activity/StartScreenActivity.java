@@ -1,6 +1,9 @@
 package com.armpatch.android.screenshade.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -13,11 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.service.OverlayService;
 
+import static com.armpatch.android.screenshade.service.OverlayService.FILTER;
+
 public class StartScreenActivity extends AppCompatActivity {
 
     private static final int REQUEST_OVERLAY_CODE = 1;
     private Intent serviceIntent;
-
+    BroadcastReceiver broadcastReceiver;
     Button enableButton;
 
     @Override
@@ -32,6 +37,39 @@ public class StartScreenActivity extends AppCompatActivity {
                 attemptToStartService();
             }
         });
+
+        View contentView = this.findViewById(android.R.id.content);
+        contentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (serviceIntent == null) {
+                    enableButton.setEnabled(true);
+                }
+            }
+        });
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean serviceDestroyed = intent.getBooleanExtra(OverlayService.EXTRA_SERVICE_DESTROYED, false);
+                if (serviceDestroyed) {
+                    enableButton.setEnabled(true);
+                }
+            }
+        };
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter(FILTER);
+        this.registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void attemptToStartService() {
