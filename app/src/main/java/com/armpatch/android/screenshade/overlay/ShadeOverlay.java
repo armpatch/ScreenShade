@@ -11,10 +11,11 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.armpatch.android.screenshade.R;
+import com.armpatch.android.screenshade.animation.DimmerAnimator;
 import com.armpatch.android.screenshade.animation.ShadeAnimator;
 
 @SuppressLint("ClickableViewAccessibility")
-class ShadeOverlay extends Overlay{
+class ShadeOverlay extends Overlay {
 
     private Callbacks callbacks;
 
@@ -23,8 +24,9 @@ class ShadeOverlay extends Overlay{
 
     private ObjectAnimator revealAnimator;
     private ObjectAnimator hideAnimator;
+    private ObjectAnimator dimmerAnimator;
 
-    interface Callbacks{
+    interface Callbacks {
         void onShadeRemoved();
     }
 
@@ -80,6 +82,8 @@ class ShadeOverlay extends Overlay{
                 callbacks.onShadeRemoved();
             }
         });
+
+        dimmerAnimator = DimmerAnimator.getAnimator(windowManagerView, 1.0f, 0.7f);
     }
 
     private void setOnTouchListener() {
@@ -93,12 +97,20 @@ class ShadeOverlay extends Overlay{
 
                 event.setLocation(event.getRawX(), event.getRawY());
 
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    duration = System.currentTimeMillis() - lastTime;
-                    if (duration < DOUBLE_TAP_DURATION) {
-                        hide();
-                    }
-                    lastTime = System.currentTimeMillis();
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        duration = System.currentTimeMillis() - lastTime;
+                        if (duration < DOUBLE_TAP_DURATION) {
+                            hide();
+                        } else {
+                            lastTime = System.currentTimeMillis();
+                            dimmerAnimator.start();
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        windowManagerView.setAlpha(1.0f);
+                        dimmerAnimator.cancel();
+                        break;
                 }
                 return false;
             }
@@ -117,7 +129,7 @@ class ShadeOverlay extends Overlay{
     }
 
     private void setShadeDimensions() {
-        int circleDiameter = 2 * ( displayInfo.getScreenDiagonal() + displayInfo.getNavBarHeight());
+        int circleDiameter = 2 * (displayInfo.getScreenDiagonal() + displayInfo.getNavBarHeight());
 
         shadeCircle.getLayoutParams().height = circleDiameter;
         shadeCircle.getLayoutParams().width = circleDiameter;
