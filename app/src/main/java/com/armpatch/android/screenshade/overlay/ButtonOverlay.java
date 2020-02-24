@@ -34,7 +34,7 @@ class ButtonOverlay extends Overlay{
 
     interface Callbacks {
         void onButtonTapped(Point centerOfButton);
-        void onButtonDismissed();
+        void onButtonHidden();
     }
 
     ButtonOverlay(Callbacks callbacks, Context appContext) {
@@ -53,40 +53,10 @@ class ButtonOverlay extends Overlay{
         setPositionOnScreen(new Point(450, 1000)); // TODO needs to work for multiple screen sizes
     }
 
-    @Override
-    void setPositionOnScreen(Point point) {
-        super.setPositionOnScreen(moveViewIntoScreenBounds(point));
-    }
-
     void startRevealAnimation() {
         addViewToWindowManager();
         windowManagerView.setVisibility(View.VISIBLE);
         expandAnimator.start();
-    }
-
-    private void pressButton() {
-        fadeAnimator.start();
-        callbacks.onButtonTapped(getWindowCenterPoint());
-    }
-
-    void dismissButton() {
-        cancelAllAnimators();
-
-        shrinkAnimator.start();
-        shrinkAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                windowManagerView.setVisibility(View.GONE);
-                callbacks.onButtonDismissed();
-            }
-        });
-    }
-
-    private void cancelAllAnimators() {
-        for (Animator animator :
-                animatorList) {
-            animator.cancel();
-        }
     }
 
     private void setInitialLayoutParams() {
@@ -186,7 +156,7 @@ class ButtonOverlay extends Overlay{
                             break;
                         }
                         if (isInTrashZone( (int) event.getRawY() ))
-                            dismissButton();
+                            hide();
 
                         break;
                     }
@@ -196,19 +166,29 @@ class ButtonOverlay extends Overlay{
         });
     }
 
-    private Point moveViewIntoScreenBounds(Point point) {
-        int Y_MAX = displayInfo.getScreenHeight() - windowManagerView.getHeight();
-        int X_MAX = displayInfo.getScreenWidth() - windowManagerView.getWidth();
+    private void pressButton() {
+        fadeAnimator.start();
+        callbacks.onButtonTapped(getWindowCenterPoint());
+    }
 
-        // Adjust x
-        if (point.x < 0) point.x = 0;
-        if (point.x > X_MAX) point.x = X_MAX;
+    void hide() {
+        cancelAllAnimators();
 
-        // Adjust Y
-        if (point.y < 0) point.y = 0;
-        if (point.y > Y_MAX) point.y = Y_MAX;
+        shrinkAnimator.start();
+        shrinkAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                windowManagerView.setVisibility(View.GONE);
+                callbacks.onButtonHidden();
+            }
+        });
+    }
 
-        return point;
+    private void cancelAllAnimators() {
+        for (Animator animator :
+                animatorList) {
+            animator.cancel();
+        }
     }
 
     private Point getWindowCenterPoint() {
@@ -229,4 +209,23 @@ class ButtonOverlay extends Overlay{
                 4 < Math.abs(dy);
     }
 
+    @Override
+    void setPositionOnScreen(Point point) {
+        super.setPositionOnScreen(moveViewIntoScreenBounds(point));
+    }
+
+    private Point moveViewIntoScreenBounds(Point point) {
+        int Y_MAX = displayInfo.getScreenHeight() - windowManagerView.getHeight();
+        int X_MAX = displayInfo.getScreenWidth() - windowManagerView.getWidth();
+
+        // Adjust x
+        if (point.x < 0) point.x = 0;
+        if (point.x > X_MAX) point.x = X_MAX;
+
+        // Adjust Y
+        if (point.y < 0) point.y = 0;
+        if (point.y > Y_MAX) point.y = Y_MAX;
+
+        return point;
+    }
 }

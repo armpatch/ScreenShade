@@ -60,17 +60,6 @@ class ShadeOverlay extends Overlay {
         }
     }
 
-    void hide() {
-        if (!isAddedToWindowManager)
-            return;
-
-        if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
-            setShadeCirclePosition(viewCenterPoint);
-
-            hideAnimator.start();
-        }
-    }
-
     private void setAnimators() {
         revealAnimator = ShadeAnimator.getRevealAnimatorSet(shadeCircle);
 
@@ -117,6 +106,17 @@ class ShadeOverlay extends Overlay {
         });
     }
 
+    void hide() {
+        if (!isAddedToWindowManager)
+            return;
+
+        if (!revealAnimator.isRunning() && !hideAnimator.isRunning()) {
+            setShadeCirclePosition(viewCenterPoint);
+
+            hideAnimator.start();
+        }
+    }
+
     private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
@@ -142,6 +142,5 @@ class ShadeOverlay extends Overlay {
         shadeCircle.setX(offsetTopLeftPoint.x);
         shadeCircle.setY(offsetTopLeftPoint.y);
     }
-
 
 }

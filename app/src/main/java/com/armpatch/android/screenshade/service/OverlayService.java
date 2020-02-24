@@ -3,7 +3,9 @@ package com.armpatch.android.screenshade.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -40,7 +42,7 @@ public class OverlayService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!isRunning){
-            overlayManager.showButtonOverlay();
+            overlayManager.showButton();
             isRunning = true;
         }
         return START_STICKY;
@@ -54,7 +56,7 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
-        overlayManager.hideAllOverlays();
+        overlayManager.removeAll();
         broadcastThisServiceIsDestroyed();
         super.onDestroy();
     }
@@ -64,5 +66,16 @@ public class OverlayService extends Service {
         i.putExtra(EXTRA_SERVICE_DESTROYED, true);
         i.setAction(FILTER);
         sendBroadcast(i);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d("OverlayService", "landscape");
+        }
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.d("OverlayService", "portrait");
+        }
     }
 }
