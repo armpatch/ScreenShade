@@ -19,11 +19,11 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
         buttonOverlay = new ButtonOverlay(this, service);
     }
 
-    public void showOverlays() {
+    public void showButtonOverlay() {
         buttonOverlay.startRevealAnimation();
     }
 
-    public void hideOverlays() {
+    public void hideAllOverlays() {
         shadeOverlay.hide();
         buttonOverlay.dismissButton();
     }

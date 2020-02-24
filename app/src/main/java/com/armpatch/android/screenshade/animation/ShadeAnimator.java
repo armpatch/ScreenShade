@@ -3,9 +3,9 @@ package com.armpatch.android.screenshade.animation;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BaseInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 
 public class ShadeAnimator {
 
@@ -23,7 +23,7 @@ public class ShadeAnimator {
         ObjectAnimator animator =
                 ObjectAnimator.ofPropertyValuesHolder(shadeView, scaleX, scaleY, alpha);
 
-        BaseInterpolator interpolator = new AccelerateInterpolator();
+        BaseInterpolator interpolator = new LinearInterpolator();
 
         animator.setInterpolator(interpolator);
         animator.setDuration(REVEAL_DURATION);

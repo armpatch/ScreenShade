@@ -27,7 +27,7 @@ public class OverlayService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!isRunning){
-            overlayManager.showOverlays();
+            overlayManager.showButtonOverlay();
             isRunning = true;
         }
         return START_STICKY;
@@ -41,7 +41,7 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
-        overlayManager.hideOverlays();
+        overlayManager.hideAllOverlays();
         super.onDestroy();
     }
 }

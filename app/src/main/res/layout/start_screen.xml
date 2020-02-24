@@ -29,7 +29,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="40dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/enable_button"
         android:text="@string/enable_button"
         android:textColor="@color/button_text"
         app:layout_constraintBottom_toBottomOf="parent"

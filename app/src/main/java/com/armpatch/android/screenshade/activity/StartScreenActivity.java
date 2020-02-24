@@ -18,13 +18,15 @@ public class StartScreenActivity extends AppCompatActivity {
     private static final int REQUEST_OVERLAY_CODE = 1;
     private Intent serviceIntent;
 
+    Button enableButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_screen);
 
-        Button showControlsButton = findViewById(R.id.show_controls_button);
-        showControlsButton.setOnClickListener(new View.OnClickListener() {
+        enableButton = findViewById(R.id.show_controls_button);
+        enableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 attemptToStartService();
@@ -38,6 +40,7 @@ public class StartScreenActivity extends AppCompatActivity {
         } else {
             serviceIntent = OverlayService.getIntent(this);
             startService(serviceIntent);
+            enableButton.setEnabled(false);
         }
     }
 
