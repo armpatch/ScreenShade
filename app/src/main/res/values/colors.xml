@@ -8,8 +8,6 @@
     <color name="start_screen_text">#000000</color>
     <color name="button_text">#FFFFFF</color>
 
-    <color name="color_background_edges">#43000000</color>
-
     <color name="button_disabled">#4B4B4B</color>
 
     <color name="color_shade_normal">#000000</color>

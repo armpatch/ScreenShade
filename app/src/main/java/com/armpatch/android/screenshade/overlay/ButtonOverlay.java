@@ -20,17 +20,13 @@ import java.util.ArrayList;
 @SuppressLint("ClickableViewAccessibility")
 class ButtonOverlay extends Overlay{
 
-
     private TrashZoneOverlay trashZoneOverlay;
-
     private Callbacks callbacks;
-    private WindowPosition windowPosition;
 
     private ArrayList<Animator> animatorList = new ArrayList<>();
     private ObjectAnimator expandAnimator;
     private ObjectAnimator shrinkAnimator;
     private ObjectAnimator fadeAnimator;
-    private ObjectAnimator inertiaAnimator;
 
     interface Callbacks {
         void onButtonTapped(Point centerOfButton);
@@ -61,7 +57,6 @@ class ButtonOverlay extends Overlay{
 
     private void setInitialLayoutParams() {
         layoutParams = WindowLayoutParams.getDefaultParams();
-        windowPosition = new WindowPosition(this, layoutParams);
     }
 
     private void setupAnimators() {
@@ -84,12 +79,9 @@ class ButtonOverlay extends Overlay{
             }
         });
 
-        inertiaAnimator = new ObjectAnimator();
-
         animatorList.add(expandAnimator);
         animatorList.add(shrinkAnimator);
         animatorList.add(fadeAnimator);
-        animatorList.add(inertiaAnimator);
     }
 
     private void setTouchListener() {

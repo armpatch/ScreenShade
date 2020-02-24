@@ -6,7 +6,6 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/gradient"
         android:layout_width="match_parent"
         android:layout_height="@dimen/trash_zone_height"
         android:src="@drawable/trash_zone_gradient"
@@ -14,7 +13,6 @@
         />
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"

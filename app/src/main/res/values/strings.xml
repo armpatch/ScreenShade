@@ -3,14 +3,6 @@
 
     <string name="permission_denied_toast">Permission is needed to use overlay.</string>
 
-    <string name="notification_title">Controls Hidden</string>
-    <string name="notification_description">Tap to show controls</string>
-
-    <string name="channel_name">Channel Name</string>
-    <string name="channel_description">Channel Description</string>
-
-    <string name="send_feedback">send feedback</string>
-
     <string name="drag_to_dismiss">Drag down to dismiss</string>
 
     <string name="enable_button">ENABLE</string>
