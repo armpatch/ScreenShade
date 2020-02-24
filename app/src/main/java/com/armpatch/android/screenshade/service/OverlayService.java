@@ -56,6 +56,7 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
+        overlayService = null;
         overlayManager.removeAll();
         broadcastThisServiceIsDestroyed();
         super.onDestroy();
