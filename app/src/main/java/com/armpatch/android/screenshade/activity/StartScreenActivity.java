@@ -22,8 +22,8 @@ public class StartScreenActivity extends AppCompatActivity {
 
     private static final int REQUEST_OVERLAY_CODE = 1;
     private Intent serviceIntent;
-    BroadcastReceiver broadcastReceiver;
-    Button enableButton;
+    private BroadcastReceiver broadcastReceiver;
+    private Button enableButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +38,12 @@ public class StartScreenActivity extends AppCompatActivity {
             }
         });
 
-        View contentView = this.findViewById(android.R.id.content);
-        contentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (serviceIntent == null) {
-                    enableButton.setEnabled(true);
-                }
-            }
-        });
-
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 boolean serviceDestroyed = intent.getBooleanExtra(OverlayService.EXTRA_SERVICE_DESTROYED, false);
                 if (serviceDestroyed) {
-                    enableButton.setEnabled(true);
+                    enableButton();
                 }
             }
         };
@@ -64,6 +54,13 @@ public class StartScreenActivity extends AppCompatActivity {
         super.onResume();
         IntentFilter intentFilter = new IntentFilter(FILTER);
         this.registerReceiver(broadcastReceiver, intentFilter);
+        resetEnableButton();
+    }
+
+    private void resetEnableButton() {
+        if (OverlayService.getInstance() == null) {
+            enableButton();
+        }
     }
 
     @Override
@@ -78,7 +75,7 @@ public class StartScreenActivity extends AppCompatActivity {
         } else {
             serviceIntent = OverlayService.getIntent(this);
             startService(serviceIntent);
-            enableButton.setEnabled(false);
+            disableButton();
         }
     }
 
@@ -107,5 +104,13 @@ public class StartScreenActivity extends AppCompatActivity {
         super.onDestroy();
         if (serviceIntent != null)
             stopService(serviceIntent);
+    }
+
+    private void enableButton() {
+        enableButton.setEnabled(true);
+    }
+
+    private void disableButton() {
+        enableButton.setEnabled(false);
     }
 }

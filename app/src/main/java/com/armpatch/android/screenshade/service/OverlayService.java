@@ -11,6 +11,7 @@ import com.armpatch.android.screenshade.overlay.OverlayManager;
 
 public class OverlayService extends Service {
 
+    public static OverlayService overlayService;
     public static final String FILTER = "com.armpatch.android.screenshade.service.OverlayService";
 
     OverlayManager overlayManager;
@@ -21,10 +22,19 @@ public class OverlayService extends Service {
         return new Intent(context, OverlayService.class);
     }
 
+    public static OverlayService getInstance() {
+        if (overlayService != null) {
+            return overlayService;
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         overlayManager = new OverlayManager(this);
+        overlayService = this;
     }
 
     @Override
@@ -45,11 +55,11 @@ public class OverlayService extends Service {
     @Override
     public void onDestroy() {
         overlayManager.hideAllOverlays();
-        broadcastServiceDestroyed();
+        broadcastThisServiceIsDestroyed();
         super.onDestroy();
     }
 
-    public void broadcastServiceDestroyed() {
+    private void broadcastThisServiceIsDestroyed() {
         Intent i = new Intent();
         i.putExtra(EXTRA_SERVICE_DESTROYED, true);
         i.setAction(FILTER);
