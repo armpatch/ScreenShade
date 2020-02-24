@@ -18,19 +18,19 @@ class TrashZoneOverlay extends Overlay {
     TrashZoneOverlay(Context appContext) {
         super(appContext);
 
+        setupWindow(appContext);
+        setupAnimators();
+    }
+
+    private void setupWindow(Context appContext) {
         DisplayInfo displayInfo = new DisplayInfo(appContext);
 
         windowManagerView = View.inflate(appContext, R.layout.trash_zone_overlay, null);
         windowManagerView.setLayoutParams(new RelativeLayout.LayoutParams(0,0));
-
-        setupAnimators();
-
         layoutParams = WindowLayoutParams.getDefaultParams();
         layoutParams.width = displayInfo.getScreenWidth();
-        layoutParams.height = displayInfo.getScreenHeight();
 
-        layoutParams.y = displayInfo.getNavBarHeight();
-
+        layoutParams.y = displayInfo.getNavBarHeight() + displayInfo.getScreenHeight() - (int) appContext.getResources().getDimension(R.dimen.trash_zone_height);
         windowManagerView.setVisibility(View.INVISIBLE);
     }
 

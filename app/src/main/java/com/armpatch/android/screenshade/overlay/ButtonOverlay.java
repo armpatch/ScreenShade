@@ -7,7 +7,6 @@ import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 @SuppressLint("ClickableViewAccessibility")
 class ButtonOverlay extends Overlay{
 
-    public static final String TAG = "ButtonOverlayTag";
 
     private TrashZoneOverlay trashZoneOverlay;
 
@@ -169,6 +167,7 @@ class ButtonOverlay extends Overlay{
                     }
 
                     case MotionEvent.ACTION_UP: {
+
                         trashZoneOverlay.hide();
                         //frame.setAlpha(1.0f);
 
@@ -228,12 +227,11 @@ class ButtonOverlay extends Overlay{
     }
 
     private boolean buttonMoved(int dx, int dy) { // TODO needs better name
-        return  2 < Math.abs(dx) ||
-                2 < Math.abs(dy);
+        return  4 < Math.abs(dx) ||
+                4 < Math.abs(dy);
     }
 
     private void startInertiaAnimation(float xSpeed, float ySpeed) {
-        Log.d(TAG, "Velocities = " + xSpeed + ", " + ySpeed);
         int k_T = 75; // constant used to adjust duration of animation
         int k_d = 200; // constant used to adjust distance traveled
 
@@ -242,8 +240,6 @@ class ButtonOverlay extends Overlay{
         int time = (int) (100 + ((rVel/2 + 1)) * k_T);
         int r_dist = -(2 * time - (time * time))/k_d;
 
-        Log.d(TAG, "time = " + time);
-        Log.d(TAG, "r_dist = " + r_dist);
 
         float xStart = windowPosition.getXPosition();
         float xEnd = (float) ( xStart + r_dist * (xSpeed/rVel));
