@@ -3,14 +3,12 @@ package com.armpatch.android.screenshade.overlay;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.armpatch.android.screenshade.R;
@@ -231,32 +229,4 @@ class ButtonOverlay extends Overlay{
                 4 < Math.abs(dy);
     }
 
-    private void startInertiaAnimation(float xSpeed, float ySpeed) {
-        int k_T = 75; // constant used to adjust duration of animation
-        int k_d = 200; // constant used to adjust distance traveled
-
-        // equations based on parabolic motion
-        double rVel = Math.hypot(xSpeed,ySpeed);
-        int time = (int) (100 + ((rVel/2 + 1)) * k_T);
-        int r_dist = -(2 * time - (time * time))/k_d;
-
-
-        float xStart = windowPosition.getXPosition();
-        float xEnd = (float) ( xStart + r_dist * (xSpeed/rVel));
-
-        float yStart = windowPosition.getYPosition();
-        float yEnd = (float) ( yStart + r_dist * (ySpeed/rVel));
-
-                PropertyValuesHolder xValue = PropertyValuesHolder.ofFloat("xPosition",xStart, xEnd );
-        PropertyValuesHolder yValue = PropertyValuesHolder.ofFloat("yPosition",yStart, yEnd );
-
-        inertiaAnimator = new ObjectAnimator();
-        inertiaAnimator.setTarget(windowPosition);
-        inertiaAnimator.setValues(xValue,yValue);
-
-        inertiaAnimator.setInterpolator(new DecelerateInterpolator());
-        inertiaAnimator.setDuration(time);
-
-        inertiaAnimator.start();
-    }
 }
