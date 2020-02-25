@@ -43,12 +43,14 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
         service.stopSelf();
     }
 
-    public void setLandscapeOrientation() {
-        shadeOverlay.setLandscapeOrientation();
+    public void toggleOrientationChange() {
+        shadeOverlay.flipHeightAndWidth();
+        buttonOverlay.flipXY();
     }
 
     public void setPortraitOrientation() {
-        shadeOverlay.setPortraitOrientation();
+        shadeOverlay.flipHeightAndWidth();
+        buttonOverlay.flipXY();
     }
 
 }

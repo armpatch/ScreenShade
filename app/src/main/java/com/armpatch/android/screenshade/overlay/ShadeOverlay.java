@@ -144,18 +144,7 @@ class ShadeOverlay extends Overlay {
     }
 
     @SuppressWarnings("SuspiciousNameCombination")
-    public void setLandscapeOrientation() {
-        int temp = layoutParams.width;
-        layoutParams.width = layoutParams.height;
-        layoutParams.height = temp;
-        if (isAddedToWindowManager) {
-            removeViewFromWindowManager();
-            addViewToWindowManager();
-        }
-    }
-
-    @SuppressWarnings("SuspiciousNameCombination")
-    public void setPortraitOrientation() {
+    public void flipHeightAndWidth() {
         int temp = layoutParams.width;
         layoutParams.width = layoutParams.height;
         layoutParams.height = temp;

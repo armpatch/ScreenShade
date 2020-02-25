@@ -74,11 +74,10 @@ public class OverlayService extends Service {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Log.d("OverlayService", "landscape");
-            overlayManager.setLandscapeOrientation();
+            overlayManager.toggleOrientationChange();
         }
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             Log.d("OverlayService", "portrait");
-            overlayManager.setPortraitOrientation();
         }
     }
 }

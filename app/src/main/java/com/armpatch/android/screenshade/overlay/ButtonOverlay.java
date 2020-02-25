@@ -220,4 +220,19 @@ class ButtonOverlay extends Overlay{
 
         return point;
     }
+
+    @SuppressWarnings("SuspiciousNameCombination")
+    public void flipXY() {
+        displayInfo.update();
+
+        int temp = layoutParams.y;
+        layoutParams.y = layoutParams.x;
+        layoutParams.x = temp;
+
+        if (isAddedToWindowManager) {
+            removeViewFromWindowManager();
+            addViewToWindowManager();
+        }
+
+    }
 }

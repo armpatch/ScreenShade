@@ -26,7 +26,7 @@ class DisplayInfo {
         update();
     }
 
-    private void update() {
+    void update() {
         setScreenHeight();
         screenWidth = getDisplayMetrics().widthPixels;
         diagonalLength = (int) Math.sqrt(Math.pow(screenHeight,2)+ Math.pow(screenWidth,2));
