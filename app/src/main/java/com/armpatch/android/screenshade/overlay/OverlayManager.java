@@ -42,4 +42,13 @@ public class OverlayManager implements ButtonOverlay.Callbacks, ShadeOverlay.Cal
     public void onButtonHidden() {
         service.stopSelf();
     }
+
+    public void setLandscapeOrientation() {
+        shadeOverlay.setLandscapeOrientation();
+    }
+
+    public void setPortraitOrientation() {
+        shadeOverlay.setPortraitOrientation();
+    }
+
 }

@@ -143,4 +143,26 @@ class ShadeOverlay extends Overlay {
         shadeCircle.setY(offsetTopLeftPoint.y);
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
+    public void setLandscapeOrientation() {
+        int temp = layoutParams.width;
+        layoutParams.width = layoutParams.height;
+        layoutParams.height = temp;
+        if (isAddedToWindowManager) {
+            removeViewFromWindowManager();
+            addViewToWindowManager();
+        }
+    }
+
+    @SuppressWarnings("SuspiciousNameCombination")
+    public void setPortraitOrientation() {
+        int temp = layoutParams.width;
+        layoutParams.width = layoutParams.height;
+        layoutParams.height = temp;
+        if (isAddedToWindowManager) {
+            removeViewFromWindowManager();
+            addViewToWindowManager();
+        }
+    }
+
 }

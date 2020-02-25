@@ -1,4 +1,4 @@
-<resources>
+ <resources>
     <string name="app_name">ScreenShade</string>
 
     <string name="permission_denied_toast">Permission is needed to use overlay.</string>
