@@ -6,7 +6,7 @@
         android:height="1000px"
         android:width="1000px">
         <shape android:shape="oval" >
-            <solid android:color="@color/color_shade_normal" />
+            <solid android:color="@android:color/black" />
         </shape>
     </item>
 

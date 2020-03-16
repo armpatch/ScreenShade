@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/start_screen_background">
+    android:background="@color/off_white">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/instructions"
         android:textAlignment="viewStart"
-        android:textColor="@color/start_screen_text"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         android:layout_margin="12dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +30,7 @@
         android:layout_marginBottom="40dp"
         android:backgroundTint="@color/enable_button"
         android:text="@string/enable_button"
-        android:textColor="@color/button_text"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

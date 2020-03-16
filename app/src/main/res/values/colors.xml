@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1e88e5</color>
-    <color name="colorPrimaryDark">#005cb2</color>
-    <color name="colorAccent">#e57b1d</color>
+    <color name="light_blue">#1e88e5</color>
+    <color name="dark_blue">#005cb2</color>
+    <color name="orange">#e57b1d</color>
 
-    <color name="start_screen_background">#EEEEEE</color>
-    <color name="start_screen_text">#000000</color>
-    <color name="button_text">#FFFFFF</color>
+    <color name="off_white">#FFFFFF</color>
+    <color name="grey">#4B4B4B</color>
 
-    <color name="button_disabled">#4B4B4B</color>
+    <color name="transparent_black_10percent">#E6000000</color>
+    <color name="transparent_blue_50percent">#801E88E5</color>
 
-    <color name="color_shade_normal">#000000</color>
 
-    <color name="color_trash_zone_transparent">#00000000</color>
-    <color name="color_trash_zone_dark">#E6000000</color>
 
 </resources>
