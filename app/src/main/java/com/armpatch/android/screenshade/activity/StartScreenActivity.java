@@ -20,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.armpatch.android.screenshade.R;
 import com.armpatch.android.screenshade.service.OverlayService;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 
 import static com.armpatch.android.screenshade.service.OverlayService.FILTER;
 
@@ -55,6 +57,19 @@ public class StartScreenActivity extends AppCompatActivity {
             }
         };
         setupRevealPane();
+
+        TapTarget target = TapTarget.forView(enableButton, "Click here to show floating button")
+                .outerCircleColor(R.color.dark_blue)
+                .transparentTarget(true);
+
+
+        TapTargetView.showFor(this, target, new TapTargetView.Listener() {
+            @Override
+            public void onTargetClick(TapTargetView view) {
+                super.onTargetClick(view);
+                if (enableButton.isEnabled()) enableButton.performClick();
+            }
+        });
     }
 
     private void setupRevealPane() {
