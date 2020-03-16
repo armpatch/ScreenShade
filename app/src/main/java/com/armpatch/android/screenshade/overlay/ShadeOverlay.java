@@ -44,7 +44,7 @@ class ShadeOverlay extends Overlay {
         };
 
         shadeCircle = windowManagerView.findViewById(R.id.shade_circle);
-        hintText = windowManagerView.findViewById(R.id.shade_hint_text_view);
+        hintText = windowManagerView.findViewById(R.id.shade_hint_frame);
 
         setOnTouchListener();
         setInitialLayoutParams();

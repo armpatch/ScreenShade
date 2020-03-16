@@ -6,32 +6,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/shade_hint_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="invisible"
-        android:backgroundTint="@color/transparent_blue_50percent"
+    <FrameLayout
+        android:id="@+id/shade_hint_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         tools:visibility="visible"
-        app:cardCornerRadius="8dp"
-        android:layout_marginBottom="12dp"
+        android:background="@drawable/boundary"
+        android:elevation="2dp"
         >
-        <TextView
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/shade_hide_hint"
-            android:textAlignment="center"
-            android:textColor="@android:color/white"
-            android:background="@color/transparent_blue_50percent"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            />
+            android:backgroundTint="@color/transparent_blue_50percent"
+            app:cardCornerRadius="8dp"
+            android:layout_marginBottom="12dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/shade_hide_hint"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:background="@color/transparent_blue_50percent"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                />
+        </androidx.cardview.widget.CardView>
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
     <ImageView
         android:elevation="4dp"
