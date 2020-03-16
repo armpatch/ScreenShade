@@ -78,7 +78,13 @@ class ShadeOverlay extends Overlay {
         shadeDimmerAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
+                shadeCircle.setElevation(8);
                 hintText.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                shadeCircle.setElevation(0);
             }
         });
     }
