@@ -30,7 +30,6 @@
                 android:textColor="@android:color/white"
                 android:background="@color/transparent_blue_50percent"
                 android:textSize="32sp"
-                android:textStyle="bold"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 />

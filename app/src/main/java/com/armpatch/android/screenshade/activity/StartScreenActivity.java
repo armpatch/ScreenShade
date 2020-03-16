@@ -1,5 +1,9 @@
 package com.armpatch.android.screenshade.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -24,6 +29,8 @@ public class StartScreenActivity extends AppCompatActivity {
     private Intent serviceIntent;
     private BroadcastReceiver broadcastReceiver;
     private Button enableButton;
+    private View buttonRevealPane;
+    ObjectAnimator paneRevealAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,33 @@ public class StartScreenActivity extends AppCompatActivity {
                 }
             }
         };
+        setupRevealPane();
+    }
+
+    private void setupRevealPane() {
+        buttonRevealPane = findViewById(R.id.button_reveal_pane);
+        buttonRevealPane.setScaleY(0.0f);
+        buttonRevealPane.setPivotY(150);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0f, 1f);
+        paneRevealAnimator = ObjectAnimator.ofPropertyValuesHolder(buttonRevealPane, scaleY);
+        paneRevealAnimator.setInterpolator(new DecelerateInterpolator());
+        paneRevealAnimator.setDuration(300);
+
+        PropertyValuesHolder scaleY2 = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0f);
+        final ObjectAnimator paneHideAnimator = ObjectAnimator.ofPropertyValuesHolder(buttonRevealPane, scaleY2);
+        paneHideAnimator.setDuration(300);
+        paneHideAnimator.setStartDelay(400);
+        paneHideAnimator.setInterpolator(new DecelerateInterpolator());
+
+        paneRevealAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                serviceIntent = OverlayService.getIntent(StartScreenActivity.this);
+                startService(serviceIntent);
+                disableButton();
+                paneHideAnimator.start();
+            }
+        });
     }
 
     @Override
@@ -73,9 +107,7 @@ public class StartScreenActivity extends AppCompatActivity {
         if (!Settings.canDrawOverlays((this))) {
             requestOverlayPermission();
         } else {
-            serviceIntent = OverlayService.getIntent(this);
-            startService(serviceIntent);
-            disableButton();
+            paneRevealAnimator.start();
         }
     }
 
