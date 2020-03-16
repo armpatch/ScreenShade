@@ -21,10 +21,11 @@ class ShadeOverlay extends Overlay {
 
     private View shadeCircle;
     private Point viewCenterPoint;
+    private View hintText;
 
     private ObjectAnimator revealAnimator;
     private ObjectAnimator hideAnimator;
-    private ObjectAnimator dimmerAnimator;
+    private ObjectAnimator shadeDimmerAnimator;
 
     interface Callbacks {
         void onShadeRemoved();
@@ -43,6 +44,7 @@ class ShadeOverlay extends Overlay {
         };
 
         shadeCircle = windowManagerView.findViewById(R.id.shade_circle);
+        hintText = windowManagerView.findViewById(R.id.shade_hint_text_view);
 
         setOnTouchListener();
         setInitialLayoutParams();
@@ -72,7 +74,13 @@ class ShadeOverlay extends Overlay {
             }
         });
 
-        dimmerAnimator = DimmerAnimator.getAnimator(windowManagerView, 1.0f, 0.7f);
+        shadeDimmerAnimator = DimmerAnimator.getAnimator(shadeCircle, 1.0f, 0.7f);
+        shadeDimmerAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                hintText.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void setOnTouchListener() {
@@ -93,12 +101,14 @@ class ShadeOverlay extends Overlay {
                             hide();
                         } else {
                             lastTime = System.currentTimeMillis();
-                            dimmerAnimator.start();
+                            shadeDimmerAnimator.start();
+
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        windowManagerView.setAlpha(1.0f);
-                        dimmerAnimator.cancel();
+                        shadeCircle.setAlpha(1.0f);
+                        shadeDimmerAnimator.cancel();
+                        hintText.setVisibility(View.INVISIBLE);
                         break;
                 }
                 return false;

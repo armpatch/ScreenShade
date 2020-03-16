@@ -8,6 +8,7 @@
     <string name="enable_button">ENABLE</string>
 
     <string name="instructions">"1. Tap the <b>ENABLE</b> button to show the floating button\n\n2. Tap the floating button enable overlay.\n\n3. Tap the back button or double tap the screen to hide the overlay.</string>
+     <string name="shade_hide_hint">DOUBLE TAP\nTO HIDE</string>
 
 
  </resources>
