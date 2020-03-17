@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -57,17 +58,33 @@ public class StartScreenActivity extends AppCompatActivity {
             }
         };
         setupRevealPane();
+        startTapTargetSequence();
+    }
 
-        TapTarget target = TapTarget.forView(enableButton, "Click here to show floating button")
+    private void startTapTargetSequence() {
+        TapTarget target = TapTarget.forView(enableButton, "Tap to show overlay button.")
                 .outerCircleColor(R.color.dark_blue)
+                .cancelable(true)
                 .transparentTarget(true);
 
+        final TapTarget target2 = TapTarget.forView(findViewById(R.id.reveal_region), "Drag or tap me.")
+                .outerCircleColor(R.color.dark_blue)
+                .cancelable(true)
+                .transparentTarget(false);
 
         TapTargetView.showFor(this, target, new TapTargetView.Listener() {
             @Override
             public void onTargetClick(TapTargetView view) {
                 super.onTargetClick(view);
-                if (enableButton.isEnabled()) enableButton.performClick();
+                enableButton.performClick();
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        TapTargetView.showFor(StartScreenActivity.this, target2);
+                    }
+                }, 800);
             }
         });
     }

@@ -32,10 +32,12 @@ public class ShadeAnimator {
     }
 
     public static ObjectAnimator getHideAnimator(View shadeView) {
-        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.0f);
+        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, MIN_SIZE);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, MIN_SIZE);
+        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, MIN_ALPHA);
 
         ObjectAnimator animator =
-                ObjectAnimator.ofPropertyValuesHolder(shadeView, alpha);
+                ObjectAnimator.ofPropertyValuesHolder(shadeView, alpha, scaleX, scaleY);
 
         BaseInterpolator interpolator = new DecelerateInterpolator();
 
