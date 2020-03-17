@@ -5,42 +5,59 @@ src="/app/images/demo_part_2.gif" width="200">
 
 Play Store: https://play.google.com/store/apps/details?id=com.armpatch.android.secretscreen&hl=en_US
 
-ScreenShade is an app that draws over other apps to cover content on your screen, giving the appearance that the display is off. This effect is most effective on OLED screens, which produce no light when black. 
+ScreenShade is an app I created to experiment with overlays and
+animations. This effect is made possible by drawing over other apps. The
+effect is most pronounced on phones with OLED screens, which provide
+deeper blacks.
 
-To enable the overlay, single tap the floating button. Once the overlay is covering the screen, double tap the screen or hit the back button to hide the overlay.
-
-The floating button can be removed by dragging it to the bottom of the screen.
+I implemented the TapTargetView library for guiding the user through the
+basics elements of the app.
 
 ## Getting Started
 
-The current version of the app is available for free on the play store.
+To enable the overlay, single tap the floating button.
 
-### Prerequisites
+Once the overlay is covering the screen, double tap the screen or hit
+the back button to hide the overlay.
 
-The minimum Android SDK version is 23.
+You can peek behind the shade overlay by tapping and holding the screen.
 
-### Permissions
+The floating button can be removed by dragging it to the bottom of the screen.
 
-This app requires "draw over apps" to run.
+## App Details
+
+The minimum Android SDK version is 23.  
+The "draw over apps" permission is required to run.
 
 ## How it works
 
-Screen Shade is able to create Views that persist between apps by adding Views through the Window Manager system service, which are created and destroyed through a background service.
+Screen Shade is able to create Views that persist between apps by adding
+Views to the Window Manager system service. When the enable button in
+the main activity is clicked, a service is started that handles all of
+the logic and overlay creation.
 
 ### The Window Manager
 
-The WindowManager is an extension of the ViewManager, which has three methods available for use:
+The WindowManager is an extension of the ViewManager, which has three
+methods available for use:
 - addView()
 - updateViewLayout()
 - removeView()
 
-These methods provide no exception/error handling by themselves (ex: in the case of adding a view twice, or removing a view that is not yet added to the window manager). For this reason, I created an [Overlay](/app/src/main/java/com/armpatch/android/screenshade/overlay/Overlay.java) class that would handle these methods safely and abstract away functionality shared between the various overlays in this app.
+These methods provide no exception/error handling by themselves (ex: in
+the case of adding a view twice, or removing a view that is not yet
+added to the window manager). For this reason, I created an
+[Overlay](/app/src/main/java/com/armpatch/android/screenshade/overlay/Overlay.java)
+class that would handle these methods safely and abstract away
+functionality shared between the various overlays in this app.
 
 ### OverlayService and OverlayManager
 
-When the app is started, an instance of an [OverlayService](/app/src/main/java/com/armpatch/android/screenshade/service/OverlayService.java) is created, which holds an [OverlayManager](/app/src/main/java/com/armpatch/android/screenshade/overlay/OverlayManager.java). This OverlayManager supervises the various instances of Overlays, and implements callbacks so that overlays are not communicating with eachother, only to the manager.
-
-For example, when the [ButtonOverlay](/app/src/main/java/com/armpatch/android/screenshade/overlay/ButtonOverlay.java) is tapped, it sends a callback to the OverlayManager, which then tells the [ShadeOverlay](/app/src/main/java/com/armpatch/android/screenshade/overlay/ShadeOverlay.java) to start a reveal animation from the center of the button's location. The Button and Shade overlays have no knowledge of eachother's functionality.
+When the app is started, an instance of an
+[OverlayService](/app/src/main/java/com/armpatch/android/screenshade/service/OverlayService.java)
+is created, which holds an instance of
+[OverlayManager](/app/src/main/java/com/armpatch/android/screenshade/overlay/OverlayManager.java),
+which supervises the various overlays and handles their interactions.
 
 
 
