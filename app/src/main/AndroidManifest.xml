@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.armpatch.android.screenshade">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -11,14 +10,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_2_round"
         android:supportsRtl="true"
-        android:theme="@style/Launcher"
-        tools:ignore="GoogleAppIndexingWarning">
+        android:theme="@style/Launcher">
 
         <activity android:name="com.armpatch.android.screenshade.activity.StartScreenActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
