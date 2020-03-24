@@ -1,7 +1,10 @@
 # ScreenShade
 
-<img src="/app/images/demo_part_1.gif" width="200"> <img
-src="/app/images/demo_part_2.gif" width="200">
+## Current Design
+
+<p align="center">
+  <img src="/app/images/demo_part_1.gif" width="200"> <img src="/app/images/demo_part_2.gif" width="200">
+</p>
 
 [Link to Play Store](https://play.google.com/store/apps/details?id=com.armpatch.android.secretscreen&hl=en_US "Play Store")
 
