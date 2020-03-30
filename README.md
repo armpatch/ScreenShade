@@ -9,12 +9,11 @@
 [Link to Play Store](https://play.google.com/store/apps/details?id=com.armpatch.android.secretscreen&hl=en_US "Play Store")
 
 ScreenShade is an app I created to experiment with overlays and
-animations. This effect is made possible by drawing over other apps. The
-effect is most pronounced on phones with OLED screens, which provide
+animations. The effect is most pronounced on phones with OLED screens, which provide
 deeper blacks.
 
 I implemented the TapTargetView library for guiding the user through the
-basics elements of the app.
+basic elements of the app.
 
 ## Getting Started
 
